@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,276 +13,161 @@ namespace BackgroundImageSorter
     class PhotoDao
     {
 
-        List<Photo> myPhoto = new List<Photo>();
-        string path = "Photo.txt";
+        static readonly string photoFilepath = @"PhotoFile.bin";
+        IList<Photo> photos = new List<Photo>();
         int nextId = 1;
-        string TOKEN = "::;:";
-        string NEW_LINE = Environment.NewLine;
-
 
         public PhotoDao()
         {
-            myPhoto = Decode();
-            DetermineNextId(myPhoto);
+            photos = decode();
+
+            nextId = DetermineNextId(photos);
         }
 
-        public void DetermineNextId(List<Photo> PhotoList)
+        public int DetermineNextId(IList<Photo> PhotoList)
         {
-            if (PhotoList == null)
-            { }
-            else if (PhotoList.Count == 1) nextId = PhotoList.First().Id++;
+            if (PhotoList == null) return 1;
+            else if (PhotoList.Count == 1) return PhotoList.First().Id++;
             else if (PhotoList.Count > 1)
             {
                 int highestId = PhotoList.Max(s => s.Id);
-                nextId = highestId++;
+                return highestId++;
             }
+            return 1;
         }
 
         public Photo Create(Photo Photo)
         {
+            if (Contains(Photo)) return null;
+
             Photo.Id = nextId;
             nextId++;
-            myPhoto.Add(Photo);
-            Encode();
+            photos.Add(Photo);
+            encode();
             return Photo;
         }
 
         public Photo Get(int id)
         {
-            return myPhoto.Find(Photo => Photo.Id == id);
+            return photos.First(Photo => Photo.Id == id);
         }
 
         public void Update(Photo Photo)
         {
             Photo foundPhoto = Get(Photo.Id);
 
-            myPhoto.Remove(foundPhoto);
-            myPhoto.Add(Photo);
+            photos.Remove(foundPhoto);
+            photos.Add(Photo);
 
-            Encode();
+            encode();
         }
 
         public void Delete(Photo Photo)
         {
             Photo foundPhoto = Get(Photo.Id);
 
-            myPhoto.Remove(foundPhoto);
+            photos.Remove(foundPhoto);
 
-            Encode();
+            encode();
         }
 
-        public List<Photo> GetList()
+        public IList<Photo> GetList()
         {
-            List<Photo> cloneList = new List<Photo>();
-            myPhoto.ForEach(cloneList.Add);
-            return cloneList;
+            return new List<Photo>(photos);
         }
 
-        public void Encode()
+        private void encode()
         {
-            WriteToFile(path, myPhoto);
-        }
-
-        private List<Photo> Decode()
-        {
-            return BuildPhotoFromFile(path);
-        }
-
-        public void WriteToFile(string path, List<Photo> myPhoto)
-        {
-            using (StreamWriter sw = new StreamWriter(path))
+            using (FileStream binaryStream = File.Create(photoFilepath))
             {
-                foreach (Photo photo in myPhoto)
-                {
-                    sw.WriteLine(stringifyPhoto(photo, TOKEN, NEW_LINE));
-                }
-                sw.Close();
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(binaryStream, photos);
             }
         }
 
-        private String stringifyPhoto(Photo photo, string TOKEN, string NEW_LINE)
+        private IList<Photo> decode()
         {
+            if (!File.Exists(photoFilepath)) return new List<Photo>();
 
-            int id = photo.Id;
-            byte[] digest = photo.Digest;
-            byte[] SHA512 = photo.SHA512;
-            byte[] SHA256 = photo.SHA256;
-            string fileInfo = photo.FileInfo;
-            Size dimension = photo.Dimension;
-            long size = photo.Size;
-            string path = photo.Path;
+            IList<Photo> Photos;
 
-            StringBuilder output = new StringBuilder();
-            output.Append(id);
-            output.Append(TOKEN);
-
-            String digestStr = byteToString(digest);
-
-            output.Append(digestStr);
-            output.Append(TOKEN);
-
-            output.Append(byteToString(SHA512));
-            output.Append(TOKEN);
-
-            output.Append(byteToString(SHA256));
-            output.Append(TOKEN);
-
-            output.Append(fileInfo);
-            output.Append(TOKEN);
-
-            long width = (dimension != null) ? dimension.Width : 0;
-            output.Append(width);
-            output.Append(TOKEN);
-
-            long height = (dimension != null) ? dimension.Height : 0;
-            output.Append(height);
-            output.Append(TOKEN);
-
-            output.Append(size);
-            output.Append(TOKEN);
-
-            output.Append(path);
-            output.Append(NEW_LINE);
-
-            return output.ToString();
+            using (FileStream binaryStream = File.Open(photoFilepath, FileMode.OpenOrCreate))
+            {
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                Photos = (List<Photo>)binaryFormatter.Deserialize(binaryStream);
+            }
+            return Photos;
         }
 
-        private String byteToString(byte[] digest)
+        public int size()
         {
-            String digestStr = "";
-            foreach (byte digestByte in digest)
-            {
-                digestStr += $"{digestByte.ToString("G")}xx";
-            }
-            return digestStr;
+            return photos.Count;
         }
 
-        public void WriteToLog(Photo myPhoto)
+        public bool ContainsFile(FileInfo fileInfo)
         {
+            return GetByFile(fileInfo) != null;
 
-            string path = "Photo-log.txt";
-
-            using (StreamWriter sw = new StreamWriter(path, true))
-            {
-                //foreach (Photo Photo in myPhoto)
-                Photo photo = myPhoto;
-                {
-                    sw.WriteLine(stringifyPhoto(photo, TOKEN, NEW_LINE));
-                }
-                sw.Close();
-            }
         }
 
-
-
-        public List<Photo> BuildPhotoFromFile(string path)
+        public bool Contains(Photo Photo)
         {
+            Photo foundPhoto = GetBySHA512(Photo.SHA512);
 
-            List<Photo> myPhoto = new List<Photo>();
-            string[] result = new string[2];
-            if (path == null)
-                path = "PhotoText.txt";
-            string[] seperator = { TOKEN };
-            string[] lineSeperator = { NEW_LINE };
+            if (foundPhoto == null) return false;
 
-            string fileContent = ReadFile(path);
-
-            if (fileContent == null)
-            {
-                return myPhoto;
-            }
-            else
-            {
-                string[] fileLines = fileContent.Split(lineSeperator, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (string line in fileLines)
-                {
-                    result = line.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
-
-                    Photo photo = PhotoBuilder(result[0], result[1]);
-                    myPhoto.Add(Photo);
-                }
-
-            }
-
-            return myPhoto;
+            return (foundPhoto.Digest.SequenceEqual(Photo.Digest)) &&
+                (foundPhoto.SHA256.SequenceEqual(Photo.SHA256));
         }
 
-        private Photo unStringifyPhoto(string photoStr, string TOKEN)
+        public bool ContainsMD5(byte[] digest)
         {
-
-            string[] tokenArray = { TOKEN };
-
-            String[] item = photoStr.Split(tokenArray, StringSplitOptions.RemoveEmptyEntries);
-
-                int id = int.Parse(item[0]);
-
-                String byteArrayStr = item[1];
-                byte[] byteAr = byteStringToArray(byteArrayStr);
-
-                byte[] digest = byteAr;
-                byte[] SHA512 = byteStringToArray(item[2]);
-                byte[] SHA256 = byteStringToArray(item[3]);
-
-                File file = new File(item[4]);
-                Dimension dimension = new Dimension(Integer.parseInt(item[5]),
-                        Integer.parseInt(item[6]));
-
-                long size = Long.parseLong(item[7]);
-                int zvidHash = Integer.parseInt(item[8]);
-
-                Thumb thumb = new Thumb();
-
-                thumb.setId(id);
-                thumb.setDigest(digest);
-                thumb.setSHA512(SHA512);
-                thumb.setSHA256(SHA256);
-                thumb.setFile(file);
-                thumb.setDimension(dimension);
-                thumb.setSize(size);
-                thumb.setZvidHash(zvidHash);
-
-            return thumb;
-
-            }
-
-        public string ReadFile(string path)
-        {
-
-            string defaultFilePath = "PhotoText.txt";
-            string filepath = "";
-
-            if (path == null)
-            {
-                filepath = defaultFilePath;
-            }
-            else
-            {
-                filepath = path;
-            }
-
-            string content = "";
-
-
-            if (File.Exists(filepath))
-            {
-                using (StreamReader sr = new StreamReader(filepath))
-                {
-                    while (!sr.EndOfStream)
-                    {
-                        content += sr.ReadLine() + NEW_LINE;
-                    }
-
-                    sr.Close();
-                }
-            }
-            else
-            {
-                return null;
-            }
-
-            return content;
+            return GetByMD5(digest) != null;
         }
+
+        public Photo GetByMD5(byte[] digest)
+        {
+            return photos.Where(testPhoto => testPhoto.Digest.SequenceEqual(digest)).SingleOrDefault();
+        }
+
+        public Photo GetByFile(FileInfo fileInfo)
+        {
+            string baseName = fileInfo.FullName;
+
+            foreach (Photo Photo in photos)
+            {
+                string str1 = Photo.FileInfo.FullName;
+                bool same = baseName.Equals(str1, System.StringComparison.OrdinalIgnoreCase);
+            }
+
+            return photos.Where(testPhoto => testPhoto
+                                                    .FileInfo
+                                                    .FullName
+                                                    .Equals(fileInfo.FullName,
+                                                            System.StringComparison
+                                                                    .OrdinalIgnoreCase)
+
+                                                    ).SingleOrDefault();
+        }
+
+        public bool ContainsSHA256(byte[] digest)
+        {
+            return GetBySHA256(digest) != null;
+        }
+
+        public Photo GetBySHA256(byte[] digest)
+        {
+            return photos.Where(testPhoto => testPhoto.SHA256.SequenceEqual(digest)).SingleOrDefault();
+        }
+        public bool ContainsSHA512(byte[] digest)
+        {
+            return GetBySHA512(digest) != null;
+        }
+
+        public Photo GetBySHA512(byte[] digest)
+        {
+            return photos.Where(testPhoto => testPhoto.SHA512.SequenceEqual(digest)).SingleOrDefault();
+        }
+
     }
-}
 }
