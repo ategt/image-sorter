@@ -33,10 +33,19 @@ namespace BackgroundImageSorter.Model
 
         private static void imageSpecificProperties(Photo photo, out System.Drawing.Size imageSize, out System.Guid format)
         {
-            System.Drawing.Image image = System.Drawing.Image.FromFile(photo.FileInfo.FullName);
-            imageSize = image.Size;
-            format = image.RawFormat.Guid;
-            image.Dispose();
+            try
+            {
+                using (System.Drawing.Image image = System.Drawing.Image.FromFile(photo.FileInfo.FullName))
+                {
+                    imageSize = image.Size;
+                    format = image.RawFormat.Guid;
+                    image.Dispose();
+                }
+            }catch(System.OutOfMemoryException ex)
+            {
+                imageSize = new System.Drawing.Size();
+                format = System.Guid.Empty;
+            }
         }
 
         public static byte[] GetSHA512Hash(string path)

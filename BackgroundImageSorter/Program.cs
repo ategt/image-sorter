@@ -15,7 +15,7 @@ namespace BackgroundImageSorter
 
             string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
             DirectoryInfo sourceDirectory = new DirectoryInfo(source);
-            DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\Screenshots\imgTemp");
+            DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\test_images");
 
             if (primaryDirectory.Exists)
             {
@@ -24,24 +24,29 @@ namespace BackgroundImageSorter
                 DirectoryInfo smallDirectory = primaryDirectory.CreateSubdirectory("Other Images");
 
                 PhotoDao photoDao = new PhotoDao();
+                Console.WriteLine("Dao loaded.");
 
                 IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(sourceDirectory, photoDao);
+
+                Console.WriteLine("Scan Complete.");
 
                 moveUniquePhotosToAppropiateDirectory(uniquePhotos,
                                                         backgroundDirectory,
                                                         smallDirectory,
                                                         dataDirectory);
+                Console.WriteLine("Copy Complete.");
 
                 updateDirectoryData(backgroundDirectory,
                                                         smallDirectory,
                                                         dataDirectory,
                                                         photoDao);
+                Console.WriteLine("Dao data updated.");
             }
             else
             {
                 Console.WriteLine("An important directory is missing.");
             }
-            
+
         }
 
         private static void updateDirectoryData(DirectoryInfo backgroundDirectory,
@@ -62,18 +67,27 @@ namespace BackgroundImageSorter
             foreach (Photo photo in uniquePhotos)
             {
                 System.Drawing.Size dimension = photo.Dimension;
+                try
+                {
+                    if (dimension.IsEmpty)
+                    {
 
-                if (dimension.IsEmpty)
-                {
-                    photo.FileInfo.CopyTo(dataDirectory.FullName, false);
+                        photo.FileInfo.CopyTo(dataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
+
+                    }
+                    else if (dimension.Height >= 1080 && dimension.Width >= 1080)
+                    {
+                        photo.FileInfo.CopyTo(backgroundDirectory.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                    }
+                    else
+                    {
+                        photo.FileInfo.CopyTo(smallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
+                    }
                 }
-                else if (dimension.Height >= 1080 && dimension.Width >= 1080)
+                catch (System.IO.IOException ex)
                 {
-                    photo.FileInfo.CopyTo(backgroundDirectory.FullName, false);
-                }
-                else
-                {
-                    photo.FileInfo.CopyTo(smallDirectory.FullName, false);
+                    Console.WriteLine("Skipping " + photo.FileInfo.Name);
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
@@ -89,7 +103,7 @@ namespace BackgroundImageSorter
                 photos[Array.IndexOf(possiblePhotos, possiblePhoto)] = PhotoBuilder.Build(possiblePhoto.FullName);
             }
 
-            IEnumerable<Photo> filteredPhotos = photos.Where<Photo>(photo => photoDao.Contains(photo));
+            IEnumerable<Photo> filteredPhotos = photos.Where<Photo>(photo => !photoDao.Contains(photo));
 
             return filteredPhotos;
 
