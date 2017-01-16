@@ -64,6 +64,9 @@ namespace BackgroundImageSorter
                                         DirectoryInfo smallDirectory,
                                         DirectoryInfo dataDirectory)
         {
+            DirectoryInfo portraitDirectory = backgroundDirectory.CreateSubdirectory("Portrait");
+            DirectoryInfo landscapeDirectory = backgroundDirectory.CreateSubdirectory("Landscape");
+
             foreach (Photo photo in uniquePhotos)
             {
                 System.Drawing.Size dimension = photo.Dimension;
@@ -77,7 +80,14 @@ namespace BackgroundImageSorter
                     }
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)
                     {
-                        photo.FileInfo.CopyTo(backgroundDirectory.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                        if (dimension.Height > dimension.Width)
+                        {
+                            photo.FileInfo.CopyTo(portraitDirectory.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                        }
+                        else
+                        {
+                            photo.FileInfo.CopyTo(landscapeDirectory.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                        }
                     }
                     else
                     {
