@@ -22,10 +22,11 @@ namespace BackgroundImageSorter.Tests
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
 
             var distinctPhotos = Program.GetDistinctPhotos(photos);
+            int counrt = distinctPhotos.Count();
 
             Assert.IsTrue(distinctPhotos.Count() < 6);
 
-            //Assert.Equals(distinctPhotos.Count(), 2);
+            Assert.AreEqual(distinctPhotos.Count(), 3);
 
         }
     }

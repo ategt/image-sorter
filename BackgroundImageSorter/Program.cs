@@ -167,29 +167,40 @@ namespace BackgroundImageSorter
 
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
         {
-            filteredPhotos = filteredPhotos.DistinctBy(photo => new { photo.SHA512, photo.SHA256, photo.Digest });
+            //filteredPhotos = filteredPhotos.DistinctBy(photo => new { photo.SHA512, photo.SHA256, photo.Digest });
+            //return filteredPhotos.DistinctBy(photo => photo.Digest );
             //filteredPhotos = filteredPhotos.DistinctBy(photo => photo.SHA512);
             //filteredPhotos = filteredPhotos.Distinct<Photo>(new EqualityComparer<Photo>
             //DistictBy<IEnumerable<Photo>, byte[]>(filteredPhotos
             //DistictBy
             //filteredPhotos = filteredPhotos.ToList().D
-            return filteredPhotos;
+            //return filteredPhotos;
+
+            return getDistinctPhotos(filteredPhotos);
+
         }
 
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>
-        (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        private static IEnumerable<Photo> getDistinctPhotos(IEnumerable<Photo> photos)
         {
-            HashSet<TKey> seenKeys = new HashSet<TKey>();
-            foreach (TSource element in source)
+
+            var hashes = photos.Select(photo => photo.SHA512);
+            //var dhash = hashes.Distinct();
+
+            List<Photo> uniques = new List<Photo>();
+
+            foreach (Photo photo in photos)
             {
-                if (seenKeys.Add(keySelector(element)))
-                {
-                    yield return element;
-                }
+                byte[] hash = photo.SHA512;
+                byte[] validOrNull = uniques.Select(testPhoto => testPhoto.SHA512).Where(testHash => testHash.SequenceEqual(hash)).SingleOrDefault();
+                if (validOrNull == null)
+                    uniques.Add(photo);
             }
+
+            
+
+            return uniques;
+
         }
 
     }
-
-    
 }
