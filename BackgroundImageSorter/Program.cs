@@ -14,10 +14,10 @@ namespace BackgroundImageSorter
     {
         static void Main(string[] args)
         {
-            string source = @"C:\Users\ATeg\Desktop\tests\input";
+            //string source = @"C:\Users\ATeg\Desktop\tests\input";
             string destination = @"C:\Users\ATeg\Desktop\tests\output";
 
-            //string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
+            string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
             //string source = @"C:\Users\ATeg\Desktop\imgTemp";
             DirectoryInfo sourceDirectory = new DirectoryInfo(source);
             //DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\Screenshots\Images");
