@@ -1,4 +1,6 @@
-﻿using BackgroundImageSorter.Model;
+﻿using BackgroundImageSorter;
+using BackgroundImageSorter.Model;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -165,14 +167,16 @@ namespace BackgroundImageSorter
 
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
         {
+            filteredPhotos = filteredPhotos.DistinctBy(photo => new { photo.SHA512, photo.SHA256, photo.Digest });
+            //filteredPhotos = filteredPhotos.DistinctBy(photo => photo.SHA512);
             //filteredPhotos = filteredPhotos.Distinct<Photo>(new EqualityComparer<Photo>
-            DistictBy<IEnumerable<Photo>, byte[]>(filteredPhotos
+            //DistictBy<IEnumerable<Photo>, byte[]>(filteredPhotos
             //DistictBy
-            filteredPhotos = filteredPhotos.ToList().D
+            //filteredPhotos = filteredPhotos.ToList().D
             return filteredPhotos;
         }
 
-        public static IEnumerable<TSource> DistictBy<TSource, TKey>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>
         (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             HashSet<TKey> seenKeys = new HashSet<TKey>();
@@ -184,6 +188,7 @@ namespace BackgroundImageSorter
                 }
             }
         }
+
     }
 
     

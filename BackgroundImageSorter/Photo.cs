@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BackgroundImageSorter
 {
     [System.Serializable]
-    public class Photo : IEquatable<Photo>
+    public class Photo
     {
         public int Id { get; set; }
         public byte[] Digest { get; set; }
@@ -44,6 +45,19 @@ namespace BackgroundImageSorter
                SHA512.SequenceEqual(other.SHA512) &&
                SHA256.SequenceEqual(other.SHA256) &&
                Digest.SequenceEqual(other.Digest);
+        }
+
+        public static IEnumerable<TSource> DistictBy<TSource, TKey>
+        (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
         }
     }
 }
