@@ -14,8 +14,10 @@ namespace BackgroundImageSorter
         {
 
             string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
+            //string source = @"C:\Users\ATeg\Desktop\imgTemp";
             DirectoryInfo sourceDirectory = new DirectoryInfo(source);
-            DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\test_images");
+            //DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\Screenshots\Images");
+            DirectoryInfo primaryDirectory = new DirectoryInfo(".");
 
             Report report = new Report();
 
@@ -58,6 +60,9 @@ namespace BackgroundImageSorter
                 Console.WriteLine();
 
                 Console.WriteLine(report);
+
+                Console.WriteLine("Press Any Key to exit...");
+                while (!Console.KeyAvailable) { }
             }
             else
             {
