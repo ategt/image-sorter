@@ -104,6 +104,18 @@ namespace BackgroundImageSorter
             return photos.Count;
         }
 
+        public int Images()
+        {
+            return photos.Count(photo => !photo.Dimension.IsEmpty);
+        }
+
+        public int Backgrounds()
+        {
+            return photos.Select(photo => photo.Dimension)
+                .Where(dimension => !dimension.IsEmpty)
+                .Count(dimension => dimension.Height >= 1080 && dimension.Width >= 1080);
+        }
+
         public bool ContainsFile(FileInfo fileInfo)
         {
             return GetByFile(fileInfo) != null;

@@ -17,6 +17,8 @@ namespace BackgroundImageSorter
             DirectoryInfo sourceDirectory = new DirectoryInfo(source);
             DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\test_images");
 
+            Report report = new Report();
+
             if (primaryDirectory.Exists)
             {
                 DirectoryInfo backgroundDirectory = primaryDirectory.CreateSubdirectory("Backgrounds");
@@ -24,16 +26,21 @@ namespace BackgroundImageSorter
                 DirectoryInfo smallDirectory = primaryDirectory.CreateSubdirectory("Other Images");
 
                 PhotoDao photoDao = new PhotoDao();
+
+                report.StoredFiles = photoDao.size();
+                report.StoredImages = photoDao.Images();
+                report.StoredBackgrounds = photoDao.Backgrounds();
+                
                 Console.WriteLine("Dao loaded.");
 
-                IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(sourceDirectory, photoDao);
+                IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(sourceDirectory, photoDao, report);
 
                 Console.WriteLine("Scan Complete.");
 
                 moveUniquePhotosToAppropiateDirectory(uniquePhotos,
                                                         backgroundDirectory,
                                                         smallDirectory,
-                                                        dataDirectory);
+                                                        dataDirectory, report);
                 Console.WriteLine("Copy Complete.");
 
                 updateDirectoryData(backgroundDirectory,
@@ -54,15 +61,32 @@ namespace BackgroundImageSorter
                                                     DirectoryInfo dataDirectory,
                                                     PhotoDao photoDao)
         {
-            Array.ForEach<FileInfo>(backgroundDirectory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
-            Array.ForEach<FileInfo>(smallDirectory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
-            Array.ForEach<FileInfo>(dataDirectory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+
+            //DirectoryInfo directory = backgroundDirectory;
+
+            IList<DirectoryInfo> directories = new List<DirectoryInfo>();
+            directories.Add(backgroundDirectory);
+            directories.Add(smallDirectory);
+            directories.Add(dataDirectory);
+
+            directories.ToList<DirectoryInfo>().ForEach( directory => updateDirectoryData(directory, photoDao));
+
+            //Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+            //Array.ForEach<FileInfo>(smallDirectory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+            //Array.ForEach<FileInfo>(dataDirectory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
         }
+
+        private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
+        {
+            Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+        }
+
 
         private static void moveUniquePhotosToAppropiateDirectory(IEnumerable<Photo> uniquePhotos,
                                         DirectoryInfo backgroundDirectory,
                                         DirectoryInfo smallDirectory,
-                                        DirectoryInfo dataDirectory)
+                                        DirectoryInfo dataDirectory,
+                                        Report report)
         {
             DirectoryInfo portraitDirectory = backgroundDirectory.CreateSubdirectory("Portrait");
             DirectoryInfo landscapeDirectory = backgroundDirectory.CreateSubdirectory("Landscape");
@@ -88,6 +112,7 @@ namespace BackgroundImageSorter
                         {
                             photo.FileInfo.CopyTo(landscapeDirectory.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
                         }
+                        report.Moved++;
                     }
                     else
                     {
@@ -102,7 +127,7 @@ namespace BackgroundImageSorter
             }
         }
 
-        private static IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao)
+        private static IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao, Report report)
         {
             FileInfo[] possiblePhotos = sourceDirectory.GetFiles();
 
@@ -113,7 +138,11 @@ namespace BackgroundImageSorter
                 photos[Array.IndexOf(possiblePhotos, possiblePhoto)] = PhotoBuilder.Build(possiblePhoto.FullName);
             }
 
+            report.Scanned = photos.Length;
+
             IEnumerable<Photo> filteredPhotos = photos.Where<Photo>(photo => !photoDao.Contains(photo));
+
+            report.Skipped = report.Scanned - filteredPhotos.Count();
 
             return filteredPhotos;
 
