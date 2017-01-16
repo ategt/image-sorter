@@ -13,12 +13,13 @@ namespace BackgroundImageSorter
     class PhotoDao
     {
 
-        static readonly string photoFilepath = @"PhotoFile.bin";
+        private string photoFilepath;
         IList<Photo> photos = new List<Photo>();
         int nextId = 1;
 
-        public PhotoDao()
+        public PhotoDao(string photoFilePath= @"PhotoFile.bin")
         {
+            this.photoFilepath = photoFilePath;
             photos = decode();
 
             nextId = DetermineNextId(photos);

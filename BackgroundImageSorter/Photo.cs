@@ -1,4 +1,7 @@
-﻿namespace BackgroundImageSorter
+﻿using System;
+using System.Linq;
+
+namespace BackgroundImageSorter
 {
     [System.Serializable]
     class Photo
@@ -12,5 +15,27 @@
         public System.Guid Format { get; set; }
         public long Size { get; set; }
         public string hash { get; set; }
+
+        public override bool Equals(object obj)
+        {
+
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Photo otherPhoto = (Photo)obj;
+
+            return
+                SHA512.SequenceEqual(otherPhoto.SHA512) &&
+                SHA256.SequenceEqual(otherPhoto.SHA256) &&
+                Digest.SequenceEqual(otherPhoto.Digest);
+
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

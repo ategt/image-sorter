@@ -12,12 +12,15 @@ namespace BackgroundImageSorter
     {
         static void Main(string[] args)
         {
+            string source = @"C:\Users\ATeg\Desktop\tests\input";
+            string destination = @"C:\Users\ATeg\Desktop\tests\output";
 
-            string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
+            //string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
             //string source = @"C:\Users\ATeg\Desktop\imgTemp";
             DirectoryInfo sourceDirectory = new DirectoryInfo(source);
             //DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\Screenshots\Images");
-            DirectoryInfo primaryDirectory = new DirectoryInfo(".");
+            //DirectoryInfo primaryDirectory = new DirectoryInfo(".");
+            DirectoryInfo primaryDirectory = new DirectoryInfo(destination);
 
             Report report = new Report();
 
@@ -27,7 +30,7 @@ namespace BackgroundImageSorter
                 DirectoryInfo dataDirectory = primaryDirectory.CreateSubdirectory("Data");
                 DirectoryInfo smallDirectory = primaryDirectory.CreateSubdirectory("Other Images");
 
-                PhotoDao photoDao = new PhotoDao();
+                PhotoDao photoDao = new PhotoDao(@"PhotoFile-Test.bin");
 
                 report.StoredFiles = photoDao.size();
                 report.StoredImages = photoDao.Images();
@@ -146,16 +149,20 @@ namespace BackgroundImageSorter
         {
             FileInfo[] possiblePhotos = sourceDirectory.GetFiles();
 
-            Photo[] photos = new Photo[possiblePhotos.Length];
+            IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
 
-            foreach (FileInfo possiblePhoto in possiblePhotos)
-            {
-                photos[Array.IndexOf(possiblePhotos, possiblePhoto)] = PhotoBuilder.Build(possiblePhoto.FullName);
-            }
+            //Photo[] photos = new Photo[possiblePhotos.Length];
 
-            report.Scanned = photos.Length;
+            //foreach (FileInfo possiblePhoto in possiblePhotos)
+            //{
+            //    photos[Array.IndexOf(possiblePhotos, possiblePhoto)] = PhotoBuilder.Build(possiblePhoto.FullName);
+            //}
+
+            report.Scanned = photos.Count();
 
             IEnumerable<Photo> filteredPhotos = photos.Where<Photo>(photo => !photoDao.Contains(photo));
+
+            filteredPhotos = filteredPhotos.Distinct();
 
             report.Skipped = report.Scanned - filteredPhotos.Count();
 
