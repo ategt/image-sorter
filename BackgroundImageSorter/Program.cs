@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BackgroundImageSorter
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -151,23 +151,40 @@ namespace BackgroundImageSorter
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
 
-            //Photo[] photos = new Photo[possiblePhotos.Length];
-
-            //foreach (FileInfo possiblePhoto in possiblePhotos)
-            //{
-            //    photos[Array.IndexOf(possiblePhotos, possiblePhoto)] = PhotoBuilder.Build(possiblePhoto.FullName);
-            //}
-
             report.Scanned = photos.Count();
 
             IEnumerable<Photo> filteredPhotos = photos.Where<Photo>(photo => !photoDao.Contains(photo));
 
-            filteredPhotos = filteredPhotos.Distinct();
+            filteredPhotos = GetDistinctPhotos(filteredPhotos);
 
             report.Skipped = report.Scanned - filteredPhotos.Count();
 
             return filteredPhotos;
 
         }
+
+        public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
+        {
+            //filteredPhotos = filteredPhotos.Distinct<Photo>(new EqualityComparer<Photo>
+            DistictBy<IEnumerable<Photo>, byte[]>(filteredPhotos
+            //DistictBy
+            filteredPhotos = filteredPhotos.ToList().D
+            return filteredPhotos;
+        }
+
+        public static IEnumerable<TSource> DistictBy<TSource, TKey>
+        (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
     }
+
+    
 }

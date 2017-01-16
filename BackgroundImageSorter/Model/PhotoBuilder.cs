@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace BackgroundImageSorter.Model
 {
-    class PhotoBuilder
+    public class PhotoBuilder
     {
 
         public static Photo Build(string path)

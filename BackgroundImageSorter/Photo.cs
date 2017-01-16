@@ -4,7 +4,7 @@ using System.Linq;
 namespace BackgroundImageSorter
 {
     [System.Serializable]
-    class Photo
+    public class Photo : IEquatable<Photo>
     {
         public int Id { get; set; }
         public byte[] Digest { get; set; }
@@ -16,26 +16,34 @@ namespace BackgroundImageSorter
         public long Size { get; set; }
         public string hash { get; set; }
 
-        public override bool Equals(object obj)
+        //public override bool Equals(object obj)
+        //{
+
+        //    if (obj == null || GetType() != obj.GetType())
+        //    {
+        //        return false;
+        //    }
+
+        //    Photo otherPhoto = (Photo)obj;
+
+        //    return
+        //        SHA512.SequenceEqual(otherPhoto.SHA512) &&
+        //        SHA256.SequenceEqual(otherPhoto.SHA256) &&
+        //        Digest.SequenceEqual(otherPhoto.Digest);
+
+        //}
+
+        //public override int GetHashCode()
+        //{
+        //    return base.GetHashCode();
+        //}
+
+        bool IEquatable<Photo>.Equals(Photo other)
         {
-
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            Photo otherPhoto = (Photo)obj;
-
             return
-                SHA512.SequenceEqual(otherPhoto.SHA512) &&
-                SHA256.SequenceEqual(otherPhoto.SHA256) &&
-                Digest.SequenceEqual(otherPhoto.Digest);
-
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+               SHA512.SequenceEqual(other.SHA512) &&
+               SHA256.SequenceEqual(other.SHA256) &&
+               Digest.SequenceEqual(other.Digest);
         }
     }
 }
