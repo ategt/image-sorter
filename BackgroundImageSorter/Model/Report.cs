@@ -18,7 +18,7 @@ namespace BackgroundImageSorter.Model
 
         public override string ToString()
         {
-            return $"Files Scanned:\t{Scanned}\nFiles Skipped:\t{Skipped}\nFiles Moved:\t{Moved}\nImages in Bckground Folder:\t{Images}\nStored Files:\t{StoredFiles}\nStore Images:\t{StoredImages}\nStored Backgrounds:\t{StoredBackgrounds}\n";
+            return $"Files Scanned:\t{Scanned}\nFiles Skipped:\t{Skipped}\nFiles Moved:\t{Moved}\nImages in Background Folder:\t{Images}\nStored Files:\t{StoredFiles}\nStore Images:\t{StoredImages}\nStored Backgrounds:\t{StoredBackgrounds}\n";
         }
     }
 }

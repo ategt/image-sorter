@@ -79,6 +79,10 @@ namespace BackgroundImageSorter
             directories.Add(smallDirectory);
             directories.Add(dataDirectory);
 
+            backgroundDirectory.GetDirectories()
+                .ToList<DirectoryInfo>()
+                .ForEach(dir => directories.Add(dir));
+
             directories.ToList<DirectoryInfo>().ForEach(directory => updateDirectoryData(directory, photoDao));
         }
 
