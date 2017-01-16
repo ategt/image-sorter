@@ -30,7 +30,7 @@ namespace BackgroundImageSorter
                 report.StoredFiles = photoDao.size();
                 report.StoredImages = photoDao.Images();
                 report.StoredBackgrounds = photoDao.Backgrounds();
-                
+
                 Console.WriteLine("Dao loaded.");
 
                 IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(sourceDirectory, photoDao, report);
@@ -47,12 +47,24 @@ namespace BackgroundImageSorter
                                                         smallDirectory,
                                                         dataDirectory,
                                                         photoDao);
+                report.Images = backgroundDirectory
+                                            .GetDirectories()
+                                            .FirstOrDefault()
+                                            .GetFiles()
+                                            .Count();
+
                 Console.WriteLine("Dao data updated.");
+
+                Console.WriteLine();
+
+                Console.WriteLine(report);
             }
             else
             {
                 Console.WriteLine("An important directory is missing.");
             }
+
+
 
         }
 
@@ -62,18 +74,12 @@ namespace BackgroundImageSorter
                                                     PhotoDao photoDao)
         {
 
-            //DirectoryInfo directory = backgroundDirectory;
-
             IList<DirectoryInfo> directories = new List<DirectoryInfo>();
             directories.Add(backgroundDirectory);
             directories.Add(smallDirectory);
             directories.Add(dataDirectory);
 
-            directories.ToList<DirectoryInfo>().ForEach( directory => updateDirectoryData(directory, photoDao));
-
-            //Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
-            //Array.ForEach<FileInfo>(smallDirectory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
-            //Array.ForEach<FileInfo>(dataDirectory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+            directories.ToList<DirectoryInfo>().ForEach(directory => updateDirectoryData(directory, photoDao));
         }
 
         private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)

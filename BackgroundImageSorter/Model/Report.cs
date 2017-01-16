@@ -15,5 +15,10 @@ namespace BackgroundImageSorter.Model
         public int StoredImages { get; set; }
         public int StoredFiles { get; set; }
         public int StoredBackgrounds { get; set; }
+
+        public override string ToString()
+        {
+            return $"Files Scanned:\t{Scanned}\nFiles Skipped:\t{Skipped}\nFiles Moved:\t{Moved}\nImages in Bckground Folder:\t{Images}\nStored Files:\t{StoredFiles}\nStore Images:\t{StoredImages}\nStored Backgrounds:\t{StoredBackgrounds}\n";
+        }
     }
 }
