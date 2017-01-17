@@ -56,47 +56,88 @@ namespace BackgroundImageSorter
 
             if (config.Destination.Exists)
             {
-
-                Console.Write("Dao loading...");
-
-                PhotoDao photoDao = new PhotoDao(config.DataFile.FullName);
-
-                LoadDaoInfoToReport(report, photoDao);
-
-                Console.WriteLine("Complete.");
-
-
-                Console.Write("Scaning Source Directory...");
-                IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report);
-
-                Console.WriteLine("Complete.");
-
-                Console.Write("Copying Photos...");
-
-                moveUniquePhotosToAppropiateDirectory(uniquePhotos,
-                                                        config, report);
-                Console.WriteLine("Copy Complete.");
-
-                Console.Write("Updating File Data...");
-                updateDirectoryData(config, photoDao);
-                report.ImagesInLandscapeFolder = config.Landscape
-                                            .GetFiles()
-                                            .Count();
-
-                Console.WriteLine("Dao updated.");
-
-                if (config.SuppressReport) return null;
-
-                return report;
+                return CommitPurpose(config, report);
             }
             else
             {
-                Console.WriteLine("An important directory is missing.");
-                return null;
+                return DisplayError();
             }
 
 
 
+        }
+
+        private static Report DisplayError()
+        {
+            Console.WriteLine("An important directory is missing.");
+            return null;
+        }
+
+        private static Report CommitPurpose(Configuration config, Report report)
+        {
+            PhotoDao photoDao = LoadData(config, report);
+
+            IEnumerable<Photo> uniquePhotos = ScanSource(config, report, photoDao);
+
+            CopyFiles(config, report, uniquePhotos);
+
+            UpdateData(config, report, photoDao);
+
+            return ProcessReport(config, report);
+        }
+
+        private static Report ProcessReport(Configuration config, Report report)
+        {
+            if (config.SuppressReport) return null;
+
+            return report;
+        }
+
+        private static void UpdateData(Configuration config, Report report, PhotoDao photoDao)
+        {
+            Console.Write("Updating File Data...");
+            updateDirectoryData(config, photoDao);
+
+            UpdateReportWithNewImageCount(config, report);
+
+            Console.WriteLine("Dao updated.");
+        }
+
+        private static void CopyFiles(Configuration config, Report report, IEnumerable<Photo> uniquePhotos)
+        {
+            Console.Write("Copying Photos...");
+
+            moveUniquePhotosToAppropiateDirectory(uniquePhotos,
+                                                    config, report);
+            Console.WriteLine("Copy Complete.");
+        }
+
+        private static IEnumerable<Photo> ScanSource(Configuration config, Report report, PhotoDao photoDao)
+        {
+            Console.Write("Scaning Source Directory...");
+            IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report);
+
+            Console.WriteLine("Complete.");
+            return uniquePhotos;
+        }
+
+        private static PhotoDao LoadData(Configuration config, Report report)
+        {
+            Console.Write("Dao loading...");
+
+            PhotoDao photoDao = new PhotoDao(config.DataFile.FullName);
+
+            LoadDaoInfoToReport(report, photoDao);
+
+            Console.WriteLine("Complete.");
+            return photoDao;
+        }
+
+        private static void UpdateReportWithNewImageCount(Configuration config, Report report)
+        {
+            report.ImagesInLandscapeFolder = config.Landscape
+                                        .GetFiles()
+                                        .Count();
         }
 
         private static void LoadDaoInfoToReport(Report report, PhotoDao photoDao)
@@ -193,9 +234,6 @@ namespace BackgroundImageSorter
 
 
         private static void moveUniquePhotosToAppropiateDirectory(IEnumerable<Photo> uniquePhotos,
-                                        //DirectoryInfo backgroundDirectory,
-                                        //DirectoryInfo smallDirectory,
-                                        //DirectoryInfo dataDirectory,
                                         Configuration config,
                                         Report report)
         {
@@ -279,25 +317,14 @@ namespace BackgroundImageSorter
 
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
         {
-            //filteredPhotos = filteredPhotos.DistinctBy(photo => new { photo.SHA512, photo.SHA256, photo.Digest });
-            //return filteredPhotos.DistinctBy(photo => photo.Digest );
-            //filteredPhotos = filteredPhotos.DistinctBy(photo => photo.SHA512);
-            //filteredPhotos = filteredPhotos.Distinct<Photo>(new EqualityComparer<Photo>
-            //DistictBy<IEnumerable<Photo>, byte[]>(filteredPhotos
-            //DistictBy
-            //filteredPhotos = filteredPhotos.ToList().D
-            //return filteredPhotos;
-
             return getDistinctPhotos(filteredPhotos);
-
         }
 
         private static IEnumerable<Photo> getDistinctPhotos(IEnumerable<Photo> photos)
         {
 
             var hashes = photos.Select(photo => photo.SHA512);
-            //var dhash = hashes.Distinct();
-
+            
             List<Photo> uniques = new List<Photo>();
 
             foreach (Photo photo in photos)
@@ -308,10 +335,7 @@ namespace BackgroundImageSorter
                     uniques.Add(photo);
             }
 
-
-
             return uniques;
-
         }
 
         static void ShowHelp(OptionSet p)
