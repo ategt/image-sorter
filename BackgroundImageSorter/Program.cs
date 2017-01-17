@@ -261,17 +261,19 @@ namespace BackgroundImageSorter
             directories.Add(config.Destination);
             directories.Add(config.SmallDirectory);
 
-            config.BackgroundDirectory
-                .GetDirectories()
-                .ToList<DirectoryInfo>()
-                .ForEach(dir => directories.Add(dir));
+            if (config.BackgroundDirectory.Exists)
+                config.BackgroundDirectory?
+                    .GetDirectories()
+                    .ToList<DirectoryInfo>()
+                    .ForEach(dir => directories.Add(dir));
 
             directories.ToList<DirectoryInfo>().ForEach(directory => updateDirectoryData(directory, photoDao));
         }
 
         private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
         {
-            Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+            if (directory.Exists)
+                Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
         }
 
 
