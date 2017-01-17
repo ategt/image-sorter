@@ -16,18 +16,21 @@ namespace BackgroundImageSorter.Tests
         [Test()]
         public void GetDistinctPhotosTest()
         {
-            DirectoryInfo sourceDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\tests\input");
+            DirectoryInfo sourceDirectory = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input");
             FileInfo[] possiblePhotos = sourceDirectory.GetFiles();
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
 
             var distinctPhotos = Program.GetDistinctPhotos(photos);
-            int counrt = distinctPhotos.Count();
 
             Assert.IsTrue(distinctPhotos.Count() < 6);
-
             Assert.AreEqual(distinctPhotos.Count(), 3);
 
         }
+
+        [Test()]
+        public void MainProgramTest()
+        {
+
+        }
     }
-}

@@ -20,6 +20,7 @@ namespace BackgroundImageSorter.Model
         public bool FastScan { get; set; }
         public bool ImagesOnly { get; set; }
         public bool LargeImagesOnly { get; set; }
+        public bool Test { get; set; }
         public bool ShowHelp { get; set; }
     }
 }

@@ -16,7 +16,8 @@ namespace BackgroundImageSorter
     {
         static void Main(string[] args)
         {
-            Report report = new BackgroundImageSorter.Program()
+            Report report = new BackgroundImageSorter
+                                                .Program()
                                                 .RunProgram(args);
             PrintReport(report);
         }
@@ -39,7 +40,8 @@ namespace BackgroundImageSorter
                 FastScan = false,
                 LargeImagesOnly = false,
                 ImagesOnly = false,
-                ShowHelp = false
+                ShowHelp = false,
+                Test = false
             };
 
             var p = new NDesk.Options.OptionSet() {
@@ -51,6 +53,7 @@ namespace BackgroundImageSorter
                 { "f|Fast", "Fast Scan - Use File Names Instead of Hashes.", v => config.FastScan = v != null },
                 { "b|Background", "Only Copy Images Larger Than 1080x1080.", v => config.LargeImagesOnly = v != null },
                 { "i|Image", "Only Copy Images - Unrecognized Files Ignored", v => config.ImagesOnly = v != null },
+                { "t|Test", "Print Files Copied, But Do No Actual Copying.", v => config.Test = v != null },
                 { "h|help",  "show this message and exit",
                         v => config.ShowHelp = v != null },
                 { "?",  "show this message and exit",
@@ -177,6 +180,7 @@ namespace BackgroundImageSorter
                             config.DataDirectory = config.Destination.CreateSubdirectory("Data");
                         }
 
+                        if (!config.Test)
                         photo.FileInfo.CopyTo(config.DataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
 
                     }
@@ -189,13 +193,16 @@ namespace BackgroundImageSorter
                         {
                             if (config.Portrait == null)
                                 config.Portrait = config.BackgroundDirectory.CreateSubdirectory("Portrait");
-                            photo.FileInfo.CopyTo(config.Portrait.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+
+                            if (!config.Test)
+                                photo.FileInfo.CopyTo(config.Portrait.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
                         }
                         else
                         {
                             if (config.Landscape == null)
                                 config.Landscape = config.BackgroundDirectory.CreateSubdirectory("Landscape");
-                            photo.FileInfo.CopyTo(config.Landscape.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                            if (!config.Test)
+                                photo.FileInfo.CopyTo(config.Landscape.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
                         }
                         report.Moved++;
                     }
@@ -206,7 +213,8 @@ namespace BackgroundImageSorter
                             if (config.SmallDirectory == null)
                                 config.SmallDirectory = config.Destination.CreateSubdirectory("Other Images");
 
-                            photo.FileInfo.CopyTo(config.SmallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
+                            if (!config.Test)
+                                photo.FileInfo.CopyTo(config.SmallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
                         }
                     }
                 }
