@@ -23,5 +23,6 @@ namespace BackgroundImageSorter.Model
         public bool Test { get; set; }
         public bool ShowHelp { get; set; }
         public bool Error { get; set; }
+        public bool SuppressReport { get; set; }
     }
 }

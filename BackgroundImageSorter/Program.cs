@@ -24,6 +24,8 @@ namespace BackgroundImageSorter
 
         private static void PrintReport(Report report)
         {
+            if (report == null) return;
+
             Console.WriteLine();
 
             Console.WriteLine(report);
@@ -48,63 +50,42 @@ namespace BackgroundImageSorter
                 return DisplayErrorMessage(e);
             }
 
-            if (config.Source == null)
-                config.Source = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
-
-            if (config.Destination == null)
-                config.Destination = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\Pictures\Saved Pictures");
-
-            if (config.DataFile == null)
-                config.DataFile = new FileInfo(@".\PhotoData.bin");
-
-            //Configuration config = new Configuration();
-
-            //string source = @"C:\Users\ATeg\Desktop\tests\input";
-            //string destination = @"C:\Users\ATeg\Desktop\tests\output";
-
-            //string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
-            //string source = @"C:\Users\ATeg\Desktop\imgTemp";
-            //DirectoryInfo sourceDirectory = new DirectoryInfo(source);
-            //DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\Screenshots\Images");
-            //DirectoryInfo primaryDirectory = new DirectoryInfo(".");
-            //DirectoryInfo primaryDirectory = new DirectoryInfo(destination);
-
-            //ImageFormat.
+            SetDefaultDirectories(config);
 
             Report report = new Report();
 
             if (config.Destination.Exists)
             {
-                //if (config.Portrait == null && config.Landscape == null)
 
+                Console.Write("Dao loading...");
 
-                //DirectoryInfo dataDirectory = primaryDirectory.CreateSubdirectory("Data");
-                //DirectoryInfo smallDirectory = primaryDirectory.CreateSubdirectory("Other Images");
-
-
-                //PhotoDao photoDao = new PhotoDao(@"PhotoFile-Test.bin");
                 PhotoDao photoDao = new PhotoDao(config.DataFile.FullName);
 
-                report.StoredFiles = photoDao.size();
-                report.StoredImages = photoDao.Images();
-                report.StoredBackgrounds = photoDao.Backgrounds();
+                LoadDaoInfoToReport(report, photoDao);
 
-                Console.WriteLine("Dao loaded.");
+                Console.WriteLine("Complete.");
 
+
+                Console.Write("Scaning Source Directory...");
                 IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report);
 
-                Console.WriteLine("Scan Complete.");
+                Console.WriteLine("Complete.");
+
+                Console.Write("Copying Photos...");
 
                 moveUniquePhotosToAppropiateDirectory(uniquePhotos,
                                                         config, report);
                 Console.WriteLine("Copy Complete.");
 
+                Console.Write("Updating File Data...");
                 updateDirectoryData(config, photoDao);
                 report.ImagesInLandscapeFolder = config.Landscape
                                             .GetFiles()
                                             .Count();
 
-                Console.WriteLine("Dao data updated.");
+                Console.WriteLine("Dao updated.");
+
+                if (config.SuppressReport) return null;
 
                 return report;
             }
@@ -116,6 +97,25 @@ namespace BackgroundImageSorter
 
 
 
+        }
+
+        private static void LoadDaoInfoToReport(Report report, PhotoDao photoDao)
+        {
+            report.StoredFiles = photoDao.size();
+            report.StoredImages = photoDao.Images();
+            report.StoredBackgrounds = photoDao.Backgrounds();
+        }
+
+        private static void SetDefaultDirectories(Configuration config)
+        {
+            if (config.Source == null)
+                config.Source = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
+
+            if (config.Destination == null)
+                config.Destination = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\Pictures\Saved Pictures");
+
+            if (config.DataFile == null)
+                config.DataFile = new FileInfo(@".\PhotoData.bin");
         }
 
         private static Report DisplayErrorMessage(OptionException e)
@@ -144,6 +144,7 @@ namespace BackgroundImageSorter
                 { "b|Background", "Only Copy Images Larger Than 1080x1080.", v => config.LargeImagesOnly = v != null },
                 { "i|Image", "Only Copy Images - Unrecognized Files Ignored", v => config.ImagesOnly = v != null },
                 { "t|Test", "Print Files Copied, But Do No Actual Copying.", v => config.Test = v != null },
+                { "a|Automated", "Suppress the Report and Do Not Pause at the End\n\tUseful For Batch Scripts.", v => config.SuppressReport = v != null },
                 { "h|help",  "show this message and exit",
                         v => config.ShowHelp = v != null },
                 { "?",  "show this message and exit",
@@ -160,7 +161,8 @@ namespace BackgroundImageSorter
                 ImagesOnly = false,
                 ShowHelp = false,
                 Test = false,
-                Error = false
+                Error = false,
+                SuppressReport = false
             };
         }
 
