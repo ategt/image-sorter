@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BackgroundImageSorter.Model
 {
-    class Report
+    public class Report
     {
         public int Scanned { get; set; }
         public int Moved { get; set; }

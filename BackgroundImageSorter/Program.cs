@@ -16,11 +16,31 @@ namespace BackgroundImageSorter
     {
         static void Main(string[] args)
         {
+            Report report = new BackgroundImageSorter.Program()
+                                                .RunProgram(args);
+            PrintReport(report);
+        }
 
-            Configuration config = new Configuration { FastScan = false,
-                                                        LargeImagesOnly = false,
-                                                        ImagesOnly = false,
-                                                        ShowHelp = false };
+        private static void PrintReport(Report report)
+        {
+            Console.WriteLine();
+
+            Console.WriteLine(report);
+
+            Console.WriteLine("Press Any Key to exit...");
+            while (!Console.KeyAvailable) { }
+        }
+
+        public Report RunProgram(string[] args)
+        {
+            
+            Configuration config = new Configuration
+            {
+                FastScan = false,
+                LargeImagesOnly = false,
+                ImagesOnly = false,
+                ShowHelp = false
+            };
 
             var p = new NDesk.Options.OptionSet() {
                 { "d|DataFile=", "Dao Data File", d => config.DataFile = new FileInfo(d) },
@@ -37,7 +57,7 @@ namespace BackgroundImageSorter
                         v => config.ShowHelp = v != null }
             };
 
-            
+
             List<string> extra = p.Parse(args);
 
             if (config.Source == null)
@@ -98,16 +118,12 @@ namespace BackgroundImageSorter
 
                 Console.WriteLine("Dao data updated.");
 
-                Console.WriteLine();
-
-                Console.WriteLine(report);
-
-                Console.WriteLine("Press Any Key to exit...");
-                while (!Console.KeyAvailable) { }
+                return report;
             }
             else
             {
                 Console.WriteLine("An important directory is missing.");
+                return null;
             }
 
 
