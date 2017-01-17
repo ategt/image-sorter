@@ -1,6 +1,7 @@
 ﻿using BackgroundImageSorter;
 using BackgroundImageSorter.Model;
 using MoreLinq;
+using NDesk.Options;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -16,7 +17,10 @@ namespace BackgroundImageSorter
         static void Main(string[] args)
         {
 
-            Configuration config = new Configuration();
+            Configuration config = new Configuration { FastScan = false,
+                                                        LargeImagesOnly = false,
+                                                        ImagesOnly = false,
+                                                        ShowHelp = false };
 
             var p = new NDesk.Options.OptionSet() {
                 { "d|DataFile=", "Dao Data File", d => config.DataFile = new FileInfo(d) },
@@ -33,6 +37,7 @@ namespace BackgroundImageSorter
                         v => config.ShowHelp = v != null }
             };
 
+            
             List<string> extra = p.Parse(args);
 
             if (config.Source == null)
@@ -149,7 +154,7 @@ namespace BackgroundImageSorter
                 System.Drawing.Size dimension = photo.Dimension;
                 try
                 {
-                    if (dimension.IsEmpty)
+                    if (dimension.IsEmpty && !config.ImagesOnly)
                     {
                         if (config.DataDirectory == null)
                         {
@@ -162,9 +167,7 @@ namespace BackgroundImageSorter
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)
                     {
                         if (config.BackgroundDirectory == null)
-                        {
                             config.BackgroundDirectory = config.Destination.CreateSubdirectory("Backgrounds");
-                        }
 
                         if (dimension.Height > dimension.Width)
                         {
@@ -182,10 +185,13 @@ namespace BackgroundImageSorter
                     }
                     else
                     {
-                        if (config.SmallDirectory == null)
-                            config.SmallDirectory = config.Destination.CreateSubdirectory("Other Images");
+                        if (!config.LargeImagesOnly)
+                        {
+                            if (config.SmallDirectory == null)
+                                config.SmallDirectory = config.Destination.CreateSubdirectory("Other Images");
 
-                        photo.FileInfo.CopyTo(config.SmallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
+                            photo.FileInfo.CopyTo(config.SmallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
+                        }
                     }
                 }
                 catch (System.IO.IOException ex)
@@ -251,5 +257,14 @@ namespace BackgroundImageSorter
 
         }
 
+        static void ShowHelp(OptionSet p)
+        {
+            Console.WriteLine("Usage: [OPTIONS]+");
+            Console.WriteLine();
+            Console.WriteLine("Options:");
+            p.WriteOptionDescriptions(Console.Out);
+            Console.WriteLine();
+            Console.WriteLine("\t ");
+        }
     }
 }
