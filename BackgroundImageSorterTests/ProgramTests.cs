@@ -29,25 +29,73 @@ namespace BackgroundImageSorter.Tests
         }
 
         [Test()]
-        public void MainProgramTest()
+        public void ConfigInterpreterTest()
         {
+
+            string[] args = { "-h" };
+
+            Configuration config = Program.SetupConfiguration(args, Program.BuildConfig());
+
+            Assert.NotNull(config);
+            Assert.IsTrue(config.ShowHelp);
+
+            args = new string[] { "-d", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin",
+                                    @"--s=C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input",
+                                    @"/Output:C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output",
+                                    "--Automated",
+                                    "-t-" };
+
+            config = Program.SetupConfiguration(args, Program.BuildConfig());
+
+            Assert.NotNull(config);
+            //Assert.Null(config.BackgroundDirectory);
+            Assert.IsFalse(config.ShowHelp);
+
+            Assert.IsTrue(config.SuppressReport);
+            Assert.IsFalse(config.Test);
+            Assert.IsFalse(config.Error);
+
+            Assert.AreEqual(config.Portrait.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Background\Portrait");
+            Assert.AreEqual(config.Landscape.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Background\Landscape");
+
+            args = new string[] { "-d", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin",
+                                    @"--s=C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input",
+                                    @"/Output:C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output",
+                                    "-p", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\portrait",
+                                    "-l", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\landscape",
+                                    "--Automated-",
+                                    "-t+" };
+
+            config = Program.SetupConfiguration(args, Program.BuildConfig());
+
+            Assert.NotNull(config);
+            Assert.IsFalse(config.ShowHelp);
+
+            Assert.IsFalse(config.SuppressReport);
+            Assert.IsTrue(config.Test);
+            Assert.IsFalse(config.Error);
+
+            Assert.AreEqual(config.Portrait.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\portrait");
+            Assert.AreEqual(config.Landscape.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\landscape");
+
 
         }
 
         [Test()]
-        public void MainActionTest()
+        public void MainProgramTest()
         {
             Directory.Delete(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output", true);
             Directory.CreateDirectory(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output");
 
-            Configuration config = new Configuration {
+            Configuration config = new Configuration
+            {
                 Source = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input"),
                 Destination = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"),
                 DataFile = new FileInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin"),
                 NoUpdate = true
             };
 
-            Report report =  Program.CommitPurpose(config, new Report());
+            Report report = Program.CommitPurpose(config, new Report());
 
             DirectoryInfo landscapes = config.Landscape;
             FileInfo[] landscapePhotos = landscapes.GetFiles();
@@ -63,7 +111,43 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(report.Moved, 3);
             Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
 
-           
+
+        }
+
+        [Test()]
+        public void MainActionTest()
+        {
+            Directory.Delete(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output", true);
+            Directory.CreateDirectory(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output");
+
+            Configuration config = new Configuration
+            {
+                Source = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input"),
+                Destination = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"),
+                DataFile = new FileInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin"),
+                NoUpdate = true
+            };
+
+            Assert.AreEqual(6, config.Source.GetFiles().Count());
+
+            Report report = Program.CommitPurpose(config, new Report());
+
+            DirectoryInfo landscapes = config.Landscape;
+            FileInfo[] landscapePhotos = landscapes.GetFiles();
+
+            Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Landscape", config.Landscape.FullName);
+
+            Assert.AreEqual(landscapePhotos.Count(), 3);
+
+            Assert.IsNull(config.Portrait);
+
+            Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.Skipped, 3);
+            Assert.AreEqual(report.Moved, 3);
+            Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
+
+            Assert.AreEqual(6, config.Source.GetFiles().Count());
+
         }
     }
 }

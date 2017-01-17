@@ -38,7 +38,7 @@ namespace BackgroundImageSorter
         {
             Configuration config = BuildConfig();
 
-            SetupConfiguration(args, config);
+            config = SetupConfiguration(args, config);
 
             if (!config.Error)
                 return CommitPurpose(config, new Model.Report());
@@ -46,7 +46,7 @@ namespace BackgroundImageSorter
                 return null;
         }
 
-        private static void SetupConfiguration(string[] args, Configuration config)
+        public static Configuration SetupConfiguration(string[] args, Configuration config)
         {
             try
             {
@@ -63,6 +63,8 @@ namespace BackgroundImageSorter
 
             SetDefaultDirectories(config);
             ConfirmImportantFoldersExist(config);
+
+            return config;
         }
 
         private static void ConfirmImportantFoldersExist(Configuration config)
@@ -211,7 +213,7 @@ namespace BackgroundImageSorter
             };
         }
 
-        private static Configuration BuildConfig()
+        public static Configuration BuildConfig()
         {
             return new Configuration
             {
