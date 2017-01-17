@@ -38,33 +38,55 @@ namespace BackgroundImageSorter
         {
             Configuration config = BuildConfig();
 
+            SetupConfiguration(args, config);
+
+            Report report = new Report();
+
+            if (!config.Error)
+                return CommitPurpose(config, report);
+            else
+                return null;
+
+        }
+
+        private static void SetupConfiguration(string[] args, Configuration config)
+        {
             try
             {
-                OptionSet p = SetOptions(config);
+                OptionSet options = SetOptions(config);
 
-                ParseArguments(args, p);
+                ParseArguments(args, options);
+                ConsiderHelp(config, options);
 
             }
             catch (OptionException e)
             {
-                return DisplayErrorMessage(e);
+                DisplayErrorMessage(e);
+                config.Error = true;
             }
 
             SetDefaultDirectories(config);
 
-            Report report = new Report();
+            ConfirmImportantFoldersExist(config);
 
-            if (config.Destination.Exists)
+        }
+
+        private static void ConfirmImportantFoldersExist(Configuration config)
+        {
+            if (!config.Destination.Exists || !config.Source.Exists)
             {
-                return CommitPurpose(config, report);
+                DisplayError();
+                config.Error = true;
             }
-            else
+        }
+
+        private static void ConsiderHelp(Configuration config, OptionSet options)
+        {
+            if (config.ShowHelp)
             {
-                return DisplayError();
+                ShowHelp(options);
+                config.Error = true;
             }
-
-
-
         }
 
         private static Report DisplayError()
@@ -324,7 +346,7 @@ namespace BackgroundImageSorter
         {
 
             var hashes = photos.Select(photo => photo.SHA512);
-            
+
             List<Photo> uniques = new List<Photo>();
 
             foreach (Photo photo in photos)
@@ -345,7 +367,7 @@ namespace BackgroundImageSorter
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
             Console.WriteLine();
-            Console.WriteLine("\t ");
+            Console.WriteLine("\t Fast Scan Not Implemented Yet.");
         }
     }
 }
