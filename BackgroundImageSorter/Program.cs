@@ -177,6 +177,27 @@ namespace BackgroundImageSorter
 
             if (config.DataFile == null)
                 config.DataFile = new FileInfo(@".\PhotoData.bin");
+
+            if (config.BackgroundDirectory == null)
+                config.BackgroundDirectory = PrepareSubDirectory(config.Destination, "Backgrounds");
+
+            if (config.Landscape == null)
+                config.Landscape = PrepareSubDirectory(config.BackgroundDirectory, "Landscape");
+
+            if (config.Portrait == null)
+                config.Portrait = PrepareSubDirectory(config.BackgroundDirectory, "Portrait");
+
+            if (config.SmallDirectory == null)
+                config.SmallDirectory = PrepareSubDirectory(config.Destination, "Other Images");
+
+            if (config.DataDirectory == null)
+                config.DataDirectory = PrepareSubDirectory(config.Destination, "Data");
+ 
+        }
+
+        private static DirectoryInfo PrepareSubDirectory(DirectoryInfo directory, string subDirectoryTitle)
+        {
+            return new DirectoryInfo(directory.FullName + @"\" + subDirectoryTitle);
         }
 
         private static Report DisplayErrorMessage(OptionException e)
@@ -231,7 +252,7 @@ namespace BackgroundImageSorter
                                                     PhotoDao photoDao)
         {
 
-            IList<DirectoryInfo> directories = new List<DirectoryInfo>();
+            ISet<DirectoryInfo> directories = new HashSet<DirectoryInfo>();
             directories.Add(config.Portrait);
             directories.Add(config.Landscape);
             directories.Add(config.DataDirectory);
@@ -266,10 +287,7 @@ namespace BackgroundImageSorter
                 {
                     if (dimension.IsEmpty && !config.ImagesOnly)
                     {
-                        if (config.DataDirectory == null)
-                        {
-                            config.DataDirectory = config.Destination.CreateSubdirectory("Data");
-                        }
+                        CreateNonExistantDirectory(config.DataDirectory);
 
                         if (!config.Test)
                             photo.FileInfo.CopyTo(config.DataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
@@ -277,21 +295,19 @@ namespace BackgroundImageSorter
                     }
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)
                     {
-                        if (config.BackgroundDirectory == null)
-                            config.BackgroundDirectory = config.Destination.CreateSubdirectory("Backgrounds");
+                        CreateNonExistantDirectory(config.BackgroundDirectory);
 
                         if (dimension.Height > dimension.Width)
                         {
-                            if (config.Portrait == null)
-                                config.Portrait = config.BackgroundDirectory.CreateSubdirectory("Portrait");
+                            CreateNonExistantDirectory(config.Portrait);
 
                             if (!config.Test)
                                 photo.FileInfo.CopyTo(config.Portrait.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
                         }
                         else
                         {
-                            if (config.Landscape == null)
-                                config.Landscape = config.BackgroundDirectory.CreateSubdirectory("Landscape");
+                            CreateNonExistantDirectory(config.Landscape);
+
                             if (!config.Test)
                                 photo.FileInfo.CopyTo(config.Landscape.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
                         }
@@ -301,8 +317,7 @@ namespace BackgroundImageSorter
                     {
                         if (!config.LargeImagesOnly)
                         {
-                            if (config.SmallDirectory == null)
-                                config.SmallDirectory = config.Destination.CreateSubdirectory("Other Images");
+                            CreateNonExistantDirectory(config.SmallDirectory);
 
                             if (!config.Test)
                                 photo.FileInfo.CopyTo(config.SmallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
@@ -315,6 +330,12 @@ namespace BackgroundImageSorter
                     Console.WriteLine(ex.Message);
                 }
             }
+        }
+
+        private static void CreateNonExistantDirectory(DirectoryInfo directory)
+        {
+            if (!directory.Exists)
+                directory.Create();
         }
 
         private static IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao, Report report)

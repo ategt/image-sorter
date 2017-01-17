@@ -48,15 +48,15 @@ namespace BackgroundImageSorter.Tests
             config = Program.SetupConfiguration(args, Program.BuildConfig());
 
             Assert.NotNull(config);
-            //Assert.Null(config.BackgroundDirectory);
+            Assert.NotNull(config.BackgroundDirectory);
             Assert.IsFalse(config.ShowHelp);
 
             Assert.IsTrue(config.SuppressReport);
             Assert.IsFalse(config.Test);
             Assert.IsFalse(config.Error);
 
-            Assert.AreEqual(config.Portrait.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Background\Portrait");
-            Assert.AreEqual(config.Landscape.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Background\Landscape");
+            Assert.AreEqual(config.Portrait.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Portrait");
+            Assert.AreEqual(config.Landscape.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Landscape");
 
             args = new string[] { "-d", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin",
                                     @"--s=C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input",
