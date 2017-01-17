@@ -167,7 +167,7 @@ namespace BackgroundImageSorter
             report.StoredBackgrounds = photoDao.Backgrounds();
         }
 
-        private static void SetDefaultDirectories(Configuration config)
+        public static Configuration SetDefaultDirectories(Configuration config)
         {
             if (config.Source == null)
                 config.Source = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
@@ -192,7 +192,8 @@ namespace BackgroundImageSorter
 
             if (config.DataDirectory == null)
                 config.DataDirectory = PrepareSubDirectory(config.Destination, "Data");
- 
+
+            return config;
         }
 
         private static DirectoryInfo PrepareSubDirectory(DirectoryInfo directory, string subDirectoryTitle)
@@ -295,7 +296,7 @@ namespace BackgroundImageSorter
                     }
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)
                     {
-                        CreateNonExistantDirectory(config.BackgroundDirectory);
+                        //CreateNonExistantDirectory(config.BackgroundDirectory);
 
                         if (dimension.Height > dimension.Width)
                         {
