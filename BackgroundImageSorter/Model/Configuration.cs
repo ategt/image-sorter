@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BackgroundImageSorter.Model
 {
-    class Configuration
+    public class Configuration
     {
         public DirectoryInfo Source { get; set; }
         public DirectoryInfo Destination { get; set; }
@@ -24,5 +24,7 @@ namespace BackgroundImageSorter.Model
         public bool ShowHelp { get; set; }
         public bool Error { get; set; }
         public bool SuppressReport { get; set; }
+        public bool NoUpdate { get; set; }
+
     }
 }

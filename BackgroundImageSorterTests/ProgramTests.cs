@@ -33,4 +33,37 @@ namespace BackgroundImageSorter.Tests
         {
 
         }
+
+        [Test()]
+        public void MainActionTest()
+        {
+            Directory.Delete(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output", true);
+            Directory.CreateDirectory(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output");
+
+            Configuration config = new Configuration {
+                Source = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input"),
+                Destination = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"),
+                DataFile = new FileInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin"),
+                NoUpdate = true
+            };
+
+            Report report =  Program.CommitPurpose(config, new Report());
+
+            DirectoryInfo landscapes = config.Landscape;
+            FileInfo[] landscapePhotos = landscapes.GetFiles();
+
+            Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Landscape", config.Landscape.FullName);
+
+            Assert.AreEqual(landscapePhotos.Count(), 3);
+
+            Assert.IsNull(config.Portrait);
+
+            Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.Skipped, 3);
+            Assert.AreEqual(report.Moved, 3);
+            Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
+
+           
+        }
     }
+}

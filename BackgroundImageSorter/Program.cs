@@ -40,13 +40,10 @@ namespace BackgroundImageSorter
 
             SetupConfiguration(args, config);
 
-            Report report = new Report();
-
             if (!config.Error)
-                return CommitPurpose(config, report);
+                return CommitPurpose(config, new Model.Report());
             else
                 return null;
-
         }
 
         private static void SetupConfiguration(string[] args, Configuration config)
@@ -57,7 +54,6 @@ namespace BackgroundImageSorter
 
                 ParseArguments(args, options);
                 ConsiderHelp(config, options);
-
             }
             catch (OptionException e)
             {
@@ -66,9 +62,7 @@ namespace BackgroundImageSorter
             }
 
             SetDefaultDirectories(config);
-
             ConfirmImportantFoldersExist(config);
-
         }
 
         private static void ConfirmImportantFoldersExist(Configuration config)
@@ -95,7 +89,7 @@ namespace BackgroundImageSorter
             return null;
         }
 
-        private static Report CommitPurpose(Configuration config, Report report)
+        public static Report CommitPurpose(Configuration config, Report report)
         {
             PhotoDao photoDao = LoadData(config, report);
 
@@ -118,7 +112,9 @@ namespace BackgroundImageSorter
         private static void UpdateData(Configuration config, Report report, PhotoDao photoDao)
         {
             Console.Write("Updating File Data...");
-            updateDirectoryData(config, photoDao);
+
+            if (!config.NoUpdate)
+                updateDirectoryData(config, photoDao);
 
             UpdateReportWithNewImageCount(config, report);
 
