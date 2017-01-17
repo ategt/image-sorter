@@ -3,6 +3,7 @@ using BackgroundImageSorter.Model;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,25 +15,62 @@ namespace BackgroundImageSorter
     {
         static void Main(string[] args)
         {
-            //string source = @"C:\Users\ATeg\Desktop\tests\input";
-            string destination = @"C:\Users\ATeg\Desktop\tests\output";
 
-            string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
+            Configuration config = new Configuration();
+
+            var p = new NDesk.Options.OptionSet() {
+                { "d|DataFile=", "Dao Data File", d => config.DataFile = new FileInfo(d) },
+                { "s|Source=", "Folder to Pull Images From", v => config.Source = new DirectoryInfo(v) },
+                { "o|Output=",  "Folder to Place Sorted Images Into", v => config.Destination = new DirectoryInfo(v)},
+                { "p|Portrait=",  "Folder to Place Portrait Images Into", v => config.Portrait = new DirectoryInfo(v)},
+                { "l|Landscape=",  "Folder to Place Landscape Images Into", v => config.Landscape = new DirectoryInfo(v)},
+                { "f|Fast", "Fast Scan - Use File Names Instead of Hashes.", v => config.FastScan = v != null },
+                { "b|Background", "Only Copy Images Larger Than 1080x1080.", v => config.LargeImagesOnly = v != null },
+                { "i|Image", "Only Copy Images - Unrecognized Files Ignored", v => config.ImagesOnly = v != null },
+                { "h|help",  "show this message and exit",
+                        v => config.ShowHelp = v != null },
+                { "?",  "show this message and exit",
+                        v => config.ShowHelp = v != null }
+            };
+
+            List<string> extra = p.Parse(args);
+
+            if (config.Source == null)
+                config.Source = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
+
+            if (config.Destination == null)
+                config.Destination = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\Pictures\Saved Pictures");
+
+            if (config.DataFile == null)
+                config.DataFile = new FileInfo(@".\PhotoData.bin");
+
+            //Configuration config = new Configuration();
+
+            //string source = @"C:\Users\ATeg\Desktop\tests\input";
+            //string destination = @"C:\Users\ATeg\Desktop\tests\output";
+
+            //string source = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
             //string source = @"C:\Users\ATeg\Desktop\imgTemp";
-            DirectoryInfo sourceDirectory = new DirectoryInfo(source);
+            //DirectoryInfo sourceDirectory = new DirectoryInfo(source);
             //DirectoryInfo primaryDirectory = new DirectoryInfo(@"C:\Users\ATeg\Desktop\Screenshots\Images");
             //DirectoryInfo primaryDirectory = new DirectoryInfo(".");
-            DirectoryInfo primaryDirectory = new DirectoryInfo(destination);
+            //DirectoryInfo primaryDirectory = new DirectoryInfo(destination);
+
+            //ImageFormat.
 
             Report report = new Report();
 
-            if (primaryDirectory.Exists)
+            if (config.Destination.Exists)
             {
-                DirectoryInfo backgroundDirectory = primaryDirectory.CreateSubdirectory("Backgrounds");
-                DirectoryInfo dataDirectory = primaryDirectory.CreateSubdirectory("Data");
-                DirectoryInfo smallDirectory = primaryDirectory.CreateSubdirectory("Other Images");
+                //if (config.Portrait == null && config.Landscape == null)
 
-                PhotoDao photoDao = new PhotoDao(@"PhotoFile-Test.bin");
+
+                //DirectoryInfo dataDirectory = primaryDirectory.CreateSubdirectory("Data");
+                //DirectoryInfo smallDirectory = primaryDirectory.CreateSubdirectory("Other Images");
+
+
+                //PhotoDao photoDao = new PhotoDao(@"PhotoFile-Test.bin");
+                PhotoDao photoDao = new PhotoDao(config.DataFile.FullName);
 
                 report.StoredFiles = photoDao.size();
                 report.StoredImages = photoDao.Images();
@@ -40,23 +78,16 @@ namespace BackgroundImageSorter
 
                 Console.WriteLine("Dao loaded.");
 
-                IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(sourceDirectory, photoDao, report);
+                IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report);
 
                 Console.WriteLine("Scan Complete.");
 
                 moveUniquePhotosToAppropiateDirectory(uniquePhotos,
-                                                        backgroundDirectory,
-                                                        smallDirectory,
-                                                        dataDirectory, report);
+                                                        config, report);
                 Console.WriteLine("Copy Complete.");
 
-                updateDirectoryData(backgroundDirectory,
-                                                        smallDirectory,
-                                                        dataDirectory,
-                                                        photoDao);
-                report.Images = backgroundDirectory
-                                            .GetDirectories()
-                                            .FirstOrDefault()
+                updateDirectoryData(config, photoDao);
+                report.ImagesInLandscapeFolder = config.Landscape
                                             .GetFiles()
                                             .Count();
 
@@ -78,18 +109,20 @@ namespace BackgroundImageSorter
 
         }
 
-        private static void updateDirectoryData(DirectoryInfo backgroundDirectory,
-                                                    DirectoryInfo smallDirectory,
-                                                    DirectoryInfo dataDirectory,
+        private static void updateDirectoryData(Configuration config,
                                                     PhotoDao photoDao)
         {
 
             IList<DirectoryInfo> directories = new List<DirectoryInfo>();
-            directories.Add(backgroundDirectory);
-            directories.Add(smallDirectory);
-            directories.Add(dataDirectory);
+            directories.Add(config.Portrait);
+            directories.Add(config.Landscape);
+            directories.Add(config.DataDirectory);
+            directories.Add(config.BackgroundDirectory);
+            directories.Add(config.Destination);
+            directories.Add(config.SmallDirectory);
 
-            backgroundDirectory.GetDirectories()
+            config.BackgroundDirectory
+                .GetDirectories()
                 .ToList<DirectoryInfo>()
                 .ForEach(dir => directories.Add(dir));
 
@@ -103,13 +136,13 @@ namespace BackgroundImageSorter
 
 
         private static void moveUniquePhotosToAppropiateDirectory(IEnumerable<Photo> uniquePhotos,
-                                        DirectoryInfo backgroundDirectory,
-                                        DirectoryInfo smallDirectory,
-                                        DirectoryInfo dataDirectory,
+                                        //DirectoryInfo backgroundDirectory,
+                                        //DirectoryInfo smallDirectory,
+                                        //DirectoryInfo dataDirectory,
+                                        Configuration config,
                                         Report report)
         {
-            DirectoryInfo portraitDirectory = backgroundDirectory.CreateSubdirectory("Portrait");
-            DirectoryInfo landscapeDirectory = backgroundDirectory.CreateSubdirectory("Landscape");
+
 
             foreach (Photo photo in uniquePhotos)
             {
@@ -118,25 +151,41 @@ namespace BackgroundImageSorter
                 {
                     if (dimension.IsEmpty)
                     {
+                        if (config.DataDirectory == null)
+                        {
+                            config.DataDirectory = config.Destination.CreateSubdirectory("Data");
+                        }
 
-                        photo.FileInfo.CopyTo(dataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
+                        photo.FileInfo.CopyTo(config.DataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
 
                     }
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)
                     {
+                        if (config.BackgroundDirectory == null)
+                        {
+                            config.BackgroundDirectory = config.Destination.CreateSubdirectory("Backgrounds");
+                        }
+
                         if (dimension.Height > dimension.Width)
                         {
-                            photo.FileInfo.CopyTo(portraitDirectory.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                            if (config.Portrait == null)
+                                config.Portrait = config.BackgroundDirectory.CreateSubdirectory("Portrait");
+                            photo.FileInfo.CopyTo(config.Portrait.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
                         }
                         else
                         {
-                            photo.FileInfo.CopyTo(landscapeDirectory.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                            if (config.Landscape == null)
+                                config.Landscape = config.BackgroundDirectory.CreateSubdirectory("Landscape");
+                            photo.FileInfo.CopyTo(config.Landscape.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
                         }
                         report.Moved++;
                     }
                     else
                     {
-                        photo.FileInfo.CopyTo(smallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
+                        if (config.SmallDirectory == null)
+                            config.SmallDirectory = config.Destination.CreateSubdirectory("Other Images");
+
+                        photo.FileInfo.CopyTo(config.SmallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
                     }
                 }
                 catch (System.IO.IOException ex)
@@ -196,7 +245,7 @@ namespace BackgroundImageSorter
                     uniques.Add(photo);
             }
 
-            
+
 
             return uniques;
 
