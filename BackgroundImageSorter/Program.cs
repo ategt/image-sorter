@@ -34,34 +34,19 @@ namespace BackgroundImageSorter
 
         public Report RunProgram(string[] args)
         {
-            
-            Configuration config = new Configuration
+            Configuration config = BuildConfig();
+
+            try
             {
-                FastScan = false,
-                LargeImagesOnly = false,
-                ImagesOnly = false,
-                ShowHelp = false,
-                Test = false
-            };
+                OptionSet p = SetOptions(config);
 
-            var p = new NDesk.Options.OptionSet() {
-                { "d|DataFile=", "Dao Data File", d => config.DataFile = new FileInfo(d) },
-                { "s|Source=", "Folder to Pull Images From", v => config.Source = new DirectoryInfo(v) },
-                { "o|Output=",  "Folder to Place Sorted Images Into", v => config.Destination = new DirectoryInfo(v)},
-                { "p|Portrait=",  "Folder to Place Portrait Images Into", v => config.Portrait = new DirectoryInfo(v)},
-                { "l|Landscape=",  "Folder to Place Landscape Images Into", v => config.Landscape = new DirectoryInfo(v)},
-                { "f|Fast", "Fast Scan - Use File Names Instead of Hashes.", v => config.FastScan = v != null },
-                { "b|Background", "Only Copy Images Larger Than 1080x1080.", v => config.LargeImagesOnly = v != null },
-                { "i|Image", "Only Copy Images - Unrecognized Files Ignored", v => config.ImagesOnly = v != null },
-                { "t|Test", "Print Files Copied, But Do No Actual Copying.", v => config.Test = v != null },
-                { "h|help",  "show this message and exit",
-                        v => config.ShowHelp = v != null },
-                { "?",  "show this message and exit",
-                        v => config.ShowHelp = v != null }
-            };
+                ParseArguments(args, p);
 
-
-            List<string> extra = p.Parse(args);
+            }
+            catch (OptionException e)
+            {
+                return DisplayErrorMessage(e);
+            }
 
             if (config.Source == null)
                 config.Source = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
@@ -133,6 +118,52 @@ namespace BackgroundImageSorter
 
         }
 
+        private static Report DisplayErrorMessage(OptionException e)
+        {
+            Console.Write("BackgroundImageSorter: ");
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Try `BackgroundImageSorter --help' for more information.");
+            return null;
+        }
+
+        private static void ParseArguments(string[] args, OptionSet p)
+        {
+            List<string> extra = p.Parse(args);
+            if (extra.Count > 0) throw new OptionException(extra.First<string>(), "Unidentified Option");
+        }
+
+        private static OptionSet SetOptions(Configuration config)
+        {
+            return new NDesk.Options.OptionSet() {
+                { "d|DataFile=", "Dao Data File", d => config.DataFile = new FileInfo(d) },
+                { "s|Source=", "Folder to Pull Images From", v => config.Source = new DirectoryInfo(v) },
+                { "o|Output=",  "Folder to Place Sorted Images Into", v => config.Destination = new DirectoryInfo(v)},
+                { "p|Portrait=",  "Folder to Place Portrait Images Into", v => config.Portrait = new DirectoryInfo(v)},
+                { "l|Landscape=",  "Folder to Place Landscape Images Into", v => config.Landscape = new DirectoryInfo(v)},
+                { "f|Fast", "Fast Scan - Use File Names Instead of Hashes.", v => config.FastScan = v != null },
+                { "b|Background", "Only Copy Images Larger Than 1080x1080.", v => config.LargeImagesOnly = v != null },
+                { "i|Image", "Only Copy Images - Unrecognized Files Ignored", v => config.ImagesOnly = v != null },
+                { "t|Test", "Print Files Copied, But Do No Actual Copying.", v => config.Test = v != null },
+                { "h|help",  "show this message and exit",
+                        v => config.ShowHelp = v != null },
+                { "?",  "show this message and exit",
+                        v => config.ShowHelp = v != null }
+            };
+        }
+
+        private static Configuration BuildConfig()
+        {
+            return new Configuration
+            {
+                FastScan = false,
+                LargeImagesOnly = false,
+                ImagesOnly = false,
+                ShowHelp = false,
+                Test = false,
+                Error = false
+            };
+        }
+
         private static void updateDirectoryData(Configuration config,
                                                     PhotoDao photoDao)
         {
@@ -181,7 +212,7 @@ namespace BackgroundImageSorter
                         }
 
                         if (!config.Test)
-                        photo.FileInfo.CopyTo(config.DataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
+                            photo.FileInfo.CopyTo(config.DataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
 
                     }
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)

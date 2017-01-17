@@ -22,5 +22,6 @@ namespace BackgroundImageSorter.Model
         public bool LargeImagesOnly { get; set; }
         public bool Test { get; set; }
         public bool ShowHelp { get; set; }
+        public bool Error { get; set; }
     }
 }
