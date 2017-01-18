@@ -1,14 +1,10 @@
-﻿using BackgroundImageSorter;
-using BackgroundImageSorter.Model;
-using MoreLinq;
+﻿using BackgroundImageSorter.Model;
 using NDesk.Options;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BackgroundImageSorter
 {
@@ -322,29 +318,7 @@ namespace BackgroundImageSorter
                 System.Drawing.Size dimension = photo.Dimension;
                 try
                 {
-                    if (dimension.IsEmpty && !config.ImagesOnly)
-                    {
-                        CopyToDirectory(config, report, photo, config.DataDirectory);
-                    }
-                    else if (dimension.Height >= 1080 && dimension.Width >= 1080)
-                    {
-
-                        if (dimension.Height > dimension.Width)
-                        {                            
-                            CopyToDirectory(config, report, photo, config.Portrait);
-                        }
-                        else
-                        {                          
-                            CopyToDirectory(config, report, photo, config.Landscape);
-                        }
-                    }
-                    else
-                    {
-                        if (!config.LargeImagesOnly)
-                        {                            
-                            CopyToDirectory(config, report, photo, config.SmallDirectory);
-                        }
-                    }
+                    CopyFilesToAppropriateDirectory(config, report, photo, dimension);
                 }
                 catch (System.IO.IOException ex)
                 {
@@ -354,12 +328,50 @@ namespace BackgroundImageSorter
             }
         }
 
+        private static void CopyFilesToAppropriateDirectory(Configuration config, Report report, Photo photo, System.Drawing.Size dimension)
+        {
+            if (dimension.IsEmpty && !config.ImagesOnly)
+            {
+                CopyToDirectory(config, report, photo, config.DataDirectory);
+            }
+            else if (dimension.Height >= 1080 && dimension.Width >= 1080)
+            {
+                CopyLargeImagesToApproprateDirectory(config, report, photo, dimension);
+            }
+            else
+            {
+                CopyOtherImages(config, report, photo);
+            }
+        }
+
+        private static void CopyOtherImages(Configuration config, Report report, Photo photo)
+        {
+            if (!config.LargeImagesOnly)
+            {
+                CopyToDirectory(config, report, photo, config.SmallDirectory);
+            }
+        }
+
+        private static void CopyLargeImagesToApproprateDirectory(Configuration config, Report report, Photo photo, System.Drawing.Size dimension)
+        {
+            if (dimension.Height > dimension.Width)
+            {
+                CopyToDirectory(config, report, photo, config.Portrait);
+            }
+            else
+            {
+                CopyToDirectory(config, report, photo, config.Landscape);
+            }
+        }
+
         private static void CopyToDirectory(Configuration config, Report report, Photo photo, DirectoryInfo destinationDirectory)
         {
-            CreateNonExistantDirectory(destinationDirectory);
 
             if (!config.Test)
+            {
+                CreateNonExistantDirectory(destinationDirectory);
                 photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, destinationDirectory), false);
+            }
             report.Moved++;
         }
 
@@ -437,7 +449,10 @@ namespace BackgroundImageSorter
         private static void CreateNonExistantDirectory(DirectoryInfo directory)
         {
             if (!directory.Exists)
+            {
                 directory.Create();
+                directory.Refresh();
+            }
         }
 
         private static IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao, Report report)
