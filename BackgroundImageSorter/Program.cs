@@ -118,7 +118,7 @@ namespace BackgroundImageSorter
             if (!config.NoUpdate)
                 updateDirectoryData(config, photoDao);
 
-            UpdateReportWithNewImageCount(config, report);
+            UpdateReportWithNewImageCount(config, report, photoDao);
 
             Console.WriteLine("Dao updated.");
         }
@@ -153,11 +153,13 @@ namespace BackgroundImageSorter
             return photoDao;
         }
 
-        private static void UpdateReportWithNewImageCount(Configuration config, Report report)
+        private static void UpdateReportWithNewImageCount(Configuration config, Report report, PhotoDao photoDao)
         {
             report.ImagesInLandscapeFolder = config.Landscape
                                         .GetFiles()
                                         .Count();
+
+            report.PostImageCount = photoDao.size();
         }
 
         private static void LoadDaoInfoToReport(Report report, PhotoDao photoDao)
@@ -275,17 +277,35 @@ namespace BackgroundImageSorter
             //bool directoryExistsOrIsNull = false;
             //directory?.Exists ?? false
 
+            if (directory?.Exists ?? false)
+                Console.WriteLine("Exists.");
+
+                directory?.Refresh();
+
             if (directory == null)
             {
                 return;
             } else if (directory.Exists)
             {
-                Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+                Array.ForEach<FileInfo>(directory.GetFiles(), file => AddPhotoToDao(photoDao, file));
+            } else
+            {
+                Console.WriteLine(directory.FullName + " does not exist.");
             }
 
             //if (directoryExistsOrIsNull)
         }
 
+        private static Photo AddPhotoToDao(PhotoDao photoDao, FileInfo file)
+        {
+            string filePath = file.FullName;
+            Photo photo = PhotoBuilder.Build(filePath);
+            Photo returnedPhoto = photoDao.Create(photo);
+
+            return returnedPhoto;
+
+            //return photoDao.Create(PhotoBuilder.Build(file.FullName));
+        }
 
         private static void moveUniquePhotosToAppropiateDirectory(IEnumerable<Photo> uniquePhotos,
                                         Configuration config,

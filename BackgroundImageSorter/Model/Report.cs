@@ -17,6 +17,7 @@ namespace BackgroundImageSorter.Model
         public int StoredImages { get; set; }
         public int StoredFiles { get; set; }
         public int StoredBackgrounds { get; set; }
+        public int PostImageCount { get; set; }
 
         public override string ToString()
         {
@@ -28,7 +29,8 @@ namespace BackgroundImageSorter.Model
                 $"Images in Background Folder:\t{ImagesInLandscapeFolder}\n" +
                 $"Stored Files:\t{StoredFiles}\n" +
                 $"Store Images:\t{StoredImages}\n" +
-                $"Stored Backgrounds:\t{StoredBackgrounds}\n";
+                $"Stored Backgrounds:\t{StoredBackgrounds}\n" + 
+                $"Images In Dao Post:\t{PostImageCount}";
         }
     }
 }

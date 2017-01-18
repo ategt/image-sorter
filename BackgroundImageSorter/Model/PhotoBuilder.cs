@@ -41,7 +41,8 @@ namespace BackgroundImageSorter.Model
                     format = image.RawFormat.Guid;
                     image.Dispose();
                 }
-            }catch(System.OutOfMemoryException ex)
+            }
+            catch (System.OutOfMemoryException ex)
             {
                 imageSize = new System.Drawing.Size();
                 format = System.Guid.Empty;

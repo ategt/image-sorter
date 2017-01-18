@@ -10,17 +10,17 @@ using BackgroundImageSorter.Model;
 
 namespace BackgroundImageSorter.Tests
 {
-    [TestFixture()]
+    [TestFixture]
     public class ProgramTests
     {
         static string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
 
-        [SetUp()]
+        [SetUp]
         public void SetUp()
         {
-            DirectoryInfo outputDir = new DirectoryInfo(workingDir + @"\output");
+            DirectoryInfo outputDir = Directory.CreateDirectory(workingDir + @"\output");
 
-            if ( outputDir.GetFiles().Count() > 0)
+            if ( outputDir.GetFiles().Count() > 0 || outputDir.GetDirectories().Count() > 0)
             {
                 ResetOutputDirectory();
                 //outputDir.Delete(true);
@@ -28,7 +28,7 @@ namespace BackgroundImageSorter.Tests
             }
         }
 
-        [TearDown()]
+        [TearDown]
         public void TearDown()
         {
             ResetOutputDirectory();
@@ -261,7 +261,7 @@ namespace BackgroundImageSorter.Tests
 
         }
 
-        [Test()]
+        [Test]
         public void RunTwice()
         {
             Configuration config = new Configuration
@@ -273,6 +273,10 @@ namespace BackgroundImageSorter.Tests
             };
 
             Report report = Program.CommitPurpose(config, new Report());
+
+            Assert.AreEqual(report.StoredBackgrounds, 0);
+            Assert.AreEqual(report.StoredFiles, 0);
+            Assert.AreEqual(report.StoredImages, 0);
 
             Assert.AreEqual(report.Scanned, 6);
             Assert.AreEqual(report.NewPhotos, 6);
@@ -290,11 +294,15 @@ namespace BackgroundImageSorter.Tests
 
             Report secondReport = Program.CommitPurpose(secondConfig, new Report());
 
-            Assert.AreEqual(report.Scanned, 6);
-            Assert.AreEqual(report.NewPhotos, 0);
-            Assert.AreEqual(report.AlreadyHad, 0);
-            Assert.AreEqual(report.Distinct, 0);
-            Assert.AreEqual(report.Moved, 0);
+            Assert.AreEqual(secondReport.StoredBackgrounds, 3);
+            Assert.AreEqual(secondReport.StoredFiles, 4);
+            Assert.AreEqual(secondReport.StoredImages, 3);
+
+            Assert.AreEqual(secondReport.Scanned, 6);
+            Assert.AreEqual(secondReport.NewPhotos, 0);
+            Assert.AreEqual(secondReport.AlreadyHad, 6);
+            Assert.AreEqual(secondReport.Distinct, 0);
+            Assert.AreEqual(secondReport.Moved, 0);
 
         }
 
