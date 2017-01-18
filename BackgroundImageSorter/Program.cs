@@ -59,7 +59,7 @@ namespace BackgroundImageSorter
 
             SetDefaultDirectories(config);
             ConfirmImportantFoldersExist(config);
-
+            
             return config;
         }
 
@@ -91,7 +91,7 @@ namespace BackgroundImageSorter
         {
             PhotoDao photoDao = LoadData(config, report);
 
-            if (config.PreScan)
+            if (config.PreScan || photoDao.size() < 1)
                 PreScanDestination(config, report, photoDao);
 
             IEnumerable<Photo> uniquePhotos = ScanSource(config, report, photoDao);
@@ -241,7 +241,7 @@ namespace BackgroundImageSorter
                 { "a|Automated", "Suppress the Report and Do Not Pause at the End\n\tUseful For Batch Scripts.", v => config.SuppressReport = v != null },
                 { "A|Aggressive", "Aggressively ReBuild File Extensions.\n\tRemoves Everything After The First Dot(.).\n\tDefault is Last Dot.", v => config.AggressiveExtensions = v != null },
                 { "sub|Sub", "Recurrsively Include Subdirectories In Search.", v => config.Recurse = v != null },
-                { "pre|Prescan", "Recurrsively Include Subdirectories In Search.", v => config.PreScan = v != null },
+                { "pre|Prescan", "PreScan The Destination Directory.", v => config.PreScan = v != null },
                 { "h|help",  "show this message and exit",
                         v => config.ShowHelp = v != null },
                 { "?",  "show this message and exit",
@@ -460,7 +460,6 @@ namespace BackgroundImageSorter
             if (aggresive)
             {
                 string name = photo.FileInfo.Name;
-                //return name.TakeUntil(name.LastIndexOf('.');
                 return name.Split(new char[] { '.' })[0];
             }
             else
@@ -520,7 +519,6 @@ namespace BackgroundImageSorter
             }
 
             return photosWeDoNotHaveYet;
-            //return photos.Where<Photo>(photo => !photoDao.Contains(photo));
         }
 
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
