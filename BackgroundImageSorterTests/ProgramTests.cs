@@ -261,6 +261,62 @@ namespace BackgroundImageSorter.Tests
 
         }
 
+        [Test()]
+        public void RecursiveActionTest()
+        {
+            Configuration config = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output"),
+                DataFile = new FileInfo(workingDir + @"\data.bin"),
+                Recurse = true,
+                NoUpdate = true
+            };
+
+            config = Program.SetDefaultDirectories(config);
+
+            Assert.AreEqual(9, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
+
+            Report report = Program.CommitPurpose(config, new Report());
+
+            DirectoryInfo landscapes = config.Landscape;
+            FileInfo[] landscapePhotos = landscapes.GetFiles();
+
+            Assert.AreEqual(landscapePhotos.Count(), 3);
+
+            DirectoryAssert.Exists(config.Portrait);
+            Assert.IsNotNull(config.Portrait);
+
+            DirectoryAssert.Exists(config.Landscape);
+            Assert.IsNotNull(config.Landscape);
+
+            DirectoryAssert.Exists(config.SmallDirectory);
+            Assert.IsNotNull(config.SmallDirectory);
+
+            DirectoryAssert.Exists(config.DataDirectory);
+            Assert.IsNotNull(config.DataDirectory);
+
+            FileAssert.Exists(workingDir + @"\output\Backgrounds\Portrait\76a834734a7ce31bab6f778642c41b1ad4675f56b57c7881bf69e2e1be095d4d.jpg.jpg");
+            FileAssert.Exists(workingDir + @"\output\Data\Random Text");
+            FileAssert.Exists(workingDir + @"\output\Other Images\Small Image");
+
+            Assert.AreEqual(report.Scanned, 9);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Distinct, 6);
+            Assert.AreEqual(report.Moved, 6);
+            Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
+
+            Assert.AreEqual(6, config.Source.GetFiles("*", SearchOption.TopDirectoryOnly).Count());
+            Assert.AreEqual(9, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(6, config.Destination.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.DataDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.SmallDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.Portrait.GetFiles("*", SearchOption.AllDirectories).Count());
+
+            //ResetOutputDirectory();
+
+        }
+
         [Test]
         public void RunTwice()
         {

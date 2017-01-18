@@ -370,7 +370,6 @@ namespace BackgroundImageSorter
 
         private static void CopyToDirectory(Configuration config, Report report, Photo photo, DirectoryInfo destinationDirectory)
         {
-
             if (!config.Test)
             {
                 CreateNonExistantDirectory(destinationDirectory);
