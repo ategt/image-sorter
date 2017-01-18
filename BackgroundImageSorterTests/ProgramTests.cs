@@ -307,13 +307,22 @@ namespace BackgroundImageSorter.Tests
         }
 
         [Test]
-        public void ImageExtensionRebuilder()
+        public void ImageExtensionRebuilderLazily()
         {
-            DirectoryInfo Source = new DirectoryInfo(workingDir + @"\input");
-
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
 
-            string improvedName = Program.RebuildImageExtension(photo);
+            string improvedName = Program.RebuildImageExtension(photo, false);
+
+            Assert.AreEqual(improvedName, "4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
+
+        }
+
+        [Test]
+        public void ImageExtensionRebuilderAggresively()
+        {
+            Photo photo = PhotoBuilder.Build(workingDir + @"\input\4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
+
+            string improvedName = Program.RebuildImageExtension(photo, true);
 
             Assert.AreEqual(improvedName, "4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg");
 
@@ -322,14 +331,21 @@ namespace BackgroundImageSorter.Tests
         [Test]
         public void ImageExtensionRebuilderB()
         {
-            DirectoryInfo Source = new DirectoryInfo(workingDir + @"\input");
-
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.png");
 
-            string improvedName = Program.RebuildImageExtension(photo);
+            string improvedName = Program.RebuildImageExtension(photo, true);
 
             Assert.AreEqual(improvedName, "07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.jpg");
+        }
 
+        [Test]
+        public void ImageExtensionRebuilderC()
+        {
+            Photo photo = PhotoBuilder.Build(workingDir + @"\input\07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.png");
+
+            string improvedName = Program.RebuildImageExtension(photo, false);
+
+            Assert.AreEqual(improvedName, "07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.jpg");
         }
 
 

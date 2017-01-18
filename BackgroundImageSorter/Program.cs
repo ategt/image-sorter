@@ -227,6 +227,7 @@ namespace BackgroundImageSorter
                 { "t|Test", "Print Files Copied, But Do No Actual Copying.", v => config.Test = v != null },
                 { "r|Rebuild", "Rebuild Image File Extensions.", v => config.RebuildExtensions = v != null },
                 { "a|Automated", "Suppress the Report and Do Not Pause at the End\n\tUseful For Batch Scripts.", v => config.SuppressReport = v != null },
+                { "A|Aggressive", "Aggressively ReBuild File Extensions.\n\tRemoves Everything After The First Dot(.).\n\tDefault is Last Dot.", v => config.AggressiveExtensions = v != null },
                 { "h|help",  "show this message and exit",
                         v => config.ShowHelp = v != null },
                 { "?",  "show this message and exit",
@@ -377,13 +378,13 @@ namespace BackgroundImageSorter
 
         private static string GenerateNewFullName(Configuration config, Photo photo, DirectoryInfo destinationDirectory)
         {
-            if (config.RebuildExtensions)
-                return destinationDirectory.FullName + @"\" + RebuildImageExtension(photo);
+            if (config?.RebuildExtensions ?? false)
+                return destinationDirectory.FullName + @"\" + RebuildImageExtension(photo, config.AggressiveExtensions);
             else
                 return destinationDirectory.FullName + @"\" + photo.FileInfo.Name;
         }
 
-        public static string RebuildImageExtension(Photo photo)
+        public static string RebuildImageExtension(Photo photo, bool aggressive)
         {
             string properExtension = string.Empty;
             Guid format = photo.Format;
@@ -435,15 +436,22 @@ namespace BackgroundImageSorter
             if (string.IsNullOrWhiteSpace(properExtension))
                 return photo.FileInfo.Name;
             else
-                return RemoveExtensions(photo) + "." + properExtension;
+                return RemoveExtensions(photo, aggressive) + "." + properExtension;
 
         }
 
-        private static string RemoveExtensions(Photo photo)
+        private static string RemoveExtensions(Photo photo, bool aggresive)
         {
-            string name = photo.FileInfo.Name;
-            //return name.TakeUntil(name.LastIndexOf('.');
-            return name.Split(new char[] { '.' })[0];
+            if (aggresive)
+            {
+                string name = photo.FileInfo.Name;
+                //return name.TakeUntil(name.LastIndexOf('.');
+                return name.Split(new char[] { '.' })[0];
+            }
+            else
+            {
+                return Path.GetFileNameWithoutExtension(photo.FileInfo.FullName);
+            }
         }
 
         private static void CreateNonExistantDirectory(DirectoryInfo directory)

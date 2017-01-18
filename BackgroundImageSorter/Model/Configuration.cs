@@ -26,6 +26,7 @@ namespace BackgroundImageSorter.Model
         public bool SuppressReport { get; set; }
         public bool NoUpdate { get; set; }
         public bool RebuildExtensions { get; set; }
+        public bool AggressiveExtensions { get; set; }
 
     }
 }
