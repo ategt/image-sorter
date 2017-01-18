@@ -12,6 +12,7 @@ namespace BackgroundImageSorter.Model
         public int Moved { get; set; }
         public int Distinct { get; set; }
         public int AlreadyHad { get; set; }
+        public int NewPhotos { get; set; }
         public int ImagesInLandscapeFolder { get; set; }
         public int StoredImages { get; set; }
         public int StoredFiles { get; set; }
@@ -21,6 +22,7 @@ namespace BackgroundImageSorter.Model
         {
             return $"Files Scanned:\t{Scanned}\n" +
                 $"Already Had:\t{AlreadyHad}\n" +
+                $"New Photos:\t{NewPhotos}\n" +
                 $"Distinct New Files:\t{Distinct}\n" +
                 $"Files Moved:\t{Moved}\n" +
                 $"Images in Background Folder:\t{ImagesInLandscapeFolder}\n" +

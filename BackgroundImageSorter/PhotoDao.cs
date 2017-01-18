@@ -79,7 +79,9 @@ namespace BackgroundImageSorter
 
         private void encode()
         {
-            using (FileStream binaryStream = File.Create(photoFilepath))
+            //using (FileStream binaryStream = File.OpenWrite(photoFilepath))
+            //using (FileStream binaryStream = File.Create( (photoFilepath), 1024, FileOptions.)
+            using (Stream binaryStream = new FileStream(photoFilepath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 binaryFormatter.Serialize(binaryStream, photos);
@@ -92,7 +94,8 @@ namespace BackgroundImageSorter
 
             IList<Photo> Photos;
 
-            using (FileStream binaryStream = File.Open(photoFilepath, FileMode.OpenOrCreate))
+            //using (FileStream binaryStream = File.Open(photoFilepath, FileMode.OpenOrCreate))
+            using (Stream binaryStream = new FileStream(photoFilepath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 Photos = (List<Photo>)binaryFormatter.Deserialize(binaryStream);

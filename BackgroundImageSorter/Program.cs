@@ -174,7 +174,7 @@ namespace BackgroundImageSorter
 
             if (config.Destination == null)
                 config.Destination = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\Pictures\Saved Pictures");
-                
+
             if (config.DataFile == null)
                 config.DataFile = new FileInfo(@".\PhotoData.bin");
 
@@ -272,8 +272,18 @@ namespace BackgroundImageSorter
 
         private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
         {
-            if (directory?.Exists ?? false)
+            //bool directoryExistsOrIsNull = false;
+            //directory?.Exists ?? false
+
+            if (directory == null)
+            {
+                return;
+            } else if (directory.Exists)
+            {
                 Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
+            }
+
+            //if (directoryExistsOrIsNull)
         }
 
 
@@ -306,6 +316,7 @@ namespace BackgroundImageSorter
 
                             if (!config.Test)
                                 photo.FileInfo.CopyTo(config.Portrait.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                            report.Moved++;
                         }
                         else
                         {
@@ -313,8 +324,8 @@ namespace BackgroundImageSorter
 
                             if (!config.Test)
                                 photo.FileInfo.CopyTo(config.Landscape.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                            report.Moved++;
                         }
-                        report.Moved++;
                     }
                     else
                     {
@@ -349,8 +360,9 @@ namespace BackgroundImageSorter
 
             report.Scanned = photos.Count();
 
-            IEnumerable<Photo> filteredPhotos = photos.Where<Photo>(photo => !photoDao.Contains(photo));
+            IEnumerable<Photo> filteredPhotos = filterOutTheFilesWeAlreadyHave(photoDao, photos);
 
+            report.NewPhotos = filteredPhotos.Count();
             report.AlreadyHad = report.Scanned - filteredPhotos.Count();
 
             filteredPhotos = GetDistinctPhotos(filteredPhotos);
@@ -358,6 +370,29 @@ namespace BackgroundImageSorter
             report.Distinct = filteredPhotos.Count();
 
             return filteredPhotos;
+        }
+
+        private static IEnumerable<Photo> filterOutTheFilesWeAlreadyHave(PhotoDao photoDao, IEnumerable<Photo> photos)
+        {
+
+            List<Photo> photosWeDoNotHaveYet = new List<Photo>();
+
+            foreach (var photo in photos)
+            {
+                bool alreadyHaveThisOne = photoDao.Contains(photo);
+
+                if (!alreadyHaveThisOne)
+                {
+                    photosWeDoNotHaveYet.Add(photo);
+                }
+                else
+                {
+                    Console.WriteLine("We Have This One.");
+                }
+            }
+
+            return photosWeDoNotHaveYet;
+            //return photos.Where<Photo>(photo => !photoDao.Contains(photo));
         }
 
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)

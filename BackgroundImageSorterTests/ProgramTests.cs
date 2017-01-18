@@ -15,15 +15,16 @@ namespace BackgroundImageSorter.Tests
     {
         static string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
 
-        [SetUp]
+        [SetUp()]
         public void SetUp()
         {
             DirectoryInfo outputDir = new DirectoryInfo(workingDir + @"\output");
 
             if ( outputDir.GetFiles().Count() > 0)
             {
-                outputDir.Delete(true);
-                outputDir.Create();
+                ResetOutputDirectory();
+                //outputDir.Delete(true);
+                //outputDir.Create();
             }
         }
 
@@ -274,6 +275,7 @@ namespace BackgroundImageSorter.Tests
             Report report = Program.CommitPurpose(config, new Report());
 
             Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.NewPhotos, 6);
             Assert.AreEqual(report.Distinct, 3);
             Assert.AreEqual(report.AlreadyHad, 0);
             Assert.AreEqual(report.Moved, 3);
@@ -289,7 +291,8 @@ namespace BackgroundImageSorter.Tests
             Report secondReport = Program.CommitPurpose(secondConfig, new Report());
 
             Assert.AreEqual(report.Scanned, 6);
-            Assert.AreEqual(report.AlreadyHad, 3);
+            Assert.AreEqual(report.NewPhotos, 0);
+            Assert.AreEqual(report.AlreadyHad, 0);
             Assert.AreEqual(report.Distinct, 0);
             Assert.AreEqual(report.Moved, 0);
 
