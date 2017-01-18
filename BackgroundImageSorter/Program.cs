@@ -91,6 +91,9 @@ namespace BackgroundImageSorter
         {
             PhotoDao photoDao = LoadData(config, report);
 
+            if (config.PreScan)
+                PreScanDestination(config, report, photoDao);
+
             IEnumerable<Photo> uniquePhotos = ScanSource(config, report, photoDao);
 
             CopyFiles(config, report, uniquePhotos);
@@ -98,6 +101,15 @@ namespace BackgroundImageSorter
             UpdateData(config, report, photoDao);
 
             return ProcessReport(config, report);
+        }
+
+        private static void PreScanDestination(Configuration config, Report report, PhotoDao photoDao)
+        {
+            Console.Write("PreScanning Destination Folder...");
+
+            updateDirectoryData(config, photoDao);
+
+            Console.WriteLine("PreScan Done.");
         }
 
         private static Report ProcessReport(Configuration config, Report report)
@@ -229,6 +241,7 @@ namespace BackgroundImageSorter
                 { "a|Automated", "Suppress the Report and Do Not Pause at the End\n\tUseful For Batch Scripts.", v => config.SuppressReport = v != null },
                 { "A|Aggressive", "Aggressively ReBuild File Extensions.\n\tRemoves Everything After The First Dot(.).\n\tDefault is Last Dot.", v => config.AggressiveExtensions = v != null },
                 { "sub|Sub", "Recurrsively Include Subdirectories In Search.", v => config.Recurse = v != null },
+                { "pre|Prescan", "Recurrsively Include Subdirectories In Search.", v => config.PreScan = v != null },
                 { "h|help",  "show this message and exit",
                         v => config.ShowHelp = v != null },
                 { "?",  "show this message and exit",

@@ -1,10 +1,7 @@
 ﻿using NUnit.Framework;
-using BackgroundImageSorter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using BackgroundImageSorter.Model;
 
@@ -318,7 +315,7 @@ namespace BackgroundImageSorter.Tests
         }
 
         [Test]
-        public void RunTwice()
+        public void RunThrice()
         {
             Configuration config = new Configuration
             {
@@ -359,6 +356,30 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(secondReport.AlreadyHad, 6);
             Assert.AreEqual(secondReport.Distinct, 0);
             Assert.AreEqual(secondReport.Moved, 0);
+
+            Configuration thirdConfig = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                DataFile = new FileInfo(workingDir + @"\output\data2.bin"),
+                Recurse = true,
+                PreScan = true
+            };
+
+            thirdConfig = Program.SetDefaultDirectories(thirdConfig);
+
+            Report thirdReport = Program.CommitPurpose(thirdConfig, new Report());
+
+            Assert.AreEqual(thirdReport.StoredBackgrounds, 0);
+            Assert.AreEqual(thirdReport.StoredFiles, 0);
+            Assert.AreEqual(thirdReport.StoredImages, 0);
+
+            Assert.AreEqual(thirdReport.Scanned, 9);
+            Assert.AreEqual(thirdReport.NewPhotos, 3);
+            Assert.AreEqual(thirdReport.AlreadyHad, 6);
+            Assert.AreEqual(thirdReport.Distinct, 3);
+            Assert.AreEqual(thirdReport.Moved, 3);
 
         }
 
