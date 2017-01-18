@@ -13,10 +13,30 @@ namespace BackgroundImageSorter.Tests
     [TestFixture()]
     public class ProgramTests
     {
+        static string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
+
+        [SetUp]
+        public void SetUp()
+        {
+            DirectoryInfo outputDir = new DirectoryInfo(workingDir + @"\output");
+
+            if ( outputDir.GetFiles().Count() > 0)
+            {
+                outputDir.Delete(true);
+                outputDir.Create();
+            }
+        }
+
+        [TearDown()]
+        public void TearDown()
+        {
+            ResetOutputDirectory();
+        }
+
         [Test()]
         public void GetDistinctPhotosTest()
         {
-            DirectoryInfo sourceDirectory = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input");
+            DirectoryInfo sourceDirectory = new DirectoryInfo(workingDir + @"\input");
             FileInfo[] possiblePhotos = sourceDirectory.GetFiles();
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
@@ -42,12 +62,12 @@ namespace BackgroundImageSorter.Tests
         }
 
         [Test()]
-        [Timeout(40)]
+        [Timeout(100)]
         public void ConfigInterpreterActionTest()
         {
-            string source = @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input";
-            string destination = @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output";
-            string data = @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\photo.bin";
+            string source = workingDir + @"\input";
+            string destination = workingDir + @"\output";
+            string data = workingDir + @"\output\photo.bin";
 
             string[] args = { "-h",
                               "-s", source,
@@ -70,9 +90,9 @@ namespace BackgroundImageSorter.Tests
         [Test()]
         public void ConfigInterpreterTest()
         {
-            string[] args = new string[] { "-d", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin",
-                                    @"--s=C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input",
-                                    @"/Output:C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output",
+            string[] args = new string[] { "-d", workingDir + @"\data.bin",
+                                    @"--s=" + workingDir + @"\input",
+                                    @"/Output:" + workingDir + @"\output",
                                     "--Automated",
                                     "-t-" };
 
@@ -86,19 +106,19 @@ namespace BackgroundImageSorter.Tests
             Assert.IsFalse(config.Test);
             Assert.IsFalse(config.Error);
 
-            Assert.AreEqual(config.Portrait.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Portrait");
-            Assert.AreEqual(config.Landscape.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Landscape");
+            Assert.AreEqual(config.Portrait.FullName, workingDir + @"\output\Backgrounds\Portrait");
+            Assert.AreEqual(config.Landscape.FullName, workingDir + @"\output\Backgrounds\Landscape");
 
         }
 
         [Test()]
         public void ConfigInterpreterWithCustomDestinationsTest()
         {
-            string[] args = new string[] { "-d", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin",
-                                    @"--s=C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input",
-                                    @"/Output:C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output",
-                                    "-p", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\portrait",
-                                    "-l", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\landscape",
+            string[] args = new string[] { "-d", workingDir + @"\data.bin",
+                                    @"--s=" + workingDir + @"\input",
+                                    @"/Output:" + workingDir + @"\output",
+                                    "-p", workingDir + @"\portrait",
+                                    "-l", workingDir + @"\landscape",
                                     "--Automated-",
                                     "-t+" };
 
@@ -111,75 +131,62 @@ namespace BackgroundImageSorter.Tests
             Assert.IsTrue(config.Test);
             Assert.IsFalse(config.Error);
 
-            Assert.AreEqual(config.Portrait.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\portrait");
-            Assert.AreEqual(config.Landscape.FullName, @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\landscape");
+            Assert.AreEqual(config.Portrait.FullName, workingDir + @"\portrait");
+            Assert.AreEqual(config.Landscape.FullName, workingDir + @"\landscape");
         }
 
         [Test()]
         public void MainProgramTest()
         {
-            ResetOutputDirectory();
+            //ResetOutputDirectory();
 
-            DirectoryInfo portraitDir = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\portrait");
-            DirectoryInfo landscapeDir = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\landscape");
-            DirectoryInfo sourceDir = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input");
+            DirectoryInfo portraitDir = new DirectoryInfo(workingDir + @"\output\portrait");
+            DirectoryInfo landscapeDir = new DirectoryInfo(workingDir + @"\output\landscape");
+            DirectoryInfo sourceDir = new DirectoryInfo(workingDir + @"\input");
 
 
-            string[] args = new string[] { "-d", @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\data.bin",
+            string[] args = new string[] { "-d", workingDir + @"\output\data.bin",
                                     $"--s={sourceDir.FullName}",
-                                    @"/Output:C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output",
+                                    @"/Output:" + workingDir + @"\output",
                                     "-p", portraitDir.FullName,
                                     "-l", landscapeDir.FullName};
-
-            //Configuration config = new Configuration
-            //{
-            //    Source = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input"),
-            //    Destination = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"),
-            //    DataFile = new FileInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin"),
-            //    NoUpdate = true
-            //};
-
-            //config = Program.SetDefaultDirectories(config);
 
             Report report = new Program().RunProgram(args);
 
             FileInfo[] landscapePhotos = landscapeDir.GetFiles();
 
-            //Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Landscape", config.Landscape.FullName);
-
             Assert.AreEqual(landscapePhotos.Count(), 3);
-
-            //Assert.IsNull(config.Portrait);
 
             DirectoryAssert.DoesNotExist(portraitDir);
 
             Assert.AreEqual(report.Scanned, 6);
-            Assert.AreEqual(report.Skipped, 3);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Distinct, 3);
             Assert.AreEqual(report.Moved, 3);
             Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
 
-            ResetOutputDirectory();
+            //ResetOutputDirectory();
 
         }
 
         [Test()]
         public void SetDirectoriesManuallyTest()
         {
-            ResetOutputDirectory();
+            //ResetOutputDirectory();
 
             Configuration config = new Configuration
             {
-                Source = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input"),
-                Destination = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"),
-                Portrait = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\portrait"),
-                Landscape = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\landscape"),
-                DataFile = new FileInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin"),
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output"),
+                Portrait = new DirectoryInfo(workingDir + @"\output\portrait"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                DataFile = new FileInfo(workingDir + @"\data.bin"),
                 NoUpdate = true
             };
 
             config = Program.SetDefaultDirectories(config);
 
-            string testImageDirectory = @"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\";
+            string testImageDirectory = workingDir + @"\";
 
             Assert.AreEqual(testImageDirectory + @"output\Other Images", config.SmallDirectory.FullName);
             Assert.AreEqual(testImageDirectory + @"output\Data", config.DataDirectory.FullName);
@@ -200,38 +207,35 @@ namespace BackgroundImageSorter.Tests
         {
             Configuration config = new Configuration
             {
-                Source = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input"),
-                Destination = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"),
-                DataFile = new FileInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin"),
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output"),
+                DataFile = new FileInfo(workingDir + @"\data.bin"),
                 NoUpdate = true
             };
 
             config = Program.SetDefaultDirectories(config);
 
-            Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Other Images", config.SmallDirectory.FullName);
-            Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Data", config.DataDirectory.FullName);
-            Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds", config.BackgroundDirectory.FullName);
-            Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Landscape", config.Landscape.FullName);
-            Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Portrait", config.Portrait.FullName);
+            Assert.AreEqual(workingDir + @"\output\Other Images", config.SmallDirectory.FullName);
+            Assert.AreEqual(workingDir + @"\output\Data", config.DataDirectory.FullName);
+            Assert.AreEqual(workingDir + @"\output\Backgrounds", config.BackgroundDirectory.FullName);
+            Assert.AreEqual(workingDir + @"\output\Backgrounds\Landscape", config.Landscape.FullName);
+            Assert.AreEqual(workingDir + @"\output\Backgrounds\Portrait", config.Portrait.FullName);
         }
 
         [Test()]
         public void MainActionTest()
         {
-            ResetOutputDirectory();
-            Directory.CreateDirectory(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output");
+            //ResetOutputDirectory();
+            //Directory.CreateDirectory(workingDir + @"\output");
 
             Configuration config = new Configuration
             {
-                Source = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input"),
-                Destination = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"),
-                //Portrait = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\portrait"),
-                Landscape = new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\landscape"),
-                DataFile = new FileInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\data.bin"),
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                DataFile = new FileInfo(workingDir + @"\data.bin"),
                 NoUpdate = true
             };
-
-            //config = Program.SetDefaultDirectories(config);
 
             Assert.AreEqual(6, config.Source.GetFiles().Count());
 
@@ -240,40 +244,75 @@ namespace BackgroundImageSorter.Tests
             DirectoryInfo landscapes = config.Landscape;
             FileInfo[] landscapePhotos = landscapes.GetFiles();
 
-            //Assert.AreEqual(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output\Backgrounds\Landscape", config.Landscape.FullName);
-
             Assert.AreEqual(landscapePhotos.Count(), 3);
 
             Assert.IsNull(config.Portrait);
 
             Assert.AreEqual(report.Scanned, 6);
-            Assert.AreEqual(report.Skipped, 3);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Distinct, 3);
             Assert.AreEqual(report.Moved, 3);
             Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
 
             Assert.AreEqual(6, config.Source.GetFiles().Count());
 
-            ResetOutputDirectory();
+            //ResetOutputDirectory();
 
         }
+
+        [Test()]
+        public void RunTwice()
+        {
+            Configuration config = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                DataFile = new FileInfo(workingDir + @"\output\data.bin"),                
+            };
+
+            Report report = Program.CommitPurpose(config, new Report());
+
+            Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.Distinct, 3);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Moved, 3);
+
+            Configuration secondConfig = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                DataFile = new FileInfo(workingDir + @"\output\data.bin"),
+            };
+
+            Report secondReport = Program.CommitPurpose(secondConfig, new Report());
+
+            Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.AlreadyHad, 3);
+            Assert.AreEqual(report.Distinct, 0);
+            Assert.AreEqual(report.Moved, 0);
+
+        }
+
 
         private static void ResetOutputDirectory()
         {
             try
             {
-                Directory.Delete(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output", true);
+                Directory.Delete(workingDir + @"\output", true);
             }
             catch (DirectoryNotFoundException ex)
             {
 
             }
 
-            Assert.IsFalse(Directory.Exists(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output"));
-            DirectoryAssert.DoesNotExist(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output");
+            Assert.IsFalse(Directory.Exists(workingDir + @"\output"));
+            DirectoryAssert.DoesNotExist(workingDir + @"\output");
 
-            Directory.CreateDirectory(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\output");
+            Directory.CreateDirectory(workingDir + @"\output");
 
-            Assert.AreEqual(new DirectoryInfo(@"C:\Users\ATeg\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\input").GetFiles().Count(),
+            Assert.AreEqual(new DirectoryInfo(workingDir + @"\input").GetFiles().Count(),
                     6);
         }
     }

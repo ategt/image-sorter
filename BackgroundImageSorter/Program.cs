@@ -174,7 +174,7 @@ namespace BackgroundImageSorter
 
             if (config.Destination == null)
                 config.Destination = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\Pictures\Saved Pictures");
-
+                
             if (config.DataFile == null)
                 config.DataFile = new FileInfo(@".\PhotoData.bin");
 
@@ -261,7 +261,7 @@ namespace BackgroundImageSorter
             directories.Add(config.Destination);
             directories.Add(config.SmallDirectory);
 
-            if (config.BackgroundDirectory.Exists)
+            if (config.BackgroundDirectory?.Exists ?? false)
                 config.BackgroundDirectory?
                     .GetDirectories()
                     .ToList<DirectoryInfo>()
@@ -272,7 +272,7 @@ namespace BackgroundImageSorter
 
         private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
         {
-            if (directory.Exists)
+            if (directory?.Exists ?? false)
                 Array.ForEach<FileInfo>(directory.GetFiles(), file => photoDao.Create(PhotoBuilder.Build(file.FullName)));
         }
 
@@ -351,12 +351,13 @@ namespace BackgroundImageSorter
 
             IEnumerable<Photo> filteredPhotos = photos.Where<Photo>(photo => !photoDao.Contains(photo));
 
+            report.AlreadyHad = report.Scanned - filteredPhotos.Count();
+
             filteredPhotos = GetDistinctPhotos(filteredPhotos);
 
-            report.Skipped = report.Scanned - filteredPhotos.Count();
+            report.Distinct = filteredPhotos.Count();
 
             return filteredPhotos;
-
         }
 
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
