@@ -387,43 +387,43 @@ namespace BackgroundImageSorter
         {
             string properExtension = string.Empty;
             Guid format = photo.Format;
-            if (format.Equals(ImageFormat.Jpeg))
+            if (format.Equals(ImageFormat.Jpeg.Guid))
             {
                 properExtension = "jpg";
             }
-            else if (format.Equals(ImageFormat.Bmp))
+            else if (format.Equals(ImageFormat.Bmp.Guid))
             {
                 properExtension = "bmp";
             }
-            else if (format.Equals(ImageFormat.Exif))
+            else if (format.Equals(ImageFormat.Exif.Guid))
             {
                 properExtension = "exif";
             }
-            else if (format.Equals(ImageFormat.Emf))
+            else if (format.Equals(ImageFormat.Emf.Guid))
             {
                 properExtension = "emf";
             }
-            else if (format.Equals(ImageFormat.Gif))
+            else if (format.Equals(ImageFormat.Gif.Guid))
             {
                 properExtension = "gif";
             }
-            else if (format.Equals(ImageFormat.Icon))
+            else if (format.Equals(ImageFormat.Icon.Guid))
             {
                 properExtension = "icon";
             }
-            else if (format.Equals(ImageFormat.MemoryBmp))
+            else if (format.Equals(ImageFormat.MemoryBmp.Guid))
             {
                 properExtension = "mbmp";
             }
-            else if (format.Equals(ImageFormat.Png))
+            else if (format.Equals(ImageFormat.Png.Guid))
             {
                 properExtension = "png";
             }
-            else if (format.Equals(ImageFormat.Tiff))
+            else if (format.Equals(ImageFormat.Tiff.Guid))
             {
                 properExtension = "tiff";
             }
-            else if (format.Equals(ImageFormat.Wmf))
+            else if (format.Equals(ImageFormat.Wmf.Guid))
             {
                 properExtension = "wmf";
             }
