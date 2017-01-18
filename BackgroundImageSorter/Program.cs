@@ -253,7 +253,15 @@ namespace BackgroundImageSorter
         private static void updateDirectoryData(Configuration config,
                                                     PhotoDao photoDao)
         {
+            ISet<DirectoryInfo> directories = GenerateScannableDirectoriesSet(config);
 
+            List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
+            directoriesToScan.RemoveAll(item => item == null);
+            directoriesToScan.ForEach(directory => updateDirectoryData(directory, photoDao));
+        }
+
+        private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
+        {
             ISet<DirectoryInfo> directories = new HashSet<DirectoryInfo>();
             directories.Add(config.Portrait);
             directories.Add(config.Landscape);
@@ -267,18 +275,11 @@ namespace BackgroundImageSorter
                     .GetDirectories()
                     .ToList<DirectoryInfo>()
                     .ForEach(dir => directories.Add(dir));
-
-            directories.ToList<DirectoryInfo>().ForEach(directory => updateDirectoryData(directory, photoDao));
+            return directories;
         }
 
         private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
         {
-            //bool directoryExistsOrIsNull = false;
-            //directory?.Exists ?? false
-
-            if (directory?.Exists ?? false)
-                Console.WriteLine("Exists.");
-
             directory?.Refresh();
 
             if (directory == null)
