@@ -327,7 +327,7 @@ namespace BackgroundImageSorter
                         CreateNonExistantDirectory(config.DataDirectory);
 
                         if (!config.Test)
-                            photo.FileInfo.CopyTo(config.DataDirectory.FullName + @"\" + photo.FileInfo.Name, false);
+                            photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.DataDirectory), false);
 
                     }
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)
@@ -339,7 +339,7 @@ namespace BackgroundImageSorter
                             CreateNonExistantDirectory(config.Portrait);
 
                             if (!config.Test)
-                                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo), false);
+                                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.Portrait), false);
                             report.Moved++;
                         }
                         else
@@ -347,7 +347,7 @@ namespace BackgroundImageSorter
                             CreateNonExistantDirectory(config.Landscape);
 
                             if (!config.Test)
-                                photo.FileInfo.CopyTo(config.Landscape.FullName + @"\" + photo.FileInfo.Name + ".jpg", false);
+                                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.Landscape), false);
                             report.Moved++;
                         }
                     }
@@ -358,7 +358,7 @@ namespace BackgroundImageSorter
                             CreateNonExistantDirectory(config.SmallDirectory);
 
                             if (!config.Test)
-                                photo.FileInfo.CopyTo(config.SmallDirectory.FullName + @"\" + photo.FileInfo.Name + ".png", false);
+                                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.SmallDirectory), false);
                         }
                     }
                 }
@@ -370,12 +370,12 @@ namespace BackgroundImageSorter
             }
         }
 
-        private static string GenerateNewFullName(Configuration config, Photo photo)
+        private static string GenerateNewFullName(Configuration config, Photo photo, DirectoryInfo destinationDirectory)
         {
             if (config.RebuildExtensions)
-                return config.Portrait.FullName + @"\" + RebuildImageExtension(photo);
+                return destinationDirectory.FullName + @"\" + RebuildImageExtension(photo);
             else
-                return config.Portrait.FullName + @"\" + photo.FileInfo.Name;
+                return destinationDirectory.FullName + @"\" + photo.FileInfo.Name;
         }
 
         public static string RebuildImageExtension(Photo photo)
