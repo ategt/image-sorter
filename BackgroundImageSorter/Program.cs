@@ -131,7 +131,7 @@ namespace BackgroundImageSorter
         private static IEnumerable<Photo> ScanSource(Configuration config, Report report, PhotoDao photoDao)
         {
             Console.Write("Scaning Source Directory...");
-            IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report);
+            IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report, config.Recurse);
 
             Console.WriteLine("Complete.");
             return uniquePhotos;
@@ -228,6 +228,7 @@ namespace BackgroundImageSorter
                 { "r|Rebuild", "Rebuild Image File Extensions.", v => config.RebuildExtensions = v != null },
                 { "a|Automated", "Suppress the Report and Do Not Pause at the End\n\tUseful For Batch Scripts.", v => config.SuppressReport = v != null },
                 { "A|Aggressive", "Aggressively ReBuild File Extensions.\n\tRemoves Everything After The First Dot(.).\n\tDefault is Last Dot.", v => config.AggressiveExtensions = v != null },
+                { "sub|Sub", "Recurrsively Include Subdirectories In Search.", v => config.Recurse = v != null },
                 { "h|help",  "show this message and exit",
                         v => config.ShowHelp = v != null },
                 { "?",  "show this message and exit",
@@ -246,7 +247,8 @@ namespace BackgroundImageSorter
                 Test = false,
                 Error = false,
                 SuppressReport = false,
-                RebuildExtensions = false
+                RebuildExtensions = false,
+                Recurse = false
             };
         }
 
@@ -464,9 +466,11 @@ namespace BackgroundImageSorter
             }
         }
 
-        private static IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao, Report report)
+        private static IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao, Report report, bool recurse)
         {
-            FileInfo[] possiblePhotos = sourceDirectory.GetFiles();
+            FileInfo[] possiblePhotos = (recurse) ? 
+                                sourceDirectory.GetFiles("*", SearchOption.AllDirectories) : 
+                                        sourceDirectory.GetFiles("*", SearchOption.TopDirectoryOnly);
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
 
