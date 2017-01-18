@@ -324,41 +324,25 @@ namespace BackgroundImageSorter
                 {
                     if (dimension.IsEmpty && !config.ImagesOnly)
                     {
-                        CreateNonExistantDirectory(config.DataDirectory);
-
-                        if (!config.Test)
-                            photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.DataDirectory), false);
-
+                        CopyToDirectory(config, report, photo, config.DataDirectory);
                     }
                     else if (dimension.Height >= 1080 && dimension.Width >= 1080)
                     {
-                        //CreateNonExistantDirectory(config.BackgroundDirectory);
 
                         if (dimension.Height > dimension.Width)
-                        {
-                            CreateNonExistantDirectory(config.Portrait);
-
-                            if (!config.Test)
-                                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.Portrait), false);
-                            report.Moved++;
+                        {                            
+                            CopyToDirectory(config, report, photo, config.Portrait);
                         }
                         else
-                        {
-                            CreateNonExistantDirectory(config.Landscape);
-
-                            if (!config.Test)
-                                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.Landscape), false);
-                            report.Moved++;
+                        {                          
+                            CopyToDirectory(config, report, photo, config.Landscape);
                         }
                     }
                     else
                     {
                         if (!config.LargeImagesOnly)
-                        {
-                            CreateNonExistantDirectory(config.SmallDirectory);
-
-                            if (!config.Test)
-                                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, config.SmallDirectory), false);
+                        {                            
+                            CopyToDirectory(config, report, photo, config.SmallDirectory);
                         }
                     }
                 }
@@ -368,6 +352,15 @@ namespace BackgroundImageSorter
                     Console.WriteLine(ex.Message);
                 }
             }
+        }
+
+        private static void CopyToDirectory(Configuration config, Report report, Photo photo, DirectoryInfo destinationDirectory)
+        {
+            CreateNonExistantDirectory(destinationDirectory);
+
+            if (!config.Test)
+                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, destinationDirectory), false);
+            report.Moved++;
         }
 
         private static string GenerateNewFullName(Configuration config, Photo photo, DirectoryInfo destinationDirectory)
