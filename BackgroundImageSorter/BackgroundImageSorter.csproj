@@ -57,7 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\ApplicationController.cs" />
+    <Compile Include="Controller\ConfigurationController.cs" />
     <Compile Include="Model\Configuration.cs" />
+    <Compile Include="Model\ConfigurationBuilder.cs" />
     <Compile Include="Model\PhotoBuilder.cs" />
     <Compile Include="Model\Report.cs" />
     <Compile Include="Photo.cs" />

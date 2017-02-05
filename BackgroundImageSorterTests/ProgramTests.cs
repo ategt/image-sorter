@@ -53,7 +53,7 @@ namespace BackgroundImageSorter.Tests
 
             string[] args = { "-h" };
 
-            Configuration config = ApplicationController.SetupConfiguration(args, ApplicationController.BuildConfig());
+            Configuration config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
             Assert.NotNull(config);
             Assert.IsTrue(config.ShowHelp);
@@ -95,7 +95,7 @@ namespace BackgroundImageSorter.Tests
                                     "--Automated",
                                     "-t-" };
 
-            Configuration config = ApplicationController.SetupConfiguration(args, ApplicationController.BuildConfig());
+            Configuration config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
             Assert.NotNull(config);
             Assert.NotNull(config.BackgroundDirectory);
@@ -121,7 +121,7 @@ namespace BackgroundImageSorter.Tests
                                     "--Automated-",
                                     "-t+" };
 
-            Configuration config = ApplicationController.SetupConfiguration(args, ApplicationController.BuildConfig());
+            Configuration config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
             Assert.NotNull(config);
             Assert.IsFalse(config.ShowHelp);
@@ -183,7 +183,7 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = ApplicationController.SetDefaultDirectories(config);
+            config = ConfigurationController.SetDefaultDirectories(config);
 
             string testImageDirectory = workingDir + @"\";
 
@@ -212,7 +212,7 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = ApplicationController.SetDefaultDirectories(config);
+            config = ConfigurationController.SetDefaultDirectories(config);
 
             Assert.AreEqual(workingDir + @"\output\Other Images", config.SmallDirectory.FullName);
             Assert.AreEqual(workingDir + @"\output\Data", config.DataDirectory.FullName);
@@ -271,7 +271,7 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = ApplicationController.SetDefaultDirectories(config);
+            config = ConfigurationController.SetDefaultDirectories(config);
 
             Assert.AreEqual(9, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
 
@@ -368,7 +368,7 @@ namespace BackgroundImageSorter.Tests
                 PreScan = true
             };
 
-            thirdConfig = ApplicationController.SetDefaultDirectories(thirdConfig);
+            thirdConfig = ConfigurationController.SetDefaultDirectories(thirdConfig);
 
             Report thirdReport = ApplicationController.SortImages(thirdConfig, new Report());
 
