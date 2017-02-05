@@ -45,7 +45,7 @@ namespace BackgroundImageSorter.Controller
             }
             catch (OptionException e)
             {
-                DisplayErrorMessage(e);
+                ConsoleView.DisplayErrorMessage(e);
                 config.Error = true;
             }
 
@@ -59,7 +59,7 @@ namespace BackgroundImageSorter.Controller
         {
             if (!config.Destination.Exists || !config.Source.Exists)
             {
-                DisplayError();
+                ConsoleView.DisplayError();
                 config.Error = true;
             }
         }
@@ -68,16 +68,11 @@ namespace BackgroundImageSorter.Controller
         {
             if (config.ShowHelp)
             {
-                ShowHelp(options);
+                ConsoleView.ShowHelp(options);
                 config.Error = true;
             }
         }
 
-        private static Report DisplayError()
-        {
-            Console.WriteLine("An important directory is missing.");
-            return null;
-        }
 
         public static Report SortImages(Configuration config, Report report)
         {
@@ -97,11 +92,11 @@ namespace BackgroundImageSorter.Controller
 
         private static void PreScanDestination(Configuration config, Report report, PhotoDao photoDao)
         {
-            Console.Write("PreScanning Destination Folder...");
+            ConsoleView.DisplayBeginingDirectoryPrescan();
 
             updateDirectoryData(config, photoDao);
 
-            Console.WriteLine("PreScan Done.");
+            ConsoleView.DisplayFinishedDirectoryPrescan();
         }
 
         private static Report ProcessReport(Configuration config, Report report)
@@ -113,45 +108,47 @@ namespace BackgroundImageSorter.Controller
 
         private static void UpdateData(Configuration config, Report report, PhotoDao photoDao)
         {
-            Console.Write("Updating File Data...");
+            ConsoleView.DisplayBeginUpdatingDao();
 
             if (!config.NoUpdate)
                 updateDirectoryData(config, photoDao);
 
             UpdateReportWithNewImageCount(config, report, photoDao);
 
-            Console.WriteLine("Dao updated.");
+            ConsoleView.DisplayFinishedUpdateingDao();
         }
+
 
         private static void CopyFiles(Configuration config, Report report, IEnumerable<Photo> uniquePhotos)
         {
-            Console.Write("Copying Photos...");
+            ConsoleView.DisplayBeginTransferingData();
 
             moveUniquePhotosToAppropiateDirectory(uniquePhotos,
                                                     config, report);
-            Console.WriteLine("Copy Complete.");
+            ConsoleView.DisplayFinishedTransferingData();
         }
 
         private static IEnumerable<Photo> ScanSource(Configuration config, Report report, PhotoDao photoDao)
         {
-            Console.Write("Scaning Source Directory...");
+            ConsoleView.DisplaySourceScanningBegining();
             IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report, config.Recurse);
 
-            Console.WriteLine("Complete.");
+            ConsoleView.DisplaySourceScanningFinished();
             return uniquePhotos;
         }
 
         private static PhotoDao LoadData(Configuration config, Report report)
         {
-            Console.Write("Dao loading...");
+            ConsoleView.DisplayDaoLoadingBeginning();
 
             PhotoDao photoDao = new PhotoDao(config.DataFile.FullName);
 
             LoadDaoInfoToReport(report, photoDao);
 
-            Console.WriteLine("Complete.");
+            ConsoleView.DisplayDaoLoadingFinished();
             return photoDao;
         }
+
 
         private static void UpdateReportWithNewImageCount(Configuration config, Report report, PhotoDao photoDao)
         {
@@ -201,14 +198,6 @@ namespace BackgroundImageSorter.Controller
         private static DirectoryInfo PrepareSubDirectory(DirectoryInfo directory, string subDirectoryTitle)
         {
             return new DirectoryInfo(directory.FullName + @"\" + subDirectoryTitle);
-        }
-
-        private static Report DisplayErrorMessage(OptionException e)
-        {
-            Console.Write("BackgroundImageSorter: ");
-            Console.WriteLine(e.Message);
-            Console.WriteLine("Try `BackgroundImageSorter --help' for more information.");
-            return null;
         }
 
         private static void ParseArguments(string[] args, OptionSet p)
@@ -506,13 +495,14 @@ namespace BackgroundImageSorter.Controller
                 }
                 else
                 {
-                    Console.WriteLine("We Have This One.");
+                    ConsoleView.DisplayAFileHasBeenFilteredOut();
                 }
             }
 
             return photosWeDoNotHaveYet;
         }
 
+        
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
         {
             return getDistinctPhotos(filteredPhotos);
@@ -536,15 +526,6 @@ namespace BackgroundImageSorter.Controller
             return uniques;
         }
 
-        static void ShowHelp(OptionSet p)
-        {
-            Console.WriteLine("Usage: [OPTIONS]+");
-            Console.WriteLine();
-            Console.WriteLine("Options:");
-            p.WriteOptionDescriptions(Console.Out);
-            Console.WriteLine();
-            Console.WriteLine("\t Fast Scan Not Implemented Yet.");
-        }
 
     }
 }
