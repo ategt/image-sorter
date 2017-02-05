@@ -39,7 +39,7 @@ namespace BackgroundImageSorter.Tests
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
 
-            var distinctPhotos = Program.GetDistinctPhotos(photos);
+            var distinctPhotos = Controller.ApplicationController.GetDistinctPhotos(photos);
 
             Assert.IsTrue(distinctPhotos.Count() < 6);
             Assert.AreEqual(distinctPhotos.Count(), 3);
@@ -52,7 +52,7 @@ namespace BackgroundImageSorter.Tests
 
             string[] args = { "-h" };
 
-            Configuration config = Program.SetupConfiguration(args, Program.BuildConfig());
+            Configuration config = Controller.ApplicationController.SetupConfiguration(args, Controller.ApplicationController.BuildConfig());
 
             Assert.NotNull(config);
             Assert.IsTrue(config.ShowHelp);
@@ -73,7 +73,7 @@ namespace BackgroundImageSorter.Tests
                               "-d", data
                        };
 
-            Report report = new Program().RunProgram(args);
+            Report report = new Controller.ApplicationController().RunProgram(args);
 
             DirectoryAssert.Exists(source);
             DirectoryAssert.Exists(destination);
@@ -94,7 +94,7 @@ namespace BackgroundImageSorter.Tests
                                     "--Automated",
                                     "-t-" };
 
-            Configuration config = Program.SetupConfiguration(args, Program.BuildConfig());
+            Configuration config = Controller.ApplicationController.SetupConfiguration(args, Controller.ApplicationController.BuildConfig());
 
             Assert.NotNull(config);
             Assert.NotNull(config.BackgroundDirectory);
@@ -120,7 +120,7 @@ namespace BackgroundImageSorter.Tests
                                     "--Automated-",
                                     "-t+" };
 
-            Configuration config = Program.SetupConfiguration(args, Program.BuildConfig());
+            Configuration config = Controller.ApplicationController.SetupConfiguration(args, Controller.ApplicationController.BuildConfig());
 
             Assert.NotNull(config);
             Assert.IsFalse(config.ShowHelp);
@@ -149,7 +149,7 @@ namespace BackgroundImageSorter.Tests
                                     "-p", portraitDir.FullName,
                                     "-l", landscapeDir.FullName};
 
-            Report report = new Program().RunProgram(args);
+            Report report = new Controller.ApplicationController().RunProgram(args);
 
             FileInfo[] landscapePhotos = landscapeDir.GetFiles();
 
@@ -182,7 +182,7 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = Program.SetDefaultDirectories(config);
+            config = Controller.ApplicationController.SetDefaultDirectories(config);
 
             string testImageDirectory = workingDir + @"\";
 
@@ -211,7 +211,7 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = Program.SetDefaultDirectories(config);
+            config = Controller.ApplicationController.SetDefaultDirectories(config);
 
             Assert.AreEqual(workingDir + @"\output\Other Images", config.SmallDirectory.FullName);
             Assert.AreEqual(workingDir + @"\output\Data", config.DataDirectory.FullName);
@@ -237,7 +237,7 @@ namespace BackgroundImageSorter.Tests
 
             Assert.AreEqual(6, config.Source.GetFiles().Count());
 
-            Report report = Program.CommitPurpose(config, new Report());
+            Report report = Controller.ApplicationController.SortImages(config, new Report());
 
             DirectoryInfo landscapes = config.Landscape;
             FileInfo[] landscapePhotos = landscapes.GetFiles();
@@ -270,11 +270,11 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = Program.SetDefaultDirectories(config);
+            config = Controller.ApplicationController.SetDefaultDirectories(config);
 
             Assert.AreEqual(9, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
 
-            Report report = Program.CommitPurpose(config, new Report());
+            Report report = Controller.ApplicationController.SortImages(config, new Report());
 
             DirectoryInfo landscapes = config.Landscape;
             FileInfo[] landscapePhotos = landscapes.GetFiles();
@@ -325,7 +325,7 @@ namespace BackgroundImageSorter.Tests
                 DataFile = new FileInfo(workingDir + @"\output\data.bin"),                
             };
 
-            Report report = Program.CommitPurpose(config, new Report());
+            Report report = Controller.ApplicationController.SortImages(config, new Report());
 
             Assert.AreEqual(report.StoredBackgrounds, 0);
             Assert.AreEqual(report.StoredFiles, 0);
@@ -345,7 +345,7 @@ namespace BackgroundImageSorter.Tests
                 DataFile = new FileInfo(workingDir + @"\output\data.bin"),
             };
 
-            Report secondReport = Program.CommitPurpose(secondConfig, new Report());
+            Report secondReport = Controller.ApplicationController.SortImages(secondConfig, new Report());
 
             Assert.AreEqual(secondReport.StoredBackgrounds, 3);
             Assert.AreEqual(secondReport.StoredFiles, 4);
@@ -367,9 +367,9 @@ namespace BackgroundImageSorter.Tests
                 PreScan = true
             };
 
-            thirdConfig = Program.SetDefaultDirectories(thirdConfig);
+            thirdConfig = Controller.ApplicationController.SetDefaultDirectories(thirdConfig);
 
-            Report thirdReport = Program.CommitPurpose(thirdConfig, new Report());
+            Report thirdReport = Controller.ApplicationController.SortImages(thirdConfig, new Report());
 
             Assert.AreEqual(thirdReport.StoredBackgrounds, 0);
             Assert.AreEqual(thirdReport.StoredFiles, 0);
@@ -388,7 +388,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
 
-            string improvedName = Program.RebuildImageExtension(photo, false);
+            string improvedName = Controller.ApplicationController.RebuildImageExtension(photo, false);
 
             Assert.AreEqual(improvedName, "4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
 
@@ -399,7 +399,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
 
-            string improvedName = Program.RebuildImageExtension(photo, true);
+            string improvedName = Controller.ApplicationController.RebuildImageExtension(photo, true);
 
             Assert.AreEqual(improvedName, "4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg");
 
@@ -410,7 +410,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.png");
 
-            string improvedName = Program.RebuildImageExtension(photo, true);
+            string improvedName = Controller.ApplicationController.RebuildImageExtension(photo, true);
 
             Assert.AreEqual(improvedName, "07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.jpg");
         }
@@ -420,7 +420,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.png");
 
-            string improvedName = Program.RebuildImageExtension(photo, false);
+            string improvedName = Controller.ApplicationController.RebuildImageExtension(photo, false);
 
             Assert.AreEqual(improvedName, "07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.jpg");
         }
