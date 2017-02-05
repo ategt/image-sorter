@@ -2,6 +2,7 @@
 using NDesk.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -101,6 +102,17 @@ namespace BackgroundImageSorter.View
         public static void DisplayAFileHasBeenFilteredOut()
         {
             Console.WriteLine("We Have This One.");
+        }
+
+        public static void DisplayDirectoryDoesNotExist(DirectoryInfo directory)
+        {
+            Console.WriteLine(directory.FullName + " does not exist.");
+        }
+
+        public static void DisplaySkippingPhotoDuringTransfer(Photo photo, IOException ex)
+        {
+            Console.WriteLine("Skipping " + photo.FileInfo.Name);
+            Console.WriteLine(ex.Message);
         }
 
     }

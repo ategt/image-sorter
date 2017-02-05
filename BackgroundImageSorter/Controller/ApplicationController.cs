@@ -167,10 +167,8 @@ namespace BackgroundImageSorter.Controller
             }
             else
             {
-                Console.WriteLine(directory.FullName + " does not exist.");
+                ConsoleView.DisplayDirectoryDoesNotExist(directory);
             }
-
-            //if (directoryExistsOrIsNull)
         }
 
         private static Photo AddPhotoToDao(PhotoDao photoDao, FileInfo file)
@@ -180,16 +178,12 @@ namespace BackgroundImageSorter.Controller
             Photo returnedPhoto = photoDao.Create(photo);
 
             return returnedPhoto;
-
-            //return photoDao.Create(PhotoBuilder.Build(file.FullName));
         }
 
         private static void moveUniquePhotosToAppropiateDirectory(IEnumerable<Photo> uniquePhotos,
                                         Configuration config,
                                         Report report)
         {
-
-
             foreach (Photo photo in uniquePhotos)
             {
                 System.Drawing.Size dimension = photo.Dimension;
@@ -199,8 +193,7 @@ namespace BackgroundImageSorter.Controller
                 }
                 catch (System.IO.IOException ex)
                 {
-                    Console.WriteLine("Skipping " + photo.FileInfo.Name);
-                    Console.WriteLine(ex.Message);
+                    ConsoleView.DisplaySkippingPhotoDuringTransfer(photo, ex);
                 }
             }
         }
