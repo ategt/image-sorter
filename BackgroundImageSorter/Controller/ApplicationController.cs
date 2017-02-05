@@ -1,4 +1,5 @@
 ﻿using BackgroundImageSorter.Model;
+using BackgroundImageSorter.View;
 using NDesk.Options;
 using System;
 using System.Collections.Generic;
@@ -17,20 +18,9 @@ namespace BackgroundImageSorter.Controller
                                                 .Controller
                                                 .ApplicationController()
                                                 .RunProgram(args);
-            PrintReport(report);
+            ConsoleView.PrintReport(report);
         }
 
-        private static void PrintReport(Report report)
-        {
-            if (report == null) return;
-
-            Console.WriteLine();
-
-            Console.WriteLine(report);
-
-            Console.WriteLine("Press Any Key to exit...");
-            while (!Console.KeyAvailable) { }
-        }
 
         public Report RunProgram(string[] args)
         {
