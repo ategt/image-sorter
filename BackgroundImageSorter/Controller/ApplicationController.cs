@@ -1,4 +1,5 @@
 ﻿using BackgroundImageSorter.Model;
+using BackgroundImageSorter.Utilities;
 using BackgroundImageSorter.View;
 using NDesk.Options;
 using System;
@@ -12,16 +13,24 @@ namespace BackgroundImageSorter.Controller
 {
     public class ApplicationController
     {
-        public static void Program(string[] args)
+        IOController ioController = null;
+        ConsoleView consoleView = null;
+
+        public ApplicationController(IOController ioController, ConsoleView consoleView)
+        {
+            this.ioController = ioController;
+            this.consoleView = consoleView;
+        }
+
+        public static void Program(string[] args, IOController ioController, ConsoleView consoleView)
         {
             Report report = new BackgroundImageSorter
                                                 .Controller
-                                                .ApplicationController()
+                                                .ApplicationController(ioController, consoleView)
                                                 .RunProgram(args);
             ConsoleView.PrintReport(report);
         }
-
-
+        
         public Report RunProgram(string[] args)
         {
             Configuration config = ConfigurationController.EstablishConfiguration(args);
@@ -31,9 +40,8 @@ namespace BackgroundImageSorter.Controller
             else
                 return null;
         }
-
-
-        public static Report SortImages(Configuration config, Report report)
+        
+        public Report SortImages(Configuration config, Report report)
         {
             PhotoDao photoDao = LoadData(config, report);
 
@@ -49,11 +57,11 @@ namespace BackgroundImageSorter.Controller
             return ProcessReport(config, report);
         }
 
-        private static void PreScanDestination(Configuration config, Report report, PhotoDao photoDao)
+        private void PreScanDestination(Configuration config, Report report, PhotoDao photoDao)
         {
             ConsoleView.DisplayBeginingDirectoryPrescan();
 
-            updateDirectoryData(config, photoDao);
+            ioController.updateDirectoryData(config, photoDao);
 
             ConsoleView.DisplayFinishedDirectoryPrescan();
         }
@@ -65,12 +73,12 @@ namespace BackgroundImageSorter.Controller
             return report;
         }
 
-        private static void UpdateData(Configuration config, Report report, PhotoDao photoDao)
+        private void UpdateData(Configuration config, Report report, PhotoDao photoDao)
         {
             ConsoleView.DisplayBeginUpdatingDao();
 
             if (!config.NoUpdate)
-                updateDirectoryData(config, photoDao);
+                ioController.updateDirectoryData(config, photoDao);
 
             UpdateReportWithNewImageCount(config, report, photoDao);
 
@@ -125,53 +133,9 @@ namespace BackgroundImageSorter.Controller
             report.StoredBackgrounds = photoDao.Backgrounds();
         }
 
-        private static void updateDirectoryData(Configuration config,
-                                                    PhotoDao photoDao)
-        {
-            ISet<DirectoryInfo> directories = GenerateScannableDirectoriesSet(config);
 
-            List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
-            directoriesToScan.RemoveAll(item => item == null);
-            directoriesToScan.ForEach(directory => updateDirectoryData(directory, photoDao));
-        }
 
-        private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
-        {
-            ISet<DirectoryInfo> directories = new HashSet<DirectoryInfo>();
-            directories.Add(config.Portrait);
-            directories.Add(config.Landscape);
-            directories.Add(config.DataDirectory);
-            directories.Add(config.BackgroundDirectory);
-            directories.Add(config.Destination);
-            directories.Add(config.SmallDirectory);
-
-            if (config.BackgroundDirectory?.Exists ?? false)
-                config.BackgroundDirectory?
-                    .GetDirectories()
-                    .ToList<DirectoryInfo>()
-                    .ForEach(dir => directories.Add(dir));
-            return directories;
-        }
-
-        private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
-        {
-            directory?.Refresh();
-
-            if (directory == null)
-            {
-                return;
-            }
-            else if (directory.Exists)
-            {
-                Array.ForEach<FileInfo>(directory.GetFiles(), file => AddPhotoToDao(photoDao, file));
-            }
-            else
-            {
-                ConsoleView.DisplayDirectoryDoesNotExist(directory);
-            }
-        }
-
-        private static Photo AddPhotoToDao(PhotoDao photoDao, FileInfo file)
+        public static Photo AddPhotoToDao(PhotoDao photoDao, FileInfo file)
         {
             string filePath = file.FullName;
             Photo photo = PhotoBuilder.Build(filePath);

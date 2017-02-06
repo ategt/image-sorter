@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BackgroundImageSorter
 {
-    class PhotoDao
+    public class PhotoDao
     {
 
         private string photoFilepath;

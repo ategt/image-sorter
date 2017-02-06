@@ -12,7 +12,8 @@ namespace BackgroundImageSorter
     {
         static void Main(string[] args)
         {
-            Controller.ApplicationController.Program(args);
+            View.ConsoleView consoleView = new View.ConsoleView();
+            Controller.ApplicationController.Program(args, new Controller.IOController(consoleView), consoleView);
         }
     }
 }

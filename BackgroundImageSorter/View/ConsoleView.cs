@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BackgroundImageSorter.View
 {
-    class ConsoleView
+    public class ConsoleView
     {
         public static void PrintReport(Report report)
         {
