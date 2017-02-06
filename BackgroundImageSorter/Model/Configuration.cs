@@ -29,6 +29,7 @@ namespace BackgroundImageSorter.Model
         public bool AggressiveExtensions { get; set; }
         public bool Recurse { get; set; }
         public bool PreScan { get; set; }
+        public bool Single { get; set; }
 
     }
 }

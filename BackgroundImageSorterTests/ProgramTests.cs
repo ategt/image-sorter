@@ -168,6 +168,40 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(report.Moved, 3);
             Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
 
+        }
+
+        [Test()]
+        public void MainProgramSingleOutputTest()
+        {
+
+            DirectoryInfo sourceDir = new DirectoryInfo(workingDir + @"\input");
+            DirectoryInfo destinationDir = new DirectoryInfo(workingDir + @"\output");
+            DirectoryInfo portraitDir = new DirectoryInfo(workingDir + @"\output\portrait");
+            DirectoryInfo landscapeDir = new DirectoryInfo(workingDir + @"\output\landscape");
+
+            string[] args = new string[] { "-d", workingDir + @"\output\data.bin",
+                                    $"--s={sourceDir.FullName}",
+                                    @"/Output:" + workingDir + @"\output",
+                                    "-Single",
+                                    "-sub" };
+
+            Report report = new ApplicationController(ioController, consoleView).RunProgram(args);
+
+            FileInfo[] outputPhotos = destinationDir.GetFiles();
+
+            Assert.AreEqual(outputPhotos.Count(), 7);
+
+            Assert.AreEqual(destinationDir.GetDirectories().Count(), 0);
+            
+            DirectoryAssert.DoesNotExist(portraitDir);
+            DirectoryAssert.DoesNotExist(landscapeDir);
+
+            Assert.AreEqual(report.Scanned, 9);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Distinct, 6);
+            Assert.AreEqual(report.Moved, 6);
+            //Assert.AreEqual(report.ImagesInLandscapeFolder, 6);
+
             //ResetOutputDirectory();
 
         }

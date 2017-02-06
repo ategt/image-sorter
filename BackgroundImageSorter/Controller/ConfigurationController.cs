@@ -66,6 +66,7 @@ namespace BackgroundImageSorter.Controller
                 { "d|DataFile=", "Dao Data File", d => config.DataFile = new FileInfo(d) },
                 { "s|Source=", "Folder to Pull Images From", v => config.Source = new DirectoryInfo(v) },
                 { "o|Output=",  "Folder to Place Sorted Images Into", v => config.Destination = new DirectoryInfo(v)},
+                { "Single",  "Place All Scanned Files Directly Into Output Folder", v => config.Single = v != null},
                 { "p|Portrait=",  "Folder to Place Portrait Images Into", v => config.Portrait = new DirectoryInfo(v)},
                 { "l|Landscape=",  "Folder to Place Landscape Images Into", v => config.Landscape = new DirectoryInfo(v)},
                 { "f|Fast", "Fast Scan - Use File Names Instead of Hashes.", v => config.FastScan = v != null },
@@ -100,6 +101,15 @@ namespace BackgroundImageSorter.Controller
 
             if (config.DataFile == null)
                 config.DataFile = new FileInfo(@".\PhotoData.bin");
+
+            if (config.Single)
+            {
+                config.BackgroundDirectory = config.Destination;
+                config.DataDirectory = config.Destination;
+                config.Portrait = config.Destination;
+                config.SmallDirectory = config.Destination;
+                config.Landscape = config.Destination;
+            }
 
             if (config.BackgroundDirectory == null)
                 config.BackgroundDirectory = PrepareSubDirectory(config.Destination, "Backgrounds");

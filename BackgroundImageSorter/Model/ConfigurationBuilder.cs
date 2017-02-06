@@ -20,7 +20,8 @@ namespace BackgroundImageSorter.Model
                 Error = false,
                 SuppressReport = false,
                 RebuildExtensions = false,
-                Recurse = false
+                Recurse = false,
+                Single = false
             };
         }
     }
