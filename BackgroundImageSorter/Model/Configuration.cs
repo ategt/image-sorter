@@ -30,6 +30,6 @@ namespace BackgroundImageSorter.Model
         public bool Recurse { get; set; }
         public bool PreScan { get; set; }
         public bool Single { get; set; }
-
+        public bool Move { get; set; }
     }
 }

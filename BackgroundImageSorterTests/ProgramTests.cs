@@ -192,7 +192,7 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(outputPhotos.Count(), 7);
 
             Assert.AreEqual(destinationDir.GetDirectories().Count(), 0);
-            
+
             DirectoryAssert.DoesNotExist(portraitDir);
             DirectoryAssert.DoesNotExist(landscapeDir);
 
@@ -207,9 +207,82 @@ namespace BackgroundImageSorter.Tests
         }
 
         [Test()]
+        public void MainProgramMoveTest()
+        {
+            DirectoryInfo middleFolder = new DirectoryInfo(workingDir + @"\output\temp");
+
+            DirectoryInfo sourceFolder = new DirectoryInfo(workingDir + @"\input");
+
+            //Now Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(sourceFolder.FullName, "*",
+                SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(sourceFolder.FullName, middleFolder.FullName));
+
+            //Copy all the files & Replaces any files with the same name
+            foreach (string newPath in Directory.GetFiles(sourceFolder.FullName, "*.*",
+                SearchOption.AllDirectories))
+                File.Copy(newPath, newPath.Replace(sourceFolder.FullName, middleFolder.FullName), false);
+
+            //Directory.c(workingDir + @"\input", middleFolder.FullName, false); 
+
+            Configuration config = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\output\temp"),
+                Destination = new DirectoryInfo(workingDir + @"\output\dest"),
+                DataFile = new FileInfo(workingDir + @"\data.bin"),
+                Recurse = true,
+                NoUpdate = true,
+                Move = true
+            };
+
+            config = ConfigurationController.SetDefaultDirectories(config);
+
+            Assert.AreEqual(9, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
+
+            Report report = new ApplicationController(ioController, consoleView).SortImages(config, new Report());
+
+            DirectoryInfo landscapes = config.Landscape;
+            FileInfo[] landscapePhotos = landscapes.GetFiles();
+
+            Assert.AreEqual(landscapePhotos.Count(), 3);
+
+            DirectoryAssert.Exists(config.Portrait);
+            Assert.IsNotNull(config.Portrait);
+
+            DirectoryAssert.Exists(config.Landscape);
+            Assert.IsNotNull(config.Landscape);
+
+            DirectoryAssert.Exists(config.SmallDirectory);
+            Assert.IsNotNull(config.SmallDirectory);
+
+            DirectoryAssert.Exists(config.DataDirectory);
+            Assert.IsNotNull(config.DataDirectory);
+
+            FileAssert.Exists(workingDir + @"\output\dest\Backgrounds\Portrait\76a834734a7ce31bab6f778642c41b1ad4675f56b57c7881bf69e2e1be095d4d.jpg.jpg");
+            FileAssert.Exists(workingDir + @"\output\dest\Data\Random Text");
+            FileAssert.Exists(workingDir + @"\output\dest\Other Images\Small Image");
+
+            Assert.AreEqual(report.Scanned, 9);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Distinct, 6);
+            Assert.AreEqual(report.Moved, 6);
+            Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
+
+            Assert.AreEqual(3, config.Source.GetFiles("*", SearchOption.TopDirectoryOnly).Count());
+            Assert.AreEqual(3, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(6, config.Destination.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.DataDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.SmallDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.Portrait.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(3, config.Landscape.GetFiles("*", SearchOption.AllDirectories).Count());
+
+            Assert.AreEqual(3, middleFolder.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, middleFolder.GetDirectories().Count());
+        }
+
+        [Test()]
         public void SetDirectoriesManuallyTest()
         {
-            //ResetOutputDirectory();
 
             Configuration config = new Configuration
             {

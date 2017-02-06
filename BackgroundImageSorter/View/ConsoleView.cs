@@ -120,5 +120,9 @@ namespace BackgroundImageSorter.View
             Console.WriteLine(ex.Message);
         }
 
+        internal static void DisplayFileTestTransfer(string inputFullName, string outputFullName)
+        {
+            Console.WriteLine($"{inputFullName} to {outputFullName}");
+        }
     }
 }

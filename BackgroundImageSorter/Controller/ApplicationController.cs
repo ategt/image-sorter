@@ -210,10 +210,19 @@ namespace BackgroundImageSorter.Controller
 
         private static void CopyToDirectory(Configuration config, Report report, Photo photo, DirectoryInfo destinationDirectory)
         {
+            string destinationFullName = GenerateNewFullName(config, photo, destinationDirectory);
+
             if (!config.Test)
             {
                 CreateNonExistantDirectory(destinationDirectory);
-                photo.FileInfo.CopyTo(GenerateNewFullName(config, photo, destinationDirectory), false);
+                if (config.Move)
+                    photo.FileInfo.MoveTo(destinationFullName);
+                else
+                    photo.FileInfo.CopyTo(destinationFullName, false);
+            }
+            else
+            {
+                ConsoleView.DisplayFileTestTransfer(photo.FileInfo.FullName, destinationFullName);
             }
             report.Moved++;
         }

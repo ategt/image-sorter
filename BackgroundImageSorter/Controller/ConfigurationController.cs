@@ -77,6 +77,7 @@ namespace BackgroundImageSorter.Controller
                 { "a|Automated", "Suppress the Report and Do Not Pause at the End\n\tUseful For Batch Scripts.", v => config.SuppressReport = v != null },
                 { "A|Aggressive", "Aggressively ReBuild File Extensions.\n\tRemoves Everything After The First Dot(.).\n\tDefault is Last Dot.", v => config.AggressiveExtensions = v != null },
                 { "sub|Sub", "Recurrsively Include Subdirectories In Search.", v => config.Recurse = v != null },
+                { "move|Move", "Move Files Instead of Copying", v => config.Move = v != null },
                 { "pre|Prescan", "PreScan The Destination Directory.", v => config.PreScan = v != null },
                 { "h|help",  "show this message and exit",
                         v => config.ShowHelp = v != null },
