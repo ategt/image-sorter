@@ -63,8 +63,8 @@
     <Compile Include="Model\ConfigurationBuilder.cs" />
     <Compile Include="Model\PhotoBuilder.cs" />
     <Compile Include="Model\Report.cs" />
-    <Compile Include="Photo.cs" />
-    <Compile Include="PhotoDao.cs" />
+    <Compile Include="Model\Photo.cs" />
+    <Compile Include="Model\PhotoDao.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\ConsoleView.cs" />
