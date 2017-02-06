@@ -219,7 +219,7 @@ namespace BackgroundImageSorter.Tests
             {
                 Source = new DirectoryInfo(workingDir + @"\output\temp"),
                 Destination = new DirectoryInfo(workingDir + @"\output\dest"),
-                DataFile = new FileInfo(workingDir + @"\data.bin"),
+                DataFile = new FileInfo(workingDir + @"\output\data.bin"),
                 Recurse = true,
                 NoUpdate = true,
                 Move = true
@@ -268,6 +268,54 @@ namespace BackgroundImageSorter.Tests
 
             Assert.AreEqual(3, middleFolder.GetFiles("*", SearchOption.AllDirectories).Count());
             Assert.AreEqual(1, middleFolder.GetDirectories().Count());
+
+            FileStream rootFile = File.Create(config.Destination.FullName + @"\a-test-file.txt");
+            FileStream landscapeFile = File.Create(config.Landscape.FullName + @"\a-test-file.txt");
+            rootFile.Close();
+            landscapeFile.Close();
+
+            report = new ApplicationController(ioController, consoleView).SortImages(config, new Report());
+
+            landscapes = config.Landscape;
+            landscapePhotos = landscapes.GetFiles();
+
+            Assert.AreEqual(landscapePhotos.Count(), 4);
+
+            DirectoryAssert.Exists(config.Portrait);
+            Assert.IsNotNull(config.Portrait);
+
+            DirectoryAssert.Exists(config.Landscape);
+            Assert.IsNotNull(config.Landscape);
+
+            DirectoryAssert.Exists(config.SmallDirectory);
+            Assert.IsNotNull(config.SmallDirectory);
+
+            DirectoryAssert.Exists(config.DataDirectory);
+            Assert.IsNotNull(config.DataDirectory);
+
+            FileAssert.Exists(workingDir + @"\output\dest\Backgrounds\Portrait\76a834734a7ce31bab6f778642c41b1ad4675f56b57c7881bf69e2e1be095d4d.jpg.jpg");
+            FileAssert.Exists(workingDir + @"\output\dest\Data\Random Text");
+            FileAssert.Exists(workingDir + @"\output\dest\Other Images\Small Image");
+
+            Assert.AreEqual(report.Scanned, 3);
+            Assert.AreEqual(report.AlreadyHad, 3);
+            Assert.AreEqual(report.Distinct, 0);
+            Assert.AreEqual(report.Moved, 0);
+            Assert.AreEqual(report.ImagesInLandscapeFolder, 0);
+
+            Assert.AreEqual(3, config.Source.GetFiles("*", SearchOption.TopDirectoryOnly).Count());
+            Assert.AreEqual(3, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(8, config.Destination.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.DataDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.SmallDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, config.Portrait.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(4, config.Landscape.GetFiles("*", SearchOption.AllDirectories).Count());
+
+            Assert.AreEqual(3, middleFolder.GetFiles("*", SearchOption.AllDirectories).Count());
+            Assert.AreEqual(1, middleFolder.GetDirectories().Count());
+
+            FileAssert.Exists(config.Destination.FullName + @"\a-test-file.txt");
+            FileAssert.Exists(config.Landscape.FullName + @"\a-test-file.txt");
         }
 
         [Test()]

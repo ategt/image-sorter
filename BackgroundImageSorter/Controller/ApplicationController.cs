@@ -122,13 +122,14 @@ namespace BackgroundImageSorter.Controller
         }
 
 
-        private static void UpdateReportWithNewImageCount(Configuration config, Report report, PhotoDao photoDao)
+        private static Report UpdateReportWithNewImageCount(Configuration config, Report report, PhotoDao photoDao)
         {
             report.ImagesInLandscapeFolder = config.Landscape
                                         .GetFiles()
                                         .Count();
 
             report.PostImageCount = photoDao.size();
+            return report;
         }
 
         private static void LoadDaoInfoToReport(Report report, PhotoDao photoDao)
