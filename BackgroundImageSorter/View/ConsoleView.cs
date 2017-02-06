@@ -42,6 +42,10 @@ namespace BackgroundImageSorter.View
             Console.WriteLine("\t Fast Scan Not Implemented Yet.");
         }
 
+        internal void DisplayProgress(int current, int count)
+        {
+            Console.WriteLine(UpdateProgressBar(current, count));
+        }
 
         public static void DisplayFinishedDirectoryPrescan()
         {
@@ -91,15 +95,17 @@ namespace BackgroundImageSorter.View
         internal static void DisplayScanProgress(int currentPosition, int totalPossibles)
         {
             int lengthOfBar = 20;
-            int dotsToShow = (currentPosition / totalPossibles);
+            int dotsToShow = (int) (( (float) currentPosition / (float) totalPossibles) * (float) lengthOfBar);
+            if (dotsToShow > 20) dotsToShow = 20; 
             int spacesToShow = lengthOfBar - dotsToShow;
+
             string dots = new string('-', dotsToShow);
             string spaceLeftOver = new string(' ', spacesToShow);
             string progressBar = $"[{dots}{spaceLeftOver}]";
 
             string output = $"{BEGINNING_SCANNING_SOURCE}{progressBar}({currentPosition}/{totalPossibles}) - {dotsToShow},{spacesToShow}*{lengthOfBar}";
             Console.CursorLeft = 0;
-            Console.WriteLine(output);
+            Console.Write(output);
         }
 
         internal static void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
@@ -149,5 +155,28 @@ namespace BackgroundImageSorter.View
             Console.WriteLine("Skipping " + photo.FileInfo.Name);
             Console.WriteLine(ex.Message);
         }
+
+        //private static int currentPosition = 0;
+        //private static int totalPossibles = 0;
+        private static string UpdateProgressBar(int currentPosition, int totalPossibles)
+        {
+            int lengthOfBar = 20;
+            int dotsToShow = (currentPosition / totalPossibles);
+            int spacesToShow = lengthOfBar - dotsToShow;
+            string dots = new string('-', dotsToShow);
+            string spaceLeftOver = new string(' ', spacesToShow);
+            string progressBar = $"[{dots}{spaceLeftOver}]";
+
+            string output = $"{progressBar}({currentPosition}/{totalPossibles}) - {dotsToShow},{spacesToShow}*{lengthOfBar}";
+            return output;
+            //Console.CursorLeft = 0;
+            //Console.WriteLine(output);
+        }
+
+        //private static void resetProgressBar()
+        //{
+        //    currentPosition = 0;
+        //}
+
     }
 }

@@ -279,7 +279,9 @@ namespace BackgroundImageSorter.Controller
             int totalPossibles = possiblePhotos.Count();
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => { ConsoleView.DisplayScanProgress(currentPosition++, totalPossibles);
-                                                                                 return PhotoBuilder.Build(possiblePhoto.FullName); });
+                                                                                 return PhotoBuilder.Build(possiblePhoto.FullName); })
+                                                                                 .ToList();
+            totalPossibles = possiblePhotos.Count();
 
             report.Scanned = photos.Count();
 

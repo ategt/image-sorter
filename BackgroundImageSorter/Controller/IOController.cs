@@ -21,11 +21,14 @@ namespace BackgroundImageSorter.Controller
         public void updateDirectoryData(Configuration config,
                                     PhotoDao photoDao)
         {
+            int currentPosition = 0;
             ISet<DirectoryInfo> directories = GenerateScannableDirectoriesSet(config);
 
             List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
             directoriesToScan.RemoveAll(item => item == null);
-            directoriesToScan.ForEach(directory => updateDirectoryData(directory, photoDao));
+            directoriesToScan.ForEach(directory => { consoleView.DisplayProgress(currentPosition++, directoriesToScan.Count);
+                                                        updateDirectoryData(directory, photoDao); })
+                                                        .toList();
         }
 
         private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
