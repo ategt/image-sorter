@@ -94,16 +94,9 @@ namespace BackgroundImageSorter.View
 
         internal static void DisplayScanProgress(int currentPosition, int totalPossibles)
         {
-            int lengthOfBar = 20;
-            int dotsToShow = (int) (( (float) currentPosition / (float) totalPossibles) * (float) lengthOfBar);
-            if (dotsToShow > 20) dotsToShow = 20; 
-            int spacesToShow = lengthOfBar - dotsToShow;
+            string progressBar = MakeProgressBar( currentPosition, totalPossibles);
 
-            string dots = new string('-', dotsToShow);
-            string spaceLeftOver = new string(' ', spacesToShow);
-            string progressBar = $"[{dots}{spaceLeftOver}]";
-
-            string output = $"{BEGINNING_SCANNING_SOURCE}{progressBar}({currentPosition}/{totalPossibles}) - {dotsToShow},{spacesToShow}*{lengthOfBar}";
+            string output = $"{BEGINNING_SCANNING_SOURCE}{progressBar}";
             Console.CursorLeft = 0;
             Console.Write(output);
         }
@@ -162,8 +155,10 @@ namespace BackgroundImageSorter.View
         private static string MakeProgressBar(int currentPosition, int totalPossibles)
         {
             int lengthOfBar = 20;
-            int dotsToShow = (currentPosition / totalPossibles);
+            int dotsToShow = (int)(((float)currentPosition / (float)totalPossibles) * (float)lengthOfBar);
+            if (dotsToShow > 20) dotsToShow = 20;
             int spacesToShow = lengthOfBar - dotsToShow;
+
             string dots = new string('-', dotsToShow);
             string spaceLeftOver = new string(' ', spacesToShow);
             string progressBar = $"[{dots}{spaceLeftOver}]";
