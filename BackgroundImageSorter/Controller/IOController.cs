@@ -61,7 +61,6 @@ namespace BackgroundImageSorter.Controller
             else
             {
                 ConsoleView.DisplayDirectoryDoesNotExist(directory);
-                //throw new DirectoryNotFoundException($"{directory.FullName} should exist.");
             }
         }
 

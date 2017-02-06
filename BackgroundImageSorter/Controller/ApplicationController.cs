@@ -42,7 +42,7 @@ namespace BackgroundImageSorter.Controller
         {
             PhotoDao photoDao = LoadData(config, report);
 
-            if (config.PreScan || photoDao.size() < 1)
+            if (evaluatePrescanRequirements(config, photoDao))
                 PreScanDestination(config, report, photoDao);
 
             IEnumerable<Photo> uniquePhotos = ScanSource(config, report, photoDao);
@@ -52,6 +52,11 @@ namespace BackgroundImageSorter.Controller
             UpdateData(config, report, photoDao);
 
             return ProcessReport(config, report);
+        }
+
+        private static bool evaluatePrescanRequirements(Configuration config, PhotoDao photoDao)
+        {
+            return config.PreScan || photoDao.size() < 1;
         }
 
         private void PreScanDestination(Configuration config, Report report, PhotoDao photoDao)
@@ -215,52 +220,7 @@ namespace BackgroundImageSorter.Controller
 
         public static string RebuildImageExtension(Photo photo, bool aggressive)
         {
-            string properExtension = string.Empty;
-            Guid format = photo.Format;
-            if (format.Equals(ImageFormat.Jpeg.Guid))
-            {
-                properExtension = "jpg";
-            }
-            else if (format.Equals(ImageFormat.Bmp.Guid))
-            {
-                properExtension = "bmp";
-            }
-            else if (format.Equals(ImageFormat.Exif.Guid))
-            {
-                properExtension = "exif";
-            }
-            else if (format.Equals(ImageFormat.Emf.Guid))
-            {
-                properExtension = "emf";
-            }
-            else if (format.Equals(ImageFormat.Gif.Guid))
-            {
-                properExtension = "gif";
-            }
-            else if (format.Equals(ImageFormat.Icon.Guid))
-            {
-                properExtension = "icon";
-            }
-            else if (format.Equals(ImageFormat.MemoryBmp.Guid))
-            {
-                properExtension = "mbmp";
-            }
-            else if (format.Equals(ImageFormat.Png.Guid))
-            {
-                properExtension = "png";
-            }
-            else if (format.Equals(ImageFormat.Tiff.Guid))
-            {
-                properExtension = "tiff";
-            }
-            else if (format.Equals(ImageFormat.Wmf.Guid))
-            {
-                properExtension = "wmf";
-            }
-            else
-            {
-                properExtension = string.Empty;
-            }
+            string properExtension = Utilities.ImageUtilities.DetectProperExtension(photo);
 
             if (string.IsNullOrWhiteSpace(properExtension))
                 return photo.FileInfo.Name;
