@@ -71,6 +71,11 @@ namespace BackgroundImageSorter.View
             Console.Write("Copying Photos...");
         }
 
+        internal void DisplayNoFilesMoved()
+        {
+            Console.WriteLine("No Files Were Moved...Skipping Data Update.");
+        }
+
         public static void DisplaySourceScanningFinished()
         {
             Console.WriteLine("Complete.");

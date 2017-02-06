@@ -27,7 +27,7 @@ namespace BackgroundImageSorter.Controller
                                                 .RunProgram(args);
             ConsoleView.PrintReport(report);
         }
-        
+
         public Report RunProgram(string[] args)
         {
             Configuration config = ConfigurationController.EstablishConfiguration(args);
@@ -37,7 +37,7 @@ namespace BackgroundImageSorter.Controller
             else
                 return null;
         }
-        
+
         public Report SortImages(Configuration config, Report report)
         {
             PhotoDao photoDao = LoadData(config, report);
@@ -49,7 +49,10 @@ namespace BackgroundImageSorter.Controller
 
             CopyFiles(config, report, uniquePhotos);
 
-            UpdateData(config, report, photoDao);
+            if (report.Moved > 0)
+                UpdateData(config, report, photoDao);
+            else
+                consoleView.DisplayNoFilesMoved();
 
             return ProcessReport(config, report);
         }
@@ -168,7 +171,7 @@ namespace BackgroundImageSorter.Controller
         {
             if (dimension.IsEmpty && !config.ImagesOnly)
             {
-                CopyToDirectory(config, report, photo, config.DataDirectory);
+                CopyToDataDirectory(config, report, photo);
             }
             else if (dimension.Height >= 1080 && dimension.Width >= 1080)
             {
@@ -178,6 +181,11 @@ namespace BackgroundImageSorter.Controller
             {
                 CopyOtherImages(config, report, photo);
             }
+        }
+
+        private static void CopyToDataDirectory(Configuration config, Report report, Photo photo)
+        {
+            CopyToDirectory(config, report, photo, config.DataDirectory);
         }
 
         private static void CopyOtherImages(Configuration config, Report report, Photo photo)
@@ -295,7 +303,7 @@ namespace BackgroundImageSorter.Controller
             return photosWeDoNotHaveYet;
         }
 
-        
+
         public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
         {
             return getDistinctPhotos(filteredPhotos);
