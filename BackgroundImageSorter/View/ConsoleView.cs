@@ -76,14 +76,35 @@ namespace BackgroundImageSorter.View
             Console.WriteLine("No Files Were Moved...Skipping Data Update.");
         }
 
-        public static void DisplaySourceScanningFinished()
+        internal static void DisplayFileTestTransfer(string inputFullName, string outputFullName)
         {
-            Console.WriteLine("Complete.");
+            Console.WriteLine($"{inputFullName} to {outputFullName}");
         }
 
         public static void DisplaySourceScanningBegining()
         {
-            Console.Write("Scaning Source Directory...");
+            Console.Write("Scaning Source Directory....");
+        }
+
+        internal static void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
+        {
+            string output = $"New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
+            if (Console.CursorLeft > output.Length)
+                Console.CursorLeft = Console.CursorLeft - output.Length  ;
+            Console.Write(output);
+        }
+
+        public static void DisplayAFileHasBeenFilteredOut(int accepted, int rejected, int total)
+        {
+            string output = $"New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
+            if (Console.CursorLeft > output.Length)
+                Console.CursorLeft = Console.CursorLeft - output.Length;
+            Console.Write(output);
+        }
+
+        public static void DisplaySourceScanningFinished()
+        {
+            Console.WriteLine("Complete.");
         }
 
         public static void DisplayDaoLoadingFinished()
@@ -104,11 +125,6 @@ namespace BackgroundImageSorter.View
             return null;
         }
 
-        public static void DisplayAFileHasBeenFilteredOut()
-        {
-            Console.WriteLine("We Have This One.");
-        }
-
         public static void DisplayDirectoryDoesNotExist(DirectoryInfo directory)
         {
             Console.WriteLine(directory.FullName + " does not exist.");
@@ -118,11 +134,6 @@ namespace BackgroundImageSorter.View
         {
             Console.WriteLine("Skipping " + photo.FileInfo.Name);
             Console.WriteLine(ex.Message);
-        }
-
-        internal static void DisplayFileTestTransfer(string inputFullName, string outputFullName)
-        {
-            Console.WriteLine($"{inputFullName} to {outputFullName}");
         }
     }
 }

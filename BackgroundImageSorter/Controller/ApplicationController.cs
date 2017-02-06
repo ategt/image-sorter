@@ -295,7 +295,8 @@ namespace BackgroundImageSorter.Controller
         {
 
             List<Photo> photosWeDoNotHaveYet = new List<Photo>();
-
+            int accepted = 0, rejected = 0, total = photos.Count();
+            
             foreach (var photo in photos)
             {
                 bool alreadyHaveThisOne = photoDao.Contains(photo);
@@ -303,10 +304,13 @@ namespace BackgroundImageSorter.Controller
                 if (!alreadyHaveThisOne)
                 {
                     photosWeDoNotHaveYet.Add(photo);
+                    accepted = photosWeDoNotHaveYet.Count();
+                    ConsoleView.DisplayAFileHasBeenAccepted(accepted, rejected, total);
                 }
                 else
                 {
-                    ConsoleView.DisplayAFileHasBeenFilteredOut();
+                    rejected++;
+                    ConsoleView.DisplayAFileHasBeenFilteredOut(accepted, rejected, total);
                 }
             }
 
