@@ -130,6 +130,13 @@ namespace BackgroundImageSorter
         {
             Photo foundPhoto = GetBySHA512(Photo.SHA512);
 
+            return (foundPhoto != null);
+        }
+
+        public bool FullContains(Photo Photo)
+        {
+            Photo foundPhoto = GetBySHA512(Photo.SHA512);
+
             if (foundPhoto == null) return false;
 
             return (foundPhoto.Digest.SequenceEqual(Photo.Digest)) &&

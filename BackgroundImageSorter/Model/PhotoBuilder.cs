@@ -5,8 +5,30 @@ namespace BackgroundImageSorter.Model
 {
     public class PhotoBuilder
     {
-
+        // New Lean Version
         public static Photo Build(string path)
+        {
+            Photo photo = new Photo();
+
+            photo.SHA512 = GetSHA512Hash(path);
+            photo.FileInfo = new FileInfo(path);
+            photo.Size = photo.FileInfo.Length;
+
+            photo.hash = photo.FileInfo.Name;
+
+            System.Drawing.Size imageSize;
+            System.Guid format;
+            imageSpecificProperties(photo, out imageSize, out format);
+
+            photo.Dimension = imageSize;
+            photo.Format = format;
+
+            return photo;
+
+        }
+
+        // Legacy Version
+        public static Photo FullBuild(string path)
         {
 
             Photo photo = new Photo();
@@ -14,7 +36,6 @@ namespace BackgroundImageSorter.Model
             photo.Digest = GetMD5Hash(path);
             photo.SHA512 = GetSHA512Hash(path);
             photo.SHA256 = GetSHA256Hash(path);
-            //photo.Path = path;
             photo.FileInfo = new FileInfo(path);
             photo.Size = photo.FileInfo.Length;
 
