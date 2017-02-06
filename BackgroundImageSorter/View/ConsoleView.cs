@@ -44,7 +44,7 @@ namespace BackgroundImageSorter.View
 
         internal void DisplayProgress(int current, int count)
         {
-            Console.WriteLine(UpdateProgressBar(current, count));
+            Console.WriteLine(MakeProgressBar(current, count));
         }
 
         public static void DisplayFinishedDirectoryPrescan()
@@ -110,21 +110,24 @@ namespace BackgroundImageSorter.View
 
         internal static void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
         {
-            string output = $"{BEGINNING_SCANNING_SOURCE}New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
+            string output = $"{BEGINNING_SCANNING_SOURCE} New:{accepted}\t Already Have:{rejected}\t Total:{total}";
             Console.CursorLeft = 0;
             Console.Write(output);
         }
 
         public static void DisplayAFileHasBeenFilteredOut(int accepted, int rejected, int total)
         {
-            string output = $"{BEGINNING_SCANNING_SOURCE}New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
+            string output = $"{BEGINNING_SCANNING_SOURCE} New:{accepted}\t Already Have:{rejected}\t Total:{total}";
             Console.CursorLeft = 0;
             Console.Write(output);
         }
 
         public static void DisplaySourceScanningFinished()
         {
-            Console.WriteLine("Complete.");
+            Console.CursorLeft = 0;
+            Console.Write(new string(' ', Console.WindowWidth - 2));
+            Console.CursorLeft = 0;
+            Console.WriteLine($"{BEGINNING_SCANNING_SOURCE}Complete.");
         }
 
         public static void DisplayDaoLoadingFinished()
@@ -156,9 +159,7 @@ namespace BackgroundImageSorter.View
             Console.WriteLine(ex.Message);
         }
 
-        //private static int currentPosition = 0;
-        //private static int totalPossibles = 0;
-        private static string UpdateProgressBar(int currentPosition, int totalPossibles)
+        private static string MakeProgressBar(int currentPosition, int totalPossibles)
         {
             int lengthOfBar = 20;
             int dotsToShow = (currentPosition / totalPossibles);
@@ -169,14 +170,6 @@ namespace BackgroundImageSorter.View
 
             string output = $"{progressBar}({currentPosition}/{totalPossibles}) - {dotsToShow},{spacesToShow}*{lengthOfBar}";
             return output;
-            //Console.CursorLeft = 0;
-            //Console.WriteLine(output);
         }
-
-        //private static void resetProgressBar()
-        //{
-        //    currentPosition = 0;
-        //}
-
     }
 }
