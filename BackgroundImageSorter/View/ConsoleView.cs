@@ -11,6 +11,8 @@ namespace BackgroundImageSorter.View
 {
     public class ConsoleView
     {
+        public readonly static string BEGINNING_SCANNING_SOURCE = "Scaning Source Directory....";
+
         public static void PrintReport(Report report)
         {
             if (report == null) return;
@@ -83,22 +85,34 @@ namespace BackgroundImageSorter.View
 
         public static void DisplaySourceScanningBegining()
         {
-            Console.Write("Scaning Source Directory....");
+            Console.Write(BEGINNING_SCANNING_SOURCE);
+        }
+
+        internal static void DisplayScanProgress(int currentPosition, int totalPossibles)
+        {
+            int lengthOfBar = 20;
+            int dotsToShow = (currentPosition / totalPossibles);
+            int spacesToShow = lengthOfBar - dotsToShow;
+            string dots = new string('-', dotsToShow);
+            string spaceLeftOver = new string(' ', spacesToShow);
+            string progressBar = $"[{dots}{spaceLeftOver}]";
+
+            string output = $"{BEGINNING_SCANNING_SOURCE}{progressBar}({currentPosition}/{totalPossibles}) - {dotsToShow},{spacesToShow}*{lengthOfBar}";
+            Console.CursorLeft = 0;
+            Console.WriteLine(output);
         }
 
         internal static void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
         {
-            string output = $"New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
-            if (Console.CursorLeft > output.Length)
-                Console.CursorLeft = Console.CursorLeft - output.Length  ;
+            string output = $"{BEGINNING_SCANNING_SOURCE}New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
+            Console.CursorLeft = 0;
             Console.Write(output);
         }
 
         public static void DisplayAFileHasBeenFilteredOut(int accepted, int rejected, int total)
         {
-            string output = $"New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
-            if (Console.CursorLeft > output.Length)
-                Console.CursorLeft = Console.CursorLeft - output.Length;
+            string output = $"{BEGINNING_SCANNING_SOURCE}New: {accepted}\tAlready Have: {rejected}\tTotal: {total}";
+            Console.CursorLeft = 0;
             Console.Write(output);
         }
 

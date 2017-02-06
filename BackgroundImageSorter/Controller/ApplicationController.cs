@@ -275,7 +275,11 @@ namespace BackgroundImageSorter.Controller
                                 sourceDirectory.GetFiles("*", SearchOption.AllDirectories) :
                                         sourceDirectory.GetFiles("*", SearchOption.TopDirectoryOnly);
 
-            IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
+            int currentPosition = 0;
+            int totalPossibles = possiblePhotos.Count();
+
+            IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => { ConsoleView.DisplayScanProgress(currentPosition++, totalPossibles);
+                                                                                 return PhotoBuilder.Build(possiblePhoto.FullName); });
 
             report.Scanned = photos.Count();
 
