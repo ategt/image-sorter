@@ -25,8 +25,6 @@ namespace BackgroundImageSorter.Tests
             if ( outputDir.GetFiles().Count() > 0 || outputDir.GetDirectories().Count() > 0)
             {
                 ResetOutputDirectory();
-                //outputDir.Delete(true);
-                //outputDir.Create();
             }
         }
 
@@ -141,8 +139,6 @@ namespace BackgroundImageSorter.Tests
         [Test()]
         public void MainProgramTest()
         {
-            //ResetOutputDirectory();
-
             DirectoryInfo portraitDir = new DirectoryInfo(workingDir + @"\output\portrait");
             DirectoryInfo landscapeDir = new DirectoryInfo(workingDir + @"\output\landscape");
             DirectoryInfo sourceDir = new DirectoryInfo(workingDir + @"\input");
@@ -200,10 +196,6 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(report.AlreadyHad, 0);
             Assert.AreEqual(report.Distinct, 6);
             Assert.AreEqual(report.Moved, 6);
-            //Assert.AreEqual(report.ImagesInLandscapeFolder, 6);
-
-            //ResetOutputDirectory();
-
         }
 
         [Test()]
@@ -222,8 +214,6 @@ namespace BackgroundImageSorter.Tests
             foreach (string newPath in Directory.GetFiles(sourceFolder.FullName, "*.*",
                 SearchOption.AllDirectories))
                 File.Copy(newPath, newPath.Replace(sourceFolder.FullName, middleFolder.FullName), false);
-
-            //Directory.c(workingDir + @"\input", middleFolder.FullName, false); 
 
             Configuration config = new Configuration
             {
@@ -335,9 +325,6 @@ namespace BackgroundImageSorter.Tests
         [Test()]
         public void MainActionTest()
         {
-            //ResetOutputDirectory();
-            //Directory.CreateDirectory(workingDir + @"\output");
-
             Configuration config = new Configuration
             {
                 Source = new DirectoryInfo(workingDir + @"\input"),
@@ -365,9 +352,6 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
 
             Assert.AreEqual(6, config.Source.GetFiles().Count());
-
-            //ResetOutputDirectory();
-
         }
 
         [Test()]
@@ -421,9 +405,6 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(1, config.DataDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
             Assert.AreEqual(1, config.SmallDirectory.GetFiles("*", SearchOption.AllDirectories).Count());
             Assert.AreEqual(1, config.Portrait.GetFiles("*", SearchOption.AllDirectories).Count());
-
-            //ResetOutputDirectory();
-
         }
 
         [Test]
