@@ -12,6 +12,7 @@ namespace BackgroundImageSorter.View
     public class ConsoleView
     {
         public readonly static string BEGINNING_SCANNING_SOURCE = "Scaning Source Directory....";
+        public readonly static string BEGINNING_SCANNING_DESTINATION = "Scaning Destination Directory....";
 
         public static void PrintReport(Report report)
         {

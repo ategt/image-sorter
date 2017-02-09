@@ -23,33 +23,50 @@ namespace BackgroundImageSorter.Controller
         {
             ISet<DirectoryInfo> directories = GenerateScannableDirectoriesSet(config);
 
-            List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
-            directoriesToScan.RemoveAll(item => item == null);
+            List<DirectoryInfo> directoriesToScan = RemoveNullDirectories(directories);
 
+            List<FileInfo> filesToScan = scanDirectoriesForFiles(directoriesToScan);
+
+            scanFilesInListToDao(photoDao, filesToScan);
+        }
+
+        private void scanFilesInListToDao(PhotoDao photoDao, List<FileInfo> filesToScan)
+        {
+            int i =  0, total = filesToScan.Count;
+            foreach (FileInfo file in filesToScan)
+            {
+                consoleView.DisplayDaoScanProgress(i, total);
+                ApplicationController.AddPhotoToDao(photoDao, file);
+            }
+        }
+
+        private static List<FileInfo> scanDirectoriesForFiles(List<DirectoryInfo> directoriesToScan)
+        {
             List<FileInfo> filesToScanList = new List<FileInfo>();
-            //FileInfo[] filesToScanList = new FileInfo[]();
             directoriesToScan.ForEach(directory =>
             {
-                FileInfo[] filesToScan = updateDirectoryData(directory, photoDao);
-                if (filesToScan != null)
-                {
-                    int i = 0;
-                    Console.WriteLine($"Scan list length: {filesToScan.Length}");
-                    foreach (FileInfo file in filesToScan)
-                    {                        
-                        Console.WriteLine($"Scanning {file.Name}:{i++}");
-                        //ApplicationController.AddPhotoToDao(photoDao, file);
-                        filesToScanList.Add(file);
-                    }
-                }
+                FileInfo[] filesToScan = getFilesFromValidDirectories(directory);
+                addFilesToFilesList(filesToScanList, filesToScan);
             });
+            return filesToScanList;
+        }
 
-            Console.WriteLine($"List length: {filesToScanList.Count}");
-            foreach (FileInfo file in filesToScanList)
+        private static void addFilesToFilesList(List<FileInfo> filesToScanList, FileInfo[] filesToScan)
+        {
+            if (filesToScan != null)
             {
-                ApplicationController.AddPhotoToDao(photoDao, file);
-                Console.WriteLine($"Listed {file.Name}");
+                foreach (FileInfo file in filesToScan)
+                {
+                    filesToScanList.Add(file);
+                }
             }
+        }
+
+        private static List<DirectoryInfo> RemoveNullDirectories(ISet<DirectoryInfo> directories)
+        {
+            List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
+            directoriesToScan.RemoveAll(item => item == null);
+            return directoriesToScan;
         }
 
         private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
@@ -70,7 +87,7 @@ namespace BackgroundImageSorter.Controller
             return directories;
         }
 
-        private static FileInfo[] updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
+        private static FileInfo[] getFilesFromValidDirectories(DirectoryInfo directory)
         {
             directory?.Refresh();
 
@@ -80,7 +97,6 @@ namespace BackgroundImageSorter.Controller
             }
             else if (directory.Exists)
             {
-                //Array.ForEach<FileInfo>(directory.GetFiles(), file => ApplicationController.AddPhotoToDao(photoDao, file));
                 return directory.GetFiles();
             }
             else
