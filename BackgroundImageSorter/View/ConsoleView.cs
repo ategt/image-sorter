@@ -101,14 +101,17 @@ namespace BackgroundImageSorter.View
             Console.Write(output);
         }
 
-        internal static void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
+        public static void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
         {
-            string output = $"{BEGINNING_SCANNING_SOURCE} New:{accepted}\t Already Have:{rejected}\t Total:{total}";
-            Console.CursorLeft = 0;
-            Console.Write(output);
+            DisplayFileFilterUpdate(accepted, rejected, total);
         }
 
         public static void DisplayAFileHasBeenFilteredOut(int accepted, int rejected, int total)
+        {
+            DisplayFileFilterUpdate(accepted, rejected, total);
+        }
+
+        private static void DisplayFileFilterUpdate(int accepted, int rejected, int total)
         {
             string output = $"{BEGINNING_SCANNING_SOURCE} New:{accepted}\t Already Have:{rejected}\t Total:{total}";
             Console.CursorLeft = 0;
