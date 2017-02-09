@@ -29,7 +29,7 @@ namespace BackgroundImageSorter.Controller
             List<FileInfo> filesToScan = new List<FileInfo>();
             Console.WriteLine($"Directories to scan: {directoriesToScan.Count}");
             int i = 0;
-            directoriesToScan.ForEach(directory => { i++; filesToScan = filesToScan.Union(getFilesInDirectory(directory) ?? new List<FileInfo>()).ToList(); });
+            directoriesToScan.ForEach(directory => { i++;  getFilesInDirectory(directory)?.ForEach(file => filesToScan.Add(file)) ; });
             Console.WriteLine($"Directories scanned: {i}");
 
             filesToScan.ForEach(file => ApplicationController.AddPhotoToDao(photoDao, file));
