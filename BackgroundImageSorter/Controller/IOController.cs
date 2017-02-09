@@ -25,15 +25,7 @@ namespace BackgroundImageSorter.Controller
 
             List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
             directoriesToScan.RemoveAll(item => item == null);
-
-            List<FileInfo> filesToScan = new List<FileInfo>();
-            Console.WriteLine($"Directories to scan: {directoriesToScan.Count}");
-            int i = 0;
-            directoriesToScan.ForEach(directory => { i++;  getFilesInDirectory(directory)?.ForEach(file => filesToScan.Add(file)) ; });
-            Console.WriteLine($"Directories scanned: {i}");
-
-            filesToScan.ForEach(file => ApplicationController.AddPhotoToDao(photoDao, file));
-
+            directoriesToScan.ForEach(directory => updateDirectoryData(directory, photoDao));
         }
 
         private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
@@ -54,24 +46,21 @@ namespace BackgroundImageSorter.Controller
             return directories;
         }
 
-        private static List<FileInfo> getFilesInDirectory(DirectoryInfo directory)
+        private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
         {
             directory?.Refresh();
 
             if (directory == null)
             {
-                return null;
+                return;
             }
             else if (directory.Exists)
             {
-                //Array.ForEach<FileInfo>(directory.GetFiles(), file => ApplicationController.AddPhotoToDao(photoDao, file));
-                //Array.ForEach<FileInfo>(directory.GetFiles(), file => ApplicationController.AddPhotoToDao(photoDao, file));
-                return directory.GetFiles().ToList();
+                Array.ForEach<FileInfo>(directory.GetFiles(), file => ApplicationController.AddPhotoToDao(photoDao, file));
             }
             else
             {
                 ConsoleView.DisplayDirectoryDoesNotExist(directory);
-                return null;
             }
         }
 
