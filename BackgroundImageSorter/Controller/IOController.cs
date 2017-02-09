@@ -25,7 +25,18 @@ namespace BackgroundImageSorter.Controller
 
             List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
             directoriesToScan.RemoveAll(item => item == null);
-            directoriesToScan.ForEach(directory => updateDirectoryData(directory, photoDao));
+            directoriesToScan.ForEach(directory =>
+            {
+
+                FileInfo[] filesToScan = updateDirectoryData(directory, photoDao);
+                if (filesToScan != null)
+                {
+                    foreach (FileInfo file in filesToScan)
+                    {
+                        ApplicationController.AddPhotoToDao(photoDao, file);
+                    }
+                }
+            });
         }
 
         private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
@@ -46,21 +57,23 @@ namespace BackgroundImageSorter.Controller
             return directories;
         }
 
-        private static void updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
+        private static FileInfo[] updateDirectoryData(DirectoryInfo directory, PhotoDao photoDao)
         {
             directory?.Refresh();
 
             if (directory == null)
             {
-                return;
+                return null;
             }
             else if (directory.Exists)
             {
-                Array.ForEach<FileInfo>(directory.GetFiles(), file => ApplicationController.AddPhotoToDao(photoDao, file));
+                //Array.ForEach<FileInfo>(directory.GetFiles(), file => ApplicationController.AddPhotoToDao(photoDao, file));
+                return directory.GetFiles();
             }
             else
             {
                 ConsoleView.DisplayDirectoryDoesNotExist(directory);
+                return null;
             }
         }
 
