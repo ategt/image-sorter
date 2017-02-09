@@ -458,11 +458,13 @@ namespace BackgroundImageSorter.Tests
         [Test]
         public void RunThrice()
         {
+            Directory.CreateDirectory(workingDir + @"\output\temp\");
+
             Configuration config = new Configuration
             {
                 Source = new DirectoryInfo(workingDir + @"\input"),
-                Destination = new DirectoryInfo(workingDir + @"\output"),
-                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                Destination = new DirectoryInfo(workingDir + @"\output\temp\"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\temp\landscape"),
                 DataFile = new FileInfo(workingDir + @"\output\data.bin"),                
             };
 
@@ -478,18 +480,20 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(report.AlreadyHad, 0);
             Assert.AreEqual(report.Moved, 3);
 
+            Console.WriteLine("Scan One Complete\n\nRunning Scan Two.");
+
             Configuration secondConfig = new Configuration
             {
                 Source = new DirectoryInfo(workingDir + @"\input"),
-                Destination = new DirectoryInfo(workingDir + @"\output"),
-                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                Destination = new DirectoryInfo(workingDir + @"\output\temp\"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\temp\landscape"),
                 DataFile = new FileInfo(workingDir + @"\output\data.bin"),
             };
 
             Report secondReport = new ApplicationController(ioController, consoleView).SortImages(secondConfig, new Report());
 
             Assert.AreEqual(secondReport.StoredBackgrounds, 3);
-            Assert.AreEqual(secondReport.StoredFiles, 4);
+            Assert.AreEqual(secondReport.StoredFiles, 3);
             Assert.AreEqual(secondReport.StoredImages, 3);
 
             Assert.AreEqual(secondReport.Scanned, 6);
@@ -498,11 +502,13 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(secondReport.Distinct, 0);
             Assert.AreEqual(secondReport.Moved, 0);
 
+            Console.WriteLine("Scan Two Complete\n\nRunning Scan Three.");
+
             Configuration thirdConfig = new Configuration
             {
                 Source = new DirectoryInfo(workingDir + @"\input"),
-                Destination = new DirectoryInfo(workingDir + @"\output"),
-                Landscape = new DirectoryInfo(workingDir + @"\output\landscape"),
+                Destination = new DirectoryInfo(workingDir + @"\output\temp\"),
+                Landscape = new DirectoryInfo(workingDir + @"\output\temp\landscape"),
                 DataFile = new FileInfo(workingDir + @"\output\data2.bin"),
                 Recurse = true,
                 PreScan = true

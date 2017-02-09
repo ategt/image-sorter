@@ -25,18 +25,31 @@ namespace BackgroundImageSorter.Controller
 
             List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
             directoriesToScan.RemoveAll(item => item == null);
+
+            List<FileInfo> filesToScanList = new List<FileInfo>();
+            //FileInfo[] filesToScanList = new FileInfo[]();
             directoriesToScan.ForEach(directory =>
             {
-
                 FileInfo[] filesToScan = updateDirectoryData(directory, photoDao);
                 if (filesToScan != null)
                 {
+                    int i = 0;
+                    Console.WriteLine($"Scan list length: {filesToScan.Length}");
                     foreach (FileInfo file in filesToScan)
-                    {
-                        ApplicationController.AddPhotoToDao(photoDao, file);
+                    {                        
+                        Console.WriteLine($"Scanning {file.Name}:{i++}");
+                        //ApplicationController.AddPhotoToDao(photoDao, file);
+                        filesToScanList.Add(file);
                     }
                 }
             });
+
+            Console.WriteLine($"List length: {filesToScanList.Count}");
+            foreach (FileInfo file in filesToScanList)
+            {
+                ApplicationController.AddPhotoToDao(photoDao, file);
+                Console.WriteLine($"Listed {file.Name}");
+            }
         }
 
         private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
