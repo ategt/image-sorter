@@ -175,7 +175,6 @@ namespace BackgroundImageSorter.View
 
         private static string MakeProgressBar(int currentPosition, int totalPossibles)
         {
-            System.Threading.Thread.Sleep(100);
             int lengthOfBar = 20;
             int dotsToShow = (int)(((float)currentPosition / (float)totalPossibles) * (float)lengthOfBar);
             if (dotsToShow > 20) dotsToShow = 20;
