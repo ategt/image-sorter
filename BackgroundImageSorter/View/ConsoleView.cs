@@ -36,7 +36,6 @@ namespace BackgroundImageSorter.View
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
             Console.WriteLine();
-            Console.WriteLine("\t Fast Scan Not Implemented Yet.");
         }
 
         internal void DisplayProgress(int current, int count)
@@ -127,8 +126,7 @@ namespace BackgroundImageSorter.View
         private static void DisplayFileFilterUpdate(int accepted, int rejected, int total)
         {
             string output = $"{BEGINNING_SCANNING_SOURCE} New:{accepted}\t Already Have:{rejected}\t Total:{total}";
-            Console.CursorLeft = 0;
-            Console.Write(output);
+            WriteFromBeginingOfConsoleLine(output);
         }
 
         public static void DisplaySourceScanningFinished()

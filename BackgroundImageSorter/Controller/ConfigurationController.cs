@@ -69,7 +69,7 @@ namespace BackgroundImageSorter.Controller
                 { "Single",  "Place All Scanned Files Directly Into Output Folder", v => config.Single = v != null},
                 { "p|Portrait=",  "Folder to Place Portrait Images Into", v => config.Portrait = new DirectoryInfo(v)},
                 { "l|Landscape=",  "Folder to Place Landscape Images Into", v => config.Landscape = new DirectoryInfo(v)},
-                { "f|Fast", "Fast Scan - Use File Names Instead of Hashes.", v => config.FastScan = v != null },
+                { "f|Fast", "Fast Scan - Only Rehash New Files When Updating the Dao Instead of the Whole Destination.", v => config.FastScan = v != null },
                 { "b|Background", "Only Copy Images Larger Than 1080x1080.", v => config.LargeImagesOnly = v != null },
                 { "i|Image", "Only Copy Images - Unrecognized Files Ignored", v => config.ImagesOnly = v != null },
                 { "t|Test", "Print Files Copied, But Do No Actual Copying.", v => config.Test = v != null },
