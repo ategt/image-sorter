@@ -21,18 +21,14 @@ namespace BackgroundImageSorter.Controller
         public void updateDirectoryData(Configuration config,
                                     PhotoDao photoDao)
         {
-            ISet<DirectoryInfo> directories = GenerateScannableDirectoriesSet(config);
-
-            List<DirectoryInfo> directoriesToScan = RemoveNullDirectories(directories);
-
-            List<FileInfo> filesToScan = scanDirectoriesForFiles(directoriesToScan);
+            List<FileInfo> filesToScan = getFilesToScan(config);
 
             scanFilesInListToDao(photoDao, filesToScan);
         }
 
         private void scanFilesInListToDao(PhotoDao photoDao, List<FileInfo> filesToScan)
         {
-            int i =  0, total = filesToScan.Count;
+            int i = 0, total = filesToScan.Count;
             foreach (FileInfo file in filesToScan)
             {
                 consoleView.DisplayDaoScanProgress(i++, total);
@@ -85,6 +81,29 @@ namespace BackgroundImageSorter.Controller
                     .ToList<DirectoryInfo>()
                     .ForEach(dir => directories.Add(dir));
             return directories;
+        }
+
+        internal void updateDirectoryDataFast(Configuration config, PhotoDao photoDao)
+        {
+            List<FileInfo> filesToScan = getFilesToScan(config);
+            filesToScan = removeFilesAlreadyInDao(filesToScan, photoDao);
+
+            scanFilesInListToDao(photoDao, filesToScan);
+        }
+
+        private List<FileInfo> removeFilesAlreadyInDao(List<FileInfo> filesToScan, PhotoDao photoDao)
+        {
+            return filesToScan.Where(file => photoDao.ContainsFile(file)).ToList();
+        }
+
+        private static List<FileInfo> getFilesToScan(Configuration config)
+        {
+            ISet<DirectoryInfo> directories = GenerateScannableDirectoriesSet(config);
+
+            List<DirectoryInfo> directoriesToScan = RemoveNullDirectories(directories);
+
+            List<FileInfo> filesToScan = scanDirectoriesForFiles(directoriesToScan);
+            return filesToScan;
         }
 
         private static FileInfo[] getFilesFromValidDirectories(DirectoryInfo directory)

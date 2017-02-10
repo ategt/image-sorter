@@ -83,7 +83,14 @@ namespace BackgroundImageSorter.Controller
             ConsoleView.DisplayBeginUpdatingDao();
 
             if (!config.NoUpdate)
-                ioController.updateDirectoryData(config, photoDao);
+            {
+                if (config.FastScan)
+                    ioController.updateDirectoryDataFast(config, photoDao);
+                else
+                {
+                    ioController.updateDirectoryData(config, photoDao);
+                }
+            }
 
             UpdateReportWithNewImageCount(config, report, photoDao);
 
@@ -278,8 +285,11 @@ namespace BackgroundImageSorter.Controller
             int currentPosition = 0;
             int totalPossibles = possiblePhotos.Count();
 
-            IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => { ConsoleView.DisplayScanProgress(currentPosition++, totalPossibles);
-                                                                                 return PhotoBuilder.Build(possiblePhoto.FullName); })
+            IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto =>
+            {
+                ConsoleView.DisplayScanProgress(currentPosition++, totalPossibles);
+                return PhotoBuilder.Build(possiblePhoto.FullName);
+            })
                                                                                  .ToList();
             totalPossibles = possiblePhotos.Count();
 
@@ -302,7 +312,7 @@ namespace BackgroundImageSorter.Controller
 
             List<Photo> photosWeDoNotHaveYet = new List<Photo>();
             int accepted = 0, rejected = 0, total = photos.Count();
-            
+
             foreach (var photo in photos)
             {
                 bool alreadyHaveThisOne = photoDao.Contains(photo);
