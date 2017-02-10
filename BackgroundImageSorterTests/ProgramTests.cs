@@ -531,6 +531,90 @@ namespace BackgroundImageSorter.Tests
         }
 
         [Test]
+        public void TestFastScanning()
+        {
+            Directory.CreateDirectory(workingDir + @"\output\temp\");
+
+            Configuration config = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output\temp\"),
+                DataFile = new FileInfo(workingDir + @"\output\data.bin"),
+                Single = true,
+                FastScan = true
+            };
+
+            config = ConfigurationController.SetDefaultDirectories(config);
+            Report report = new ApplicationController(ioController, consoleView).SortImages(config, new Report());
+
+            Assert.AreEqual(report.StoredBackgrounds, 0);
+            Assert.AreEqual(report.StoredFiles, 0);
+            Assert.AreEqual(report.StoredImages, 0);
+
+            Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.NewPhotos, 6);
+            Assert.AreEqual(report.Distinct, 3);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Moved, 3);
+
+            Console.WriteLine("Scan One Complete\n");
+
+            string filename = workingDir + @"\output\temp\7bc34afd723f018f1f1895390a5468374b5f68fad9dbec689f812b4b8302cc30.jpg.jpg";
+            FileAssert.Exists(filename);
+            File.Delete(filename);
+            FileAssert.DoesNotExist(filename);
+
+            Console.WriteLine("Running Scan Two.");
+
+            Configuration secondConfig = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output\temp\"),
+                DataFile = new FileInfo(workingDir + @"\output\data2.bin"),
+                Single = true,
+                FastScan = true
+            };
+
+            secondConfig = ConfigurationController.SetDefaultDirectories(secondConfig);
+
+            Report secondReport = new ApplicationController(ioController, consoleView).SortImages(secondConfig, new Report());
+
+            Assert.AreEqual(secondReport.StoredBackgrounds, 0);
+            Assert.AreEqual(secondReport.StoredFiles, 0);
+            Assert.AreEqual(secondReport.StoredImages, 0);
+
+            Assert.AreEqual(secondReport.Scanned, 6);
+            Assert.AreEqual(secondReport.NewPhotos, 1);
+            Assert.AreEqual(secondReport.AlreadyHad, 5);
+            Assert.AreEqual(secondReport.Distinct, 1);
+            Assert.AreEqual(secondReport.Moved, 1);
+
+            Console.WriteLine("Scan Two Complete\n\nRunning Scan Three.");
+
+            Configuration thirdConfig = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output\temp\"),
+                DataFile = new FileInfo(workingDir + @"\output\data.bin")
+            };
+
+            thirdConfig = ConfigurationController.SetDefaultDirectories(thirdConfig);
+
+            Report thirdReport = new ApplicationController(ioController, consoleView).SortImages(thirdConfig, new Report());
+            
+            Assert.AreEqual(thirdReport.StoredBackgrounds, 3);
+            Assert.AreEqual(thirdReport.StoredFiles, 3);
+            Assert.AreEqual(thirdReport.StoredImages, 3);
+
+            Assert.AreEqual(thirdReport.Scanned, 6);
+            Assert.AreEqual(thirdReport.NewPhotos, 0);
+            Assert.AreEqual(thirdReport.AlreadyHad, 6);
+            Assert.AreEqual(thirdReport.Distinct, 0);
+            Assert.AreEqual(thirdReport.Moved, 0);
+
+        }
+
+        [Test]
         public void ImageExtensionRebuilderLazily()
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
