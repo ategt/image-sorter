@@ -93,7 +93,7 @@ namespace BackgroundImageSorter.Controller
 
         private List<FileInfo> removeFilesAlreadyInDao(List<FileInfo> filesToScan, PhotoDao photoDao)
         {
-            return filesToScan.Where(file => photoDao.ContainsFile(file)).ToList();
+            return filesToScan.Where(file => !photoDao.ContainsFile(file)).ToList();
         }
 
         private static List<FileInfo> getFilesToScan(Configuration config)
