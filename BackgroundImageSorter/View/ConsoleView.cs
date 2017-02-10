@@ -1,11 +1,7 @@
 ﻿using BackgroundImageSorter.Model;
 using NDesk.Options;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BackgroundImageSorter.View
 {
@@ -50,22 +46,33 @@ namespace BackgroundImageSorter.View
 
         public static void DisplayFinishedDirectoryPrescan()
         {
-            Console.WriteLine("PreScan Done.");
+            EraseCurrentLine();
+            Console.WriteLine($"{BEGINNING_SCANNING_DESTINATION}PreScan Done.");
         }
 
         public static void DisplayBeginingDirectoryPrescan()
         {
-            Console.Write("PreScanning Destination Folder...");
+            Console.WriteLine("PreScanning Destination Folder.");
+            Console.Write(BEGINNING_SCANNING_DESTINATION);
+        }
+        
+        public void DisplayDaoScanProgress(int currentPosition, int totalPositions)
+        {
+            string progressBar = MakeProgressBar(currentPosition, totalPositions);
+
+            WriteFromBeginingOfConsoleLine($"{BEGINNING_SCANNING_DESTINATION}{progressBar}");
         }
 
         public static void DisplayFinishedUpdateingDao()
         {
-            Console.WriteLine("Dao updated.");
+            EraseCurrentLine();
+            Console.WriteLine($"{BEGINNING_SCANNING_DESTINATION}Dao updated.");
         }
 
         public static void DisplayBeginUpdatingDao()
         {
-            Console.Write("Updating File Data...");
+            Console.WriteLine("Updating File Data.");
+            Console.Write(BEGINNING_SCANNING_DESTINATION);
         }
 
         public static void DisplayFinishedTransferingData()
@@ -95,9 +102,14 @@ namespace BackgroundImageSorter.View
 
         internal static void DisplayScanProgress(int currentPosition, int totalPossibles)
         {
-            string progressBar = MakeProgressBar( currentPosition, totalPossibles);
+            string progressBar = MakeProgressBar(currentPosition, totalPossibles);
 
             string output = $"{BEGINNING_SCANNING_SOURCE}{progressBar}";
+            WriteFromBeginingOfConsoleLine(output);
+        }
+
+        private static void WriteFromBeginingOfConsoleLine(string output)
+        {
             Console.CursorLeft = 0;
             Console.Write(output);
         }
@@ -121,10 +133,15 @@ namespace BackgroundImageSorter.View
 
         public static void DisplaySourceScanningFinished()
         {
+            EraseCurrentLine();
+            Console.WriteLine($"{BEGINNING_SCANNING_SOURCE}Complete.");
+        }
+
+        private static void EraseCurrentLine()
+        {
             Console.CursorLeft = 0;
             Console.Write(new string(' ', Console.WindowWidth - 2));
             Console.CursorLeft = 0;
-            Console.WriteLine($"{BEGINNING_SCANNING_SOURCE}Complete.");
         }
 
         public static void DisplayDaoLoadingFinished()
@@ -158,6 +175,7 @@ namespace BackgroundImageSorter.View
 
         private static string MakeProgressBar(int currentPosition, int totalPossibles)
         {
+            System.Threading.Thread.Sleep(100);
             int lengthOfBar = 20;
             int dotsToShow = (int)(((float)currentPosition / (float)totalPossibles) * (float)lengthOfBar);
             if (dotsToShow > 20) dotsToShow = 20;
@@ -167,7 +185,7 @@ namespace BackgroundImageSorter.View
             string spaceLeftOver = new string(' ', spacesToShow);
             string progressBar = $"[{dots}{spaceLeftOver}]";
 
-            string output = $"{progressBar}({currentPosition}/{totalPossibles}) - {dotsToShow},{spacesToShow}*{lengthOfBar}";
+            string output = $"{progressBar}({currentPosition}/{totalPossibles})";
             return output;
         }
     }

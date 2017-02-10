@@ -35,7 +35,7 @@ namespace BackgroundImageSorter.Controller
             int i =  0, total = filesToScan.Count;
             foreach (FileInfo file in filesToScan)
             {
-                consoleView.DisplayDaoScanProgress(i, total);
+                consoleView.DisplayDaoScanProgress(i++, total);
                 ApplicationController.AddPhotoToDao(photoDao, file);
             }
         }
