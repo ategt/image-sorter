@@ -47,7 +47,7 @@ namespace BackgroundImageSorter.Controller
 
             IEnumerable<Photo> uniquePhotos = ScanSource(config, report, photoDao);
 
-            CopyFiles(config, report, uniquePhotos);
+            CopyOrMoveFiles(config, report, uniquePhotos);
 
             if (report.Moved > 0)
                 UpdateData(config, report, photoDao);
@@ -98,7 +98,7 @@ namespace BackgroundImageSorter.Controller
         }
 
 
-        private static void CopyFiles(Configuration config, Report report, IEnumerable<Photo> uniquePhotos)
+        private static void CopyOrMoveFiles(Configuration config, Report report, IEnumerable<Photo> uniquePhotos)
         {
             ConsoleView.DisplayBeginTransferingData();
 
@@ -252,9 +252,13 @@ namespace BackgroundImageSorter.Controller
             string properExtension = Utilities.ImageUtilities.DetectProperExtension(photo);
 
             if (string.IsNullOrWhiteSpace(properExtension))
+            {
                 return photo.FileInfo.Name;
+            }
             else
+            {
                 return RemoveExtensions(photo, aggressive) + "." + properExtension;
+            }
 
         }
 
