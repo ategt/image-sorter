@@ -181,9 +181,12 @@ namespace BackgroundImageSorter.Controller
 
         private static void CopyFilesToAppropriateDirectory(Configuration config, Report report, Photo photo, System.Drawing.Size dimension)
         {
-            if (dimension.IsEmpty && !config.ImagesOnly)
+            if (dimension.IsEmpty)
             {
-                CopyToDataDirectory(config, report, photo);
+                if (!config.ImagesOnly)
+                {
+                    CopyToDataDirectory(config, report, photo);
+                }
             }
             else if (dimension.Height >= 1080 && dimension.Width >= 1080)
             {

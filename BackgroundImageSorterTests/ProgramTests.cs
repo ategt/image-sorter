@@ -656,6 +656,48 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(improvedName, "07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.jpg");
         }
 
+        [Test]
+        public void TestImagesOnlyCopySingle()
+        {
+            Directory.CreateDirectory(workingDir + @"\output\temp\");
+
+            Configuration config = new Configuration
+            {
+                Source = new DirectoryInfo(workingDir + @"\input"),
+                Destination = new DirectoryInfo(workingDir + @"\output\temp\"),
+                DataFile = new FileInfo(workingDir + @"\output\data.bin"),
+                Single = true,
+                FastScan = false,
+                ImagesOnly = true,
+                Recurse = true
+            };
+
+            config = ConfigurationController.SetDefaultDirectories(config);
+            Report report = new ApplicationController(ioController, consoleView).SortImages(config, new Report());
+
+            Assert.AreEqual(report.Moved, 5);
+            Assert.AreEqual(config.Destination.EnumerateFiles("*", SearchOption.AllDirectories).Count(), 5);
+            Assert.AreEqual(new DirectoryInfo(workingDir + @"\output\temp\").EnumerateFiles("*", SearchOption.AllDirectories).Count(), 5);
+
+            Assert.AreEqual(report.StoredBackgrounds, 0);
+            Assert.AreEqual(report.StoredFiles, 0);
+            Assert.AreEqual(report.StoredImages, 0);
+
+            Assert.AreEqual(report.Scanned, 9);
+            Assert.AreEqual(report.NewPhotos, 9);
+            Assert.AreEqual(report.Distinct, 6);
+            Assert.AreEqual(report.AlreadyHad, 0);
+
+            FileAssert.DoesNotExist(workingDir + @"\output\temp\Random Text");
+
+            string filename = workingDir + @"\output\temp\7bc34afd723f018f1f1895390a5468374b5f68fad9dbec689f812b4b8302cc30.jpg.jpg";
+            FileAssert.Exists(filename);
+            File.Delete(filename);
+            FileAssert.DoesNotExist(filename);
+
+        }
+
+
 
         private static void ResetOutputDirectory()
         {
