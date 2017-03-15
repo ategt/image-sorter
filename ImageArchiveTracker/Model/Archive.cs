@@ -12,5 +12,10 @@ namespace ImageArchiveTracker.Model
         public bool Flickr { get; set; }
         public bool GooglePhoto { get; set; }
         public bool Disc { get; set; }
+
+        public override string ToString()
+        {
+            return Hash.GetHashCode() + ", \t" + Flickr + ", \t" + GooglePhoto + ", \t" + Disc;
+        }
     }
 }

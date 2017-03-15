@@ -22,15 +22,78 @@ namespace ImageArchiveTracker.Model
             m_dbConnection = new SQLiteConnection($"Data Source={databaseName};Version=3; FailIfMissing=True; Foreign Keys=True;");
             m_dbConnection.Open();
 
-            string CREATE_ARCHIVE_TABLE = "CREATE TABLE IF NOT EXISTS media_archive_log (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, hash BLOB UNIQUE, filename STRING, flickr INT DEFAULT 0, google_photo INT DEFAULT 0, disc INT DEFAULT 0);";
+            //string CREATE_ARCHIVE_TABLE = "CREATE TABLE IF NOT EXISTS media_archive_log (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, hash BLOB UNIQUE, filename STRING, flickr INT DEFAULT 0, google_photo INT DEFAULT 0, disc INT DEFAULT 0);";
+            string CREATE_ARCHIVE_TABLE = "CREATE TABLE IF NOT EXISTS media_archive_log (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, hash BLOB UNIQUE, flickr INT DEFAULT 0, google_photo INT DEFAULT 0, disc INT DEFAULT 0);";
             SQLiteCommand createLogCommand = new SQLiteCommand(CREATE_ARCHIVE_TABLE, m_dbConnection);
             createLogCommand.ExecuteNonQuery();
+
+            string CREATE_ARCHIVE_HASH_INDEX = "CREATE INDEX IF NOT EXISTS media_archive_log_hash_idx ON media_archive_log (hash);";
+            SQLiteCommand createIndexCommand = new SQLiteCommand(CREATE_ARCHIVE_HASH_INDEX, m_dbConnection);
+            createIndexCommand.ExecuteNonQuery();
 
         }
 
         public void Close()
         {
             m_dbConnection.Close();
+        }
+
+        public Archive Create(Archive archive)
+        {
+            //int result = -1;
+            //Int64 lastID;
+            using (SQLiteCommand cmd = new SQLiteCommand(m_dbConnection)) // , getLastRow = new SQLiteCommand(m_dbConnection))
+            {
+                cmd.CommandText = "INSERT INTO media_archive_log (hash, flickr, google_photo, disc) VALUES (@Hash, @Flickr, @Google, @Disc);";
+                cmd.Prepare();
+                cmd.Parameters.AddWithValue("@Hash", archive.Hash);
+                cmd.Parameters.AddWithValue("@Flickr", archive.Flickr);
+                cmd.Parameters.AddWithValue("@Google", archive.GooglePhoto);
+                cmd.Parameters.AddWithValue("@Disc", archive.Disc);
+
+                int result = cmd.ExecuteNonQuery();
+                //return result == 1;
+                //getLastRow.CommandText = "SELECT last_insert_rowid();";
+                //getLastRow.Prepare();
+
+                //try
+                //{
+                //result = cmd.ExecuteNonQuery();
+                //object returnValue = getLastRow.ExecuteScalar();
+                //lastID = (Int64)returnValue;
+                //sourceFile.Id = lastID;
+                //}
+                //catch (SQLiteException e)
+                //{
+                //}
+
+                return (result == 1) ? archive : null;
+
+            }
+        }
+
+        public Archive Get(byte[] hash)
+        {
+            using (SQLiteCommand cmd = new SQLiteCommand(m_dbConnection))
+            {
+                cmd.CommandText = "SELECT hash, flickr, google_photo, disc FROM media_archive_log WHERE hash = @Hash;";
+                cmd.Prepare();
+                cmd.Parameters.AddWithValue("@Hash", hash);
+
+                SQLiteDataReader dataReader = cmd.ExecuteReader();
+
+                Archive archive = null;
+
+                while (dataReader.Read())
+                {
+                    archive.Hash = (byte[]) dataReader["hash"];
+                    archive.GooglePhoto = (bool) dataReader["google_photo"];
+                    archive.Flickr = (bool) dataReader["flickr"];
+                    archive.Disc = (bool) dataReader["disc"];
+                }
+
+                return archive;
+            }
         }
 
         public bool Add(byte[] hash) //, String filename = null)

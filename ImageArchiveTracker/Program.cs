@@ -10,7 +10,7 @@ namespace ImageArchiveTracker
     {
         public static void Main(string[] args)
         {
-
+            new ImageArchiveTracker.Controller.Application(new Model.ArchiveDao("MediaArchive.sqlite3"));
         }
     }
 }

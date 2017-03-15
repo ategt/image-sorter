@@ -7,6 +7,7 @@ namespace ImageArchiveTracker.Model
         public bool Add { get; set; }
         public bool Remove { get; set; }
         public bool List { get; set; }
+        public bool Test { get; set; }
 
         public bool Flickr { get; set; }
         public bool GooglePhoto { get; set; }
