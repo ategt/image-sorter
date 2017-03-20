@@ -46,9 +46,10 @@ namespace BackgroundImageSorterGUI
 
         private void ChooseDatabaseFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
+            Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
             //fileDialog.FileName = "database.bin";
-            fileDialog.FileName = config.DataFile.FullName;
+            fileDialog.FileName = config.DataFile.Name;
+            fileDialog.InitialDirectory = config.DataFile.Directory.FullName;
             fileDialog.DefaultExt = ".bin";
             fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
 
@@ -60,25 +61,21 @@ namespace BackgroundImageSorterGUI
             }
         }
 
-        public 
-
         private void ChooseInputFolder_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.
-            var dialog = new Microsoft.Win32.CommonDialog(); // CommonOpenFileDialog();
-            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
+            Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
             //fileDialog.FileName = "database.bin";
             fileDialog.FileName = config.Source.FullName;
-            fileDialog.DefaultExt = ".bin";
-            fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
+            fileDialog.InitialDirectory = config.Source.FullName;
+            //fileDialog.
+            //fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
 
             Nullable<bool> result = fileDialog.ShowDialog();
 
             if (result == true)
             {
-                config.DataFile = new System.IO.FileInfo(fileDialog.FileName);
+                config.Source = new System.IO.DirectoryInfo(fileDialog.FileName);
             }
-
         }
     }
 }
