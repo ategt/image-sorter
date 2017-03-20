@@ -12,18 +12,20 @@ namespace BackgroundImageSorter.Controller
     {
         IOController ioController = null;
         ConsoleView consoleView = null;
+        PhotoDao photoDao = null;
 
-        public ApplicationController(IOController ioController, ConsoleView consoleView)
+        public ApplicationController(IOController ioController, ConsoleView consoleView, PhotoDao photoDao)
         {
             this.ioController = ioController;
             this.consoleView = consoleView;
+            this.photoDao = photoDao;
         }
 
-        public static void Program(string[] args, IOController ioController, ConsoleView consoleView)
+        public static void Program(string[] args, IOController ioController, ConsoleView consoleView, PhotoDao photoDao)
         {
             Report report = new BackgroundImageSorter
                                                 .Controller
-                                                .ApplicationController(ioController, consoleView)
+                                                .ApplicationController(ioController, consoleView, photoDao)
                                                 .RunProgram(args);
             ConsoleView.PrintReport(report);
         }
@@ -40,21 +42,27 @@ namespace BackgroundImageSorter.Controller
 
         public Report SortImages(Configuration config, Report report)
         {
-            PhotoDao photoDao = LoadData(config, report);
-
-            if (evaluatePrescanRequirements(config, photoDao))
-                PreScanDestination(config, report, photoDao);
-
-            IEnumerable<Photo> uniquePhotos = ScanSource(config, report, photoDao);
+            PhotoDao photoDao;
+            IEnumerable<Photo> uniquePhotos =
+            FindUniquePhotos(config, report);
 
             CopyOrMoveFiles(config, report, uniquePhotos);
 
             if (report.Moved > 0)
-                UpdateData(config, report, photoDao);
+                UpdateData(config, report);
             else
                 consoleView.DisplayNoFilesMoved();
 
             return ProcessReport(config, report);
+        }
+
+        private IEnumerable<Photo> FindUniquePhotos(Configuration config, Report report)
+        {
+            photoDao = LoadData(config, report);
+            if (evaluatePrescanRequirements(config, photoDao))
+                PreScanDestination(config, report, photoDao);
+
+            return ScanSource(config, report, photoDao);
         }
 
         private static bool evaluatePrescanRequirements(Configuration config, PhotoDao photoDao)
@@ -78,7 +86,7 @@ namespace BackgroundImageSorter.Controller
             return report;
         }
 
-        private void UpdateData(Configuration config, Report report, PhotoDao photoDao)
+        private void UpdateData(Configuration config, Report report)
         {
             ConsoleView.DisplayBeginUpdatingDao();
 
