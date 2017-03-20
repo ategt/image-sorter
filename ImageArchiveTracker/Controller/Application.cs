@@ -77,6 +77,15 @@ namespace ImageArchiveTracker.Controller
                                    {
                                        Console.WriteLine(fileToProcess.FullName);                                    
                                    }
+                               } else if (config.Add)
+                               {
+                                   if (archiveDao.Create(archive) == null)
+                                   {
+                                       Console.WriteLine("Add of " + fileToProcess.Name + " Failed!");
+                                   }else
+                                   {
+                                       Console.WriteLine(fileToProcess.Name + " added.");
+                                   }
                                }
                            }
                     );
