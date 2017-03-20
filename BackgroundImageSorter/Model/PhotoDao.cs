@@ -17,7 +17,18 @@ namespace BackgroundImageSorter
         IList<Photo> photos = new List<Photo>();
         int nextId = 1;
 
+        public bool ChangeDatabase(string photoFilePath)
+        {
+            initDatabase(photoFilePath);
+            return true;
+        }
+
         public PhotoDao(string photoFilePath= @"PhotoFile.bin")
+        {
+            initDatabase(photoFilePath);
+        }
+
+        private void initDatabase(string photoFilePath)
         {
             this.photoFilepath = photoFilePath;
             photos = decode();

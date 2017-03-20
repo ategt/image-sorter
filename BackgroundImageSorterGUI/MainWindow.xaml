@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
+        <DockPanel>
+            <Button Name="ChooseDatabaseFile" Click="ChooseDatabaseFile_Click">Choose Database</Button>
+            <Button Name="ChooseInputFolder" Click="ChooseInputFolder_Click">Choose Input Folder</Button>
+        </DockPanel>
         <StackPanel>
             <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click">Check For New Photos</Button>
             <ListBox ItemsSource="{Binding Photos}">

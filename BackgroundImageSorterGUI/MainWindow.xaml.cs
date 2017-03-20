@@ -1,4 +1,6 @@
-﻿using BackgroundImageSorter.Model;
+﻿using BackgroundImageSorter;
+using BackgroundImageSorter.Controller;
+using BackgroundImageSorter.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,22 +23,61 @@ namespace BackgroundImageSorterGUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        ApplicationController applicationController = null;
+        Configuration config = null;
+
         public MainWindow()
         {
-            InitializeComponent();
-            
+            string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
+            string[] args = new string[] { "-d", workingDir + @"\data.bin",
+                                    @"--s=" + workingDir + @"\input",
+                                    @"/Output:" + workingDir + @"\output" };
 
+            config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+
+            InitializeComponent();
         }
 
         private void CheckForUniquePhotos_Click(object sender, RoutedEventArgs e)
         {
-            PhotoDao photoDao = LoadData(config, report);
+            IEnumerable<Photo> uniquePhotos = applicationController.FindUniquePhotos(config, new Report());
 
-            if (evaluatePrescanRequirements(config, photoDao))
-                PreScanDestination(config, Report, photoDao);
+        }
 
-            IEnumerable<Photo> uniquePhotos = ScanSource(config, report, photoDao);
+        private void ChooseDatabaseFile_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
+            //fileDialog.FileName = "database.bin";
+            fileDialog.FileName = config.DataFile.FullName;
+            fileDialog.DefaultExt = ".bin";
+            fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
 
+            Nullable<bool> result = fileDialog.ShowDialog();
+
+            if (result== true)
+            {
+                config.DataFile = new System.IO.FileInfo(fileDialog.FileName);
+            }
+        }
+
+        public 
+
+        private void ChooseInputFolder_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.
+            var dialog = new Microsoft.Win32.CommonDialog(); // CommonOpenFileDialog();
+            Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
+            //fileDialog.FileName = "database.bin";
+            fileDialog.FileName = config.Source.FullName;
+            fileDialog.DefaultExt = ".bin";
+            fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
+
+            Nullable<bool> result = fileDialog.ShowDialog();
+
+            if (result == true)
+            {
+                config.DataFile = new System.IO.FileInfo(fileDialog.FileName);
+            }
 
         }
     }

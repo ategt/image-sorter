@@ -12,13 +12,13 @@ namespace BackgroundImageSorter.Controller
     {
         IOController ioController = null;
         ConsoleView consoleView = null;
-        PhotoDao photoDao = null;
+        static PhotoDao photoDao = null;
 
         public ApplicationController(IOController ioController, ConsoleView consoleView, PhotoDao photoDao)
         {
             this.ioController = ioController;
             this.consoleView = consoleView;
-            this.photoDao = photoDao;
+            ApplicationController.photoDao = photoDao;
         }
 
         public static void Program(string[] args, IOController ioController, ConsoleView consoleView, PhotoDao photoDao)
@@ -42,7 +42,7 @@ namespace BackgroundImageSorter.Controller
 
         public Report SortImages(Configuration config, Report report)
         {
-            PhotoDao photoDao;
+            //PhotoDao photoDao;
             IEnumerable<Photo> uniquePhotos =
             FindUniquePhotos(config, report);
 
@@ -56,7 +56,7 @@ namespace BackgroundImageSorter.Controller
             return ProcessReport(config, report);
         }
 
-        private IEnumerable<Photo> FindUniquePhotos(Configuration config, Report report)
+        public IEnumerable<Photo> FindUniquePhotos(Configuration config, Report report)
         {
             photoDao = LoadData(config, report);
             if (evaluatePrescanRequirements(config, photoDao))
@@ -124,7 +124,7 @@ namespace BackgroundImageSorter.Controller
             return uniquePhotos;
         }
 
-        private static PhotoDao LoadData(Configuration config, Report report)
+        public static PhotoDao LoadData(Configuration config, Report report)
         {
             ConsoleView.DisplayDaoLoadingBeginning();
 
