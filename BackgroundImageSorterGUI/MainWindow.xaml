@@ -8,19 +8,66 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <DockPanel>
-            <Button Name="ChooseDatabaseFile" Click="ChooseDatabaseFile_Click">Choose Database</Button>
-            <Button Name="ChooseInputFolder" Click="ChooseInputFolder_Click">Choose Input Folder</Button>
+            <Grid DockPanel.Dock="Top">
+                <Button Content="Browse..."
+                Height="23"
+                HorizontalAlignment="Left"
+                Margin="401,18,0,0"
+                Name="button1"
+                VerticalAlignment="Top"
+                Width="75"
+                />
+                <TextBox Height="23"
+                 HorizontalAlignment="Left"
+                 Margin="12,19,0,0"
+                 Name="textBox1"
+                 VerticalAlignment="Top"
+                 Width="371" />
+            </Grid>
+            <Grid DockPanel.Dock="Top">
+                <Button Name="ChooseDatabaseFile" 
+                        Height="23"
+                HorizontalAlignment="Left"
+                Margin="401,18,0,0"
+                Content="Choose Database"
+                VerticalAlignment="Top"
+                Width="75" />
+                <TextBox Height="23"
+                 HorizontalAlignment="Left"
+                 Margin="12,19,0,0"
+                 Name="textBox2"
+                 VerticalAlignment="Top"
+                 Width="371" />
+            </Grid>
+            <Grid DockPanel.Dock="Top">
+
+                <Button Name="ChooseInputFolder" 
+                        Height="23"
+                HorizontalAlignment="Left"
+                Margin="401,18,0,0"
+                
+                VerticalAlignment="Top"
+                Width="75">Choose Input Folder</Button>
+
+                <TextBox Height="23"
+                 HorizontalAlignment="Left"
+                 Margin="12,19,0,0"
+                 Name="textBox3"
+                 VerticalAlignment="Top"
+                 Width="371" />
+            </Grid>
+            <StackPanel>
+                <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
+                <ListBox ItemsSource="{Binding Photos}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
         </DockPanel>
-        <StackPanel>
-            <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click">Check For New Photos</Button>
-            <ListBox ItemsSource="{Binding Photos}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </StackPanel>
+       
     </Grid>
 </Window>
