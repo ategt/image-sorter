@@ -13,9 +13,10 @@
                 Height="23"
                 HorizontalAlignment="Left"
                 Margin="401,18,0,0"
-                Name="button1"
+                Name="SourceButton"
                 VerticalAlignment="Top"
                 Width="75"
+                        Click="SourceButton_Click"
                 />
                 <TextBox Height="23"
                  HorizontalAlignment="Left"
@@ -31,7 +32,8 @@
                 Margin="401,18,0,0"
                 Content="Choose Database"
                 VerticalAlignment="Top"
-                Width="75" />
+                Width="75"
+                        Click="ChooseDatabaseFile_Click_1"/>
                 <TextBox Height="23"
                  HorizontalAlignment="Left"
                  Margin="12,19,0,0"
@@ -68,6 +70,6 @@
                 </ListBox>
             </StackPanel>
         </DockPanel>
-       
+
     </Grid>
 </Window>

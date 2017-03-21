@@ -3,18 +3,8 @@ using BackgroundImageSorter.Controller;
 using BackgroundImageSorter.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Forms;
 
 namespace BackgroundImageSorterGUI
 {
@@ -76,6 +66,41 @@ namespace BackgroundImageSorterGUI
             {
                 config.Source = new System.IO.DirectoryInfo(fileDialog.FileName);
             }
+        }
+
+        private void SourceButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+
+            // Set the help text description for the FolderBrowserDialog.
+            folderBrowserDialog1.Description =
+                "Select the directory that you want to use as the default.";
+
+            // Do not allow the user to create new files via the FolderBrowserDialog.
+            folderBrowserDialog1.ShowNewFolderButton = true;
+
+            // Default to the My Documents folder.
+            folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
+            folderBrowserDialog1.SelectedPath = Environment.GetFolderPath( Environment.SpecialFolder.DesktopDirectory);
+
+            DialogResult result = folderBrowserDialog1.ShowDialog();
+
+            if (result.Equals(true))
+            {
+                config.Source = new System.IO.DirectoryInfo(folderBrowserDialog1.SelectedPath);
+                //if (!fileOpened)
+                //{
+                //    // No file is opened, bring up openFileDialog in selected path.
+                //    openFileDialog1.InitialDirectory = folderName;
+                //    openFileDialog1.FileName = null;
+                //    openMenuItem.PerformClick();
+                //}
+            }
+        }
+
+        private void ChooseDatabaseFile_Click_1(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialogExampleForm.Launch();
         }
     }
 }
