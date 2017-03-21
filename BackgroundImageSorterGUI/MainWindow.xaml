@@ -21,7 +21,7 @@
                 <TextBox Height="23"
                  HorizontalAlignment="Left"
                  Margin="12,19,0,0"
-                 Name="textBox1"
+                 Name="sourcePath"
                  VerticalAlignment="Top"
                  Width="371" />
             </Grid>
@@ -37,24 +37,24 @@
                 <TextBox Height="23"
                  HorizontalAlignment="Left"
                  Margin="12,19,0,0"
-                 Name="textBox2"
+                 Name="databaseFile"
                  VerticalAlignment="Top"
                  Width="371" />
             </Grid>
             <Grid DockPanel.Dock="Top">
 
-                <Button Name="ChooseInputFolder" 
+                <Button Name="ChooseDestinationFolder" 
                         Height="23"
                 HorizontalAlignment="Left"
                 Margin="401,18,0,0"
-                
+                Click="ChooseDestinationFolder_Click"
                 VerticalAlignment="Top"
-                Width="75">Choose Input Folder</Button>
+                Width="75">Choose Output Folder</Button>
 
                 <TextBox Height="23"
                  HorizontalAlignment="Left"
                  Margin="12,19,0,0"
-                 Name="textBox3"
+                 Name="destinationPath"
                  VerticalAlignment="Top"
                  Width="371" />
             </Grid>

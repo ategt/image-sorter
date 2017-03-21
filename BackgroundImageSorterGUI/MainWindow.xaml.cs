@@ -26,6 +26,7 @@ namespace BackgroundImageSorterGUI
             config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
             InitializeComponent();
+            OnConfigChange();
         }
 
         private void CheckForUniquePhotos_Click(object sender, RoutedEventArgs e)
@@ -84,10 +85,11 @@ namespace BackgroundImageSorterGUI
             folderBrowserDialog1.SelectedPath = Environment.GetFolderPath( Environment.SpecialFolder.DesktopDirectory);
 
             DialogResult result = folderBrowserDialog1.ShowDialog();
-
-            if (result.Equals(true))
+            
+            if (System.Windows.Forms.DialogResult.OK == result)
             {
                 config.Source = new System.IO.DirectoryInfo(folderBrowserDialog1.SelectedPath);
+                OnConfigChange();
                 //if (!fileOpened)
                 //{
                 //    // No file is opened, bring up openFileDialog in selected path.
@@ -100,7 +102,49 @@ namespace BackgroundImageSorterGUI
 
         private void ChooseDatabaseFile_Click_1(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialogExampleForm.Launch();
+            //FolderBrowserDialogExampleForm.Launch();
+            Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
+            //fileDialog.FileName = "database.bin";
+            fileDialog.FileName = config.DataFile.Name;
+            fileDialog.InitialDirectory = config.DataFile.DirectoryName;
+            //fileDialog.
+            //fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
+
+            Nullable<bool> result = fileDialog.ShowDialog();
+
+            if (result == true)
+            {
+                config.DataFile = new System.IO.FileInfo(fileDialog.FileName);
+                OnConfigChange();
+            }
+        }
+
+        private void OnConfigChange()
+        {
+            databaseFile.Text = config.DataFile.FullName;
+            destinationPath.Text = config.Destination.FullName;
+            sourcePath.Text = config.Source.FullName;
+        }
+
+        private void ChooseDestinationFolder_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+
+            folderBrowserDialog1.Description =
+                "Select the directory that you want to use as the destination.";
+
+            folderBrowserDialog1.ShowNewFolderButton = true;
+
+            folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
+            folderBrowserDialog1.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+            DialogResult result = folderBrowserDialog1.ShowDialog();
+
+            if (System.Windows.Forms.DialogResult.OK == result)
+            {
+                config.Destination = new System.IO.DirectoryInfo(folderBrowserDialog1.SelectedPath);
+                OnConfigChange();                
+            }
         }
     }
 }
