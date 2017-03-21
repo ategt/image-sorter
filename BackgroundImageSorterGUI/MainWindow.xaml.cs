@@ -82,7 +82,7 @@ namespace BackgroundImageSorterGUI
 
             // Default to the My Documents folder.
             folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
-            folderBrowserDialog1.SelectedPath = Environment.GetFolderPath( Environment.SpecialFolder.DesktopDirectory);
+            folderBrowserDialog1.SelectedPath = config.Source.FullName;
 
             DialogResult result = folderBrowserDialog1.ShowDialog();
             
@@ -136,7 +136,7 @@ namespace BackgroundImageSorterGUI
             folderBrowserDialog1.ShowNewFolderButton = true;
 
             folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
-            folderBrowserDialog1.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            folderBrowserDialog1.SelectedPath = config.Destination.FullName;
 
             DialogResult result = folderBrowserDialog1.ShowDialog();
 
