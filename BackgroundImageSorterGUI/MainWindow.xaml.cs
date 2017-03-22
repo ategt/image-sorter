@@ -25,6 +25,10 @@ namespace BackgroundImageSorterGUI
 
             config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
+            View.ConsoleView consoleView = new View.ConsoleView();
+            applicationController = new ApplicationController(new BackgroundImageSorter.Controller.IOController(consoleView), consoleView, new PhotoDao());
+
+
             InitializeComponent();
             OnConfigChange();
         }
