@@ -9,18 +9,18 @@
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Top">
-                <Button Content="Browse..."
+                <Button Content="Input Folder"
                 Height="23"
                 HorizontalAlignment="Right"
-                Margin="12,18,12,0"
+                Margin="12,5,12,0"
                 Name="SourceButton"
                 VerticalAlignment="Top"
-                Width="85"
+                Width="100"
                 Click="SourceButton_Click"
                 />
                 <TextBox Height="23"
                  HorizontalAlignment="Stretch"
-                 Margin="12,19,109,0"
+                 Margin="12,5,120,0"
                  Name="sourcePath"
                  VerticalAlignment="Top"
                  Width="Auto" />
@@ -29,14 +29,14 @@
                 <Button Name="ChooseDatabaseFile" 
                 Height="23"
                 HorizontalAlignment="Right"
-                Margin="12,18,12,0"
+                Margin="12,5,12,0"
                 Content="Choose Database"
                 VerticalAlignment="Top"
-                Width="85"
+                Width="100"
                 Click="ChooseDatabaseFile_Click_1"/>
                 <TextBox Height="23"
                  HorizontalAlignment="Stretch"
-                 Margin="12,19,109,0"
+                 Margin="12,5,120,0"
                  Name="databaseFile"
                  VerticalAlignment="Top"
                  Width="Auto" />
@@ -46,14 +46,14 @@
                 <Button Name="ChooseDestinationFolder" 
                 Height="23"
                 HorizontalAlignment="Right"
-                Margin="12,18,12,0"
+                Margin="12,5,12,0"
                 Click="ChooseDestinationFolder_Click"
                 VerticalAlignment="Top"
-                Width="85">Choose Output Folder</Button>
+                Width="100">Output Folder</Button>
 
                 <TextBox Height="23"
                  HorizontalAlignment="Stretch"
-                 Margin="12,19,109,0"
+                 Margin="12,5,120,0"
                  Name="destinationPath"
                  VerticalAlignment="Top"
                  Width="Auto" 
