@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace BackgroundImageSorterGUI
 {
@@ -16,6 +17,7 @@ namespace BackgroundImageSorterGUI
         ApplicationController applicationController = null;
         Configuration config = null;
         ConfigurationController configurationController = null;
+        PhotoViewModel photoViewModel = null;
 
         public MainWindow()
         {
@@ -41,14 +43,15 @@ namespace BackgroundImageSorterGUI
             IEnumerable<Photo> uniquePhotos = applicationController.FindUniquePhotos(config, new Report());
 
             //uniquePhotos
-            PhotoViewModel photoViewModel = new PhotoViewModel();
+            //PhotoViewModel photoViewModel = new PhotoViewModel();
+            photoViewModel = new PhotoViewModel();
 
             foreach (Photo photo in uniquePhotos)
             {
                 photoViewModel.Photos.Add(photo);
             }
 
-
+            DataContext = photoViewModel;
         }
 
         private void ChooseDatabaseFile_Click(object sender, RoutedEventArgs e)
@@ -161,6 +164,12 @@ namespace BackgroundImageSorterGUI
                 config.Destination = new System.IO.DirectoryInfo(folderBrowserDialog1.SelectedPath);
                 OnConfigChange();
             }
+        }
+
+        private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            //ImageSource imageSource = new ImageSource();
+            image1.Source = photoViewModel.RandomImage();
         }
     }
 }

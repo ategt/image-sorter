@@ -16,7 +16,17 @@ namespace BackgroundImageSorterGUI
             this.Photos = new List<Photo>();
         }
 
+        public System.Windows.Media.ImageSource RandomImage()
+        {
+            //System.Windows.Media.ImageSource.
+            //System.Drawing.Image.FromFile( Photos[new Random().Next(0, Photos.Count)].FileInfo.FullName));
+            //System.Windows.Media.ImageSource.
 
+            //new Uri("Photos[new Random().Next(0, Photos.Count)].FileInfo.FullName"
+            string path = Photos[new Random().Next(0, Photos.Count)].FileInfo.FullName;
+            Uri uri = new Uri(path);
+            return new System.Windows.Media.Imaging.BitmapImage(uri);
+        }
 
     }
 }

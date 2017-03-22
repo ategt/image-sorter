@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace BackgroundImageSorter
@@ -16,5 +17,13 @@ namespace BackgroundImageSorter
         public System.Guid Format { get; set; }
         public long Size { get; set; }
         public string hash { get; set; }
+
+        public Image Image
+        {
+            get
+            {
+                return Image.FromFile(FileInfo.FullName);
+            }
+        }
     }
 }
