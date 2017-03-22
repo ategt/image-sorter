@@ -40,6 +40,15 @@ namespace BackgroundImageSorterGUI
         {
             IEnumerable<Photo> uniquePhotos = applicationController.FindUniquePhotos(config, new Report());
 
+            //uniquePhotos
+            PhotoViewModel photoViewModel = new PhotoViewModel();
+
+            foreach (Photo photo in uniquePhotos)
+            {
+                photoViewModel.Photos.Add(photo);
+            }
+
+
         }
 
         private void ChooseDatabaseFile_Click(object sender, RoutedEventArgs e)
@@ -53,7 +62,7 @@ namespace BackgroundImageSorterGUI
 
             Nullable<bool> result = fileDialog.ShowDialog();
 
-            if (result== true)
+            if (result == true)
             {
                 config.DataFile = new System.IO.FileInfo(fileDialog.FileName);
             }
@@ -92,7 +101,7 @@ namespace BackgroundImageSorterGUI
             folderBrowserDialog1.SelectedPath = config.Source.FullName;
 
             DialogResult result = folderBrowserDialog1.ShowDialog();
-            
+
             if (System.Windows.Forms.DialogResult.OK == result)
             {
                 config.Source = new System.IO.DirectoryInfo(folderBrowserDialog1.SelectedPath);
@@ -150,7 +159,7 @@ namespace BackgroundImageSorterGUI
             if (System.Windows.Forms.DialogResult.OK == result)
             {
                 config.Destination = new System.IO.DirectoryInfo(folderBrowserDialog1.SelectedPath);
-                OnConfigChange();                
+                OnConfigChange();
             }
         }
     }

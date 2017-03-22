@@ -65,6 +65,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding hash}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

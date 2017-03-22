@@ -15,5 +15,8 @@ namespace BackgroundImageSorterGUI
         {
             this.Photos = new List<Photo>();
         }
+
+
+
     }
 }
