@@ -171,5 +171,29 @@ namespace BackgroundImageSorterGUI
             //ImageSource imageSource = new ImageSource();
             image1.Source = photoViewModel.RandomImage();
         }
+
+        private void TextBlock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            System.Windows.Controls.TextBlock textBox = (System.Windows.Controls.TextBlock)sender;
+            //'System.Windows.Controls.TextBlock' to type 'System.Windows.Forms.TextBox
+            int valcount = textBox.CommandBindings.Count;
+            object dCtx = textBox.DataContext;
+
+            //Photo photo = null;
+            if (dCtx is Photo)
+            {
+                Photo photo = (Photo)dCtx;
+                Uri uri = new Uri(photo.FileInfo.FullName);
+                image1.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
+            }
+            else
+                //cont.
+                //object os = sender.GetType();
+                //object sour = e.Source.GetType();
+                //bit
+                //return new System.Windows.Media.Imaging.BitmapImage(uri);
+                //image1.Stretch = Stretch.Fill;
+                image1.Source = null;
+        }
     }
 }

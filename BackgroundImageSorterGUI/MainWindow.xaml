@@ -61,22 +61,25 @@
             </Grid>
             <StackPanel>
                 <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
-                <ListBox ItemsSource="{Binding Photos}" Height="Auto" VerticalAlignment="Stretch">
+                <ListBox ItemsSource="{Binding Photos}" VerticalAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Image MouseDown="Image_MouseDown" Source="{Binding Image}" />
-                                <TextBlock Text="{Binding hash}" Mouse.MouseDown="Image_MouseDown" />
+                                <TextBlock Text="{Binding hash}" Mouse.MouseEnter="TextBlock_MouseEnter" Mouse.MouseDown="Image_MouseDown" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Image Name="image1" Stretch="Fill" 
+                <StackPanel>
+                    <Image Name="image1" Stretch="Fill" 
                        Height="Auto" 
                        Width="Auto" 
                        VerticalAlignment="Stretch"
-                       HorizontalAlignment="Stretch"
-                       />
+                       HorizontalAlignment="Center"
+                       ></Image>
+
+                </StackPanel>
             </StackPanel>
         </DockPanel>
 

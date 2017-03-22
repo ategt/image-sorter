@@ -18,6 +18,11 @@ namespace BackgroundImageSorter
         public long Size { get; set; }
         public string hash { get; set; }
 
+        public string Path
+        {
+            get { return FileInfo.FullName; }
+        }
+
         public Image Image
         {
             get
