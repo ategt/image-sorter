@@ -23,13 +23,13 @@ namespace BackgroundImageSorter.Controller
             this.configurationController = configurationController;
         }
 
-        public static void Program(string[] args, IOController ioController, IView consoleView, PhotoDao photoDao, ConfigurationController configurationController)
+        public static void Program(string[] args, IOController ioController, IView view, PhotoDao photoDao, ConfigurationController configurationController)
         {
             Report report = new BackgroundImageSorter
                                                 .Controller
-                                                .ApplicationController(ioController, consoleView, photoDao, configurationController)
+                                                .ApplicationController(ioController, view, photoDao, configurationController)
                                                 .RunProgram(args);
-            consoleView.PrintReport(report);
+            view.PrintReport(report);
         }
 
         public Report RunProgram(string[] args)
