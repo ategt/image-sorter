@@ -11,32 +11,32 @@
             <Grid DockPanel.Dock="Top">
                 <Button Content="Browse..."
                 Height="23"
-                HorizontalAlignment="Left"
-                Margin="401,18,0,0"
+                HorizontalAlignment="Right"
+                Margin="12,18,12,0"
                 Name="SourceButton"
                 VerticalAlignment="Top"
                 Width="85"
-                        Click="SourceButton_Click"
+                Click="SourceButton_Click"
                 />
                 <TextBox Height="23"
-                 HorizontalAlignment="Left"
-                 Margin="12,19,0,0"
+                 HorizontalAlignment="Stretch"
+                 Margin="12,19,109,0"
                  Name="sourcePath"
                  VerticalAlignment="Top"
                  Width="Auto" />
             </Grid>
             <Grid DockPanel.Dock="Top">
                 <Button Name="ChooseDatabaseFile" 
-                        Height="23"
-                HorizontalAlignment="Left"
-                Margin="401,18,0,0"
+                Height="23"
+                HorizontalAlignment="Right"
+                Margin="12,18,12,0"
                 Content="Choose Database"
                 VerticalAlignment="Top"
                 Width="85"
-                        Click="ChooseDatabaseFile_Click_1"/>
+                Click="ChooseDatabaseFile_Click_1"/>
                 <TextBox Height="23"
-                 HorizontalAlignment="Left"
-                 Margin="12,19,0,0"
+                 HorizontalAlignment="Stretch"
+                 Margin="12,19,109,0"
                  Name="databaseFile"
                  VerticalAlignment="Top"
                  Width="Auto" />
@@ -44,7 +44,7 @@
             <Grid DockPanel.Dock="Top">
 
                 <Button Name="ChooseDestinationFolder" 
-                        Height="23"
+                Height="23"
                 HorizontalAlignment="Right"
                 Margin="12,18,12,0"
                 Click="ChooseDestinationFolder_Click"
@@ -57,7 +57,7 @@
                  Name="destinationPath"
                  VerticalAlignment="Top"
                  Width="Auto" 
-                         />
+                  />
             </Grid>
             <StackPanel>
                 <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
