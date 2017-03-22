@@ -11,9 +11,9 @@ namespace BackgroundImageSorter.Controller
 {
     public class IOController
     {
-        ConsoleView consoleView;
+        IView consoleView;
 
-        public IOController(ConsoleView consoleView)
+        public IOController(IView consoleView)
         {
             this.consoleView = consoleView;
         }

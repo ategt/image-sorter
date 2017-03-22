@@ -13,7 +13,7 @@ namespace BackgroundImageSorter
     {
         public static void Main(string[] args)
         {
-            View.ConsoleView consoleView = new View.ConsoleView();
+            View.IView consoleView = new View.ConsoleView();
             ConfigurationController configurationController = new ConfigurationController(consoleView);
             Controller.ApplicationController.Program(args, new Controller.IOController(consoleView), consoleView, new PhotoDao(), configurationController);
         }

@@ -69,6 +69,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ImageUtilities.cs" />
     <Compile Include="View\ConsoleView.cs" />
+    <Compile Include="View\ConsoleView2.cs" />
+    <Compile Include="View\IView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -11,11 +11,11 @@ namespace BackgroundImageSorter.Controller
     public class ApplicationController
     {
         IOController ioController = null;
-        ConsoleView consoleView = null;
+        IView consoleView = null;
         PhotoDao photoDao = null;
         ConfigurationController configurationController = null;
 
-        public ApplicationController(IOController ioController, ConsoleView consoleView, PhotoDao photoDao, ConfigurationController configurationController)
+        public ApplicationController(IOController ioController, IView consoleView, PhotoDao photoDao, ConfigurationController configurationController)
         {
             this.ioController = ioController;
             this.consoleView = consoleView;
@@ -23,7 +23,7 @@ namespace BackgroundImageSorter.Controller
             this.configurationController = configurationController;
         }
 
-        public static void Program(string[] args, IOController ioController, ConsoleView consoleView, PhotoDao photoDao, ConfigurationController configurationController)
+        public static void Program(string[] args, IOController ioController, IView consoleView, PhotoDao photoDao, ConfigurationController configurationController)
         {
             Report report = new BackgroundImageSorter
                                                 .Controller

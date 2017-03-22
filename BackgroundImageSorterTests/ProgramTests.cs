@@ -12,7 +12,7 @@ namespace BackgroundImageSorter.Tests
     public class ProgramTests
     {
         static readonly string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
-        View.ConsoleView consoleView = null;
+        View.IView consoleView = null;
         Controller.IOController ioController = null;
         PhotoDao photoDao = null;
         ConfigurationController configurationController = null;
@@ -21,7 +21,7 @@ namespace BackgroundImageSorter.Tests
         [SetUp]
         public void SetUp()
         {
-            consoleView = new View.ConsoleView();
+            consoleView = new View.IView();
             ioController = new IOController(consoleView);
             photoDao = new PhotoDao();
             DirectoryInfo outputDir = Directory.CreateDirectory(workingDir + @"\output");

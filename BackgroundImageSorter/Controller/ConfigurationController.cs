@@ -12,9 +12,9 @@ namespace BackgroundImageSorter.Controller
 {
     public class ConfigurationController
     {
-        ConsoleView consoleView = null;
+        IView consoleView = null;
 
-        public ConfigurationController(ConsoleView consoleView)
+        public ConfigurationController(IView consoleView)
         {
             this.consoleView = consoleView;
         }
