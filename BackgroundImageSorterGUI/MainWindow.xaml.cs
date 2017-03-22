@@ -24,7 +24,7 @@ namespace BackgroundImageSorterGUI
                                     @"--s=" + workingDir + @"\input",
                                     @"/Output:" + workingDir + @"\output" };
 
-            BackgroundImageSorter.View.IView consoleView = new BackgroundImageSorter.View.IView();
+            BackgroundImageSorter.View.IView consoleView = new BackgroundImageSorter.View.ConsoleView();
             ConfigurationController configurationController = new ConfigurationController(consoleView);
 
             config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());

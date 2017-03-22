@@ -24,6 +24,9 @@ namespace BackgroundImageSorter.View
         void DisplaySourceScanningBegining();
         void DisplaySourceScanningFinished();
         void PrintReport(Report report);
+        void DisplayNoFilesMoved();
         void ShowHelp(OptionSet p);
+        void DisplayFileTestTransfer(string inputFullName, string outputFullName);
+        void DisplayScanProgress(int currentPosition, int totalPossibles);
     }
 }

@@ -84,12 +84,12 @@ namespace BackgroundImageSorter.View
             Console.Write("Copying Photos...");
         }
 
-        internal void DisplayNoFilesMoved()
+        public void DisplayNoFilesMoved()
         {
             Console.WriteLine("No Files Were Moved...Skipping Data Update.");
         }
 
-        internal void DisplayFileTestTransfer(string inputFullName, string outputFullName)
+        public void DisplayFileTestTransfer(string inputFullName, string outputFullName)
         {
             Console.WriteLine($"{inputFullName} to {outputFullName}");
         }
@@ -99,7 +99,7 @@ namespace BackgroundImageSorter.View
             Console.Write(BEGINNING_SCANNING_SOURCE);
         }
 
-        internal void DisplayScanProgress(int currentPosition, int totalPossibles)
+        public void DisplayScanProgress(int currentPosition, int totalPossibles)
         {
             string progressBar = MakeProgressBar(currentPosition, totalPossibles);
 

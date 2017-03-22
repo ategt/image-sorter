@@ -21,7 +21,7 @@ namespace BackgroundImageSorter.Tests
         [SetUp]
         public void SetUp()
         {
-            consoleView = new View.IView();
+            consoleView = new View.ConsoleView();
             ioController = new IOController(consoleView);
             photoDao = new PhotoDao();
             DirectoryInfo outputDir = Directory.CreateDirectory(workingDir + @"\output");
