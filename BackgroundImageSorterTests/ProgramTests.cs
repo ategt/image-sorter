@@ -11,10 +11,12 @@ namespace BackgroundImageSorter.Tests
     [TestFixture]
     public class ProgramTests
     {
-        static string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
+        static readonly string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
         View.ConsoleView consoleView = null;
         Controller.IOController ioController = null;
         PhotoDao photoDao = null;
+        ConfigurationController configurationController = null;
+        ApplicationController applicationController = null;
 
         [SetUp]
         public void SetUp()
@@ -23,6 +25,8 @@ namespace BackgroundImageSorter.Tests
             ioController = new IOController(consoleView);
             photoDao = new PhotoDao();
             DirectoryInfo outputDir = Directory.CreateDirectory(workingDir + @"\output");
+            configurationController = new ConfigurationController(consoleView);
+            applicationController = new ApplicationController(ioController, consoleView, photoDao, configurationController);
 
             if ( outputDir.GetFiles().Count() > 0 || outputDir.GetDirectories().Count() > 0)
             {
@@ -44,7 +48,7 @@ namespace BackgroundImageSorter.Tests
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto => PhotoBuilder.Build(possiblePhoto.FullName));
 
-            var distinctPhotos = ApplicationController.GetDistinctPhotos(photos);
+            var distinctPhotos = applicationController.GetDistinctPhotos(photos);
 
             Assert.IsTrue(distinctPhotos.Count() < 6);
             Assert.AreEqual(distinctPhotos.Count(), 3);
@@ -57,7 +61,7 @@ namespace BackgroundImageSorter.Tests
 
             string[] args = { "-h" };
 
-            Configuration config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+            Configuration config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
             Assert.NotNull(config);
             Assert.IsTrue(config.ShowHelp);
@@ -78,7 +82,7 @@ namespace BackgroundImageSorter.Tests
                               "-d", data
                        };
 
-            Report report = new ApplicationController(ioController, consoleView, photoDao).RunProgram(args);
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
 
             DirectoryAssert.Exists(source);
             DirectoryAssert.Exists(destination);
@@ -99,7 +103,7 @@ namespace BackgroundImageSorter.Tests
                                     "--Automated",
                                     "-t-" };
 
-            Configuration config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+            Configuration config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
             Assert.NotNull(config);
             Assert.NotNull(config.BackgroundDirectory);
@@ -125,7 +129,7 @@ namespace BackgroundImageSorter.Tests
                                     "--Automated-",
                                     "-t+" };
 
-            Configuration config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+            Configuration config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
 
             Assert.NotNull(config);
             Assert.IsFalse(config.ShowHelp);
@@ -152,7 +156,7 @@ namespace BackgroundImageSorter.Tests
                                     "-p", portraitDir.FullName,
                                     "-l", landscapeDir.FullName};
 
-            Report report = new ApplicationController(ioController, consoleView, photoDao).RunProgram(args);
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
 
             FileInfo[] landscapePhotos = landscapeDir.GetFiles();
 
@@ -183,7 +187,7 @@ namespace BackgroundImageSorter.Tests
                                     "-Single",
                                     "-sub" };
 
-            Report report = new ApplicationController(ioController, consoleView, photoDao).RunProgram(args);
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
 
             FileInfo[] outputPhotos = destinationDir.GetFiles();
 
@@ -227,11 +231,11 @@ namespace BackgroundImageSorter.Tests
                 Move = true
             };
 
-            config = ConfigurationController.SetDefaultDirectories(config);
+            config = configurationController.SetDefaultDirectories(config);
 
             Assert.AreEqual(9, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
 
-            Report report = new ApplicationController(ioController, consoleView, photoDao).SortImages(config, new Report());
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Report());
 
             DirectoryInfo landscapes = config.Landscape;
             FileInfo[] landscapePhotos = landscapes.GetFiles();
@@ -276,7 +280,7 @@ namespace BackgroundImageSorter.Tests
             rootFile.Close();
             landscapeFile.Close();
 
-            report = new ApplicationController(ioController, consoleView, photoDao).SortImages(config, new Report());
+            report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Report());
 
             landscapes = config.Landscape;
             landscapePhotos = landscapes.GetFiles();
@@ -334,7 +338,7 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = ConfigurationController.SetDefaultDirectories(config);
+            config = configurationController.SetDefaultDirectories(config);
 
             string testImageDirectory = workingDir + @"\";
 
@@ -363,7 +367,7 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = ConfigurationController.SetDefaultDirectories(config);
+            config = configurationController.SetDefaultDirectories(config);
 
             Assert.AreEqual(workingDir + @"\output\Other Images", config.SmallDirectory.FullName);
             Assert.AreEqual(workingDir + @"\output\Data", config.DataDirectory.FullName);
@@ -386,7 +390,7 @@ namespace BackgroundImageSorter.Tests
 
             Assert.AreEqual(6, config.Source.GetFiles().Count());
 
-            Report report = new ApplicationController(ioController, consoleView, photoDao).SortImages(config, new Report());
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Report());
 
             DirectoryInfo landscapes = config.Landscape;
             FileInfo[] landscapePhotos = landscapes.GetFiles();
@@ -416,11 +420,11 @@ namespace BackgroundImageSorter.Tests
                 NoUpdate = true
             };
 
-            config = ConfigurationController.SetDefaultDirectories(config);
+            config = configurationController.SetDefaultDirectories(config);
 
             Assert.AreEqual(9, config.Source.GetFiles("*", SearchOption.AllDirectories).Count());
 
-            Report report = new ApplicationController(ioController, consoleView, photoDao).SortImages(config, new Report());
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Report());
 
             DirectoryInfo landscapes = config.Landscape;
             FileInfo[] landscapePhotos = landscapes.GetFiles();
@@ -470,7 +474,7 @@ namespace BackgroundImageSorter.Tests
                 DataFile = new FileInfo(workingDir + @"\output\data.bin"),                
             };
 
-            Report report = new ApplicationController(ioController, consoleView, photoDao).SortImages(config, new Report());
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Report());
 
             Assert.AreEqual(report.StoredBackgrounds, 0);
             Assert.AreEqual(report.StoredFiles, 0);
@@ -492,7 +496,7 @@ namespace BackgroundImageSorter.Tests
                 DataFile = new FileInfo(workingDir + @"\output\data.bin"),
             };
 
-            Report secondReport = new ApplicationController(ioController, consoleView, photoDao).SortImages(secondConfig, new Report());
+            Report secondReport = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(secondConfig, new Report());
 
             Assert.AreEqual(secondReport.StoredBackgrounds, 3);
             Assert.AreEqual(secondReport.StoredFiles, 3);
@@ -516,9 +520,9 @@ namespace BackgroundImageSorter.Tests
                 PreScan = true
             };
 
-            thirdConfig = ConfigurationController.SetDefaultDirectories(thirdConfig);
+            thirdConfig = configurationController.SetDefaultDirectories(thirdConfig);
 
-            Report thirdReport = new ApplicationController(ioController, consoleView, photoDao).SortImages(thirdConfig, new Report());
+            Report thirdReport = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(thirdConfig, new Report());
 
             Assert.AreEqual(thirdReport.StoredBackgrounds, 0);
             Assert.AreEqual(thirdReport.StoredFiles, 0);
@@ -546,8 +550,8 @@ namespace BackgroundImageSorter.Tests
                 FastScan = true
             };
 
-            config = ConfigurationController.SetDefaultDirectories(config);
-            Report report = new ApplicationController(ioController, consoleView, photoDao).SortImages(config, new Report());
+            config = configurationController.SetDefaultDirectories(config);
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Report());
 
             Assert.AreEqual(report.StoredBackgrounds, 0);
             Assert.AreEqual(report.StoredFiles, 0);
@@ -577,9 +581,9 @@ namespace BackgroundImageSorter.Tests
                 FastScan = true
             };
 
-            secondConfig = ConfigurationController.SetDefaultDirectories(secondConfig);
+            secondConfig = configurationController.SetDefaultDirectories(secondConfig);
 
-            Report secondReport = new ApplicationController(ioController, consoleView, photoDao).SortImages(secondConfig, new Report());
+            Report secondReport = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(secondConfig, new Report());
 
             Assert.AreEqual(secondReport.StoredBackgrounds, 0);
             Assert.AreEqual(secondReport.StoredFiles, 0);
@@ -600,9 +604,9 @@ namespace BackgroundImageSorter.Tests
                 DataFile = new FileInfo(workingDir + @"\output\data.bin")
             };
 
-            thirdConfig = ConfigurationController.SetDefaultDirectories(thirdConfig);
+            thirdConfig = configurationController.SetDefaultDirectories(thirdConfig);
 
-            Report thirdReport = new ApplicationController(ioController, consoleView, photoDao).SortImages(thirdConfig, new Report());
+            Report thirdReport = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(thirdConfig, new Report());
             
             Assert.AreEqual(thirdReport.StoredBackgrounds, 3);
             Assert.AreEqual(thirdReport.StoredFiles, 3);
@@ -621,7 +625,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
 
-            string improvedName = ApplicationController.RebuildImageExtension(photo, false);
+            string improvedName = applicationController.RebuildImageExtension(photo, false);
 
             Assert.AreEqual(improvedName, "4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
 
@@ -632,7 +636,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg.jpg");
 
-            string improvedName = ApplicationController.RebuildImageExtension(photo, true);
+            string improvedName = applicationController.RebuildImageExtension(photo, true);
 
             Assert.AreEqual(improvedName, "4aaf59bdb816c76e7b2983a48ef907833ecae3f5cef6fb02a3fbfa36274e1cc6.jpg");
 
@@ -643,7 +647,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.png");
 
-            string improvedName = ApplicationController.RebuildImageExtension(photo, true);
+            string improvedName = applicationController.RebuildImageExtension(photo, true);
 
             Assert.AreEqual(improvedName, "07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.jpg");
         }
@@ -653,7 +657,7 @@ namespace BackgroundImageSorter.Tests
         {
             Photo photo = PhotoBuilder.Build(workingDir + @"\input\07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.png");
 
-            string improvedName = ApplicationController.RebuildImageExtension(photo, false);
+            string improvedName = applicationController.RebuildImageExtension(photo, false);
 
             Assert.AreEqual(improvedName, "07d13665d2a42b6a9b1308d76ea9d43ede14964ac843f5c646e11d8537323c75.jpg");
         }
@@ -674,8 +678,8 @@ namespace BackgroundImageSorter.Tests
                 Recurse = true
             };
 
-            config = ConfigurationController.SetDefaultDirectories(config);
-            Report report = new ApplicationController(ioController, consoleView, photoDao).SortImages(config, new Report());
+            config = configurationController.SetDefaultDirectories(config);
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Report());
 
             Assert.AreEqual(report.Moved, 5);
             Assert.AreEqual(config.Destination.EnumerateFiles("*", SearchOption.AllDirectories).Count(), 5);

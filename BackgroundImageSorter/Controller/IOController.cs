@@ -36,7 +36,7 @@ namespace BackgroundImageSorter.Controller
             }
         }
 
-        private static List<FileInfo> scanDirectoriesForFiles(List<DirectoryInfo> directoriesToScan)
+        private List<FileInfo> scanDirectoriesForFiles(List<DirectoryInfo> directoriesToScan)
         {
             List<FileInfo> filesToScanList = new List<FileInfo>();
             directoriesToScan.ForEach(directory =>
@@ -47,7 +47,7 @@ namespace BackgroundImageSorter.Controller
             return filesToScanList;
         }
 
-        private static void addFilesToFilesList(List<FileInfo> filesToScanList, FileInfo[] filesToScan)
+        private void addFilesToFilesList(List<FileInfo> filesToScanList, FileInfo[] filesToScan)
         {
             if (filesToScan != null)
             {
@@ -58,14 +58,14 @@ namespace BackgroundImageSorter.Controller
             }
         }
 
-        private static List<DirectoryInfo> RemoveNullDirectories(ISet<DirectoryInfo> directories)
+        private List<DirectoryInfo> RemoveNullDirectories(ISet<DirectoryInfo> directories)
         {
             List<DirectoryInfo> directoriesToScan = directories.ToList<DirectoryInfo>();
             directoriesToScan.RemoveAll(item => item == null);
             return directoriesToScan;
         }
 
-        private static ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
+        private ISet<DirectoryInfo> GenerateScannableDirectoriesSet(Configuration config)
         {
             ISet<DirectoryInfo> directories = new HashSet<DirectoryInfo>();
             directories.Add(config.Portrait);
@@ -96,7 +96,7 @@ namespace BackgroundImageSorter.Controller
             return filesToScan.Where(file => !photoDao.ContainsFile(file)).ToList();
         }
 
-        private static List<FileInfo> getFilesToScan(Configuration config)
+        private List<FileInfo> getFilesToScan(Configuration config)
         {
             ISet<DirectoryInfo> directories = GenerateScannableDirectoriesSet(config);
 
@@ -106,7 +106,7 @@ namespace BackgroundImageSorter.Controller
             return filesToScan;
         }
 
-        private static FileInfo[] getFilesFromValidDirectories(DirectoryInfo directory)
+        private FileInfo[] getFilesFromValidDirectories(DirectoryInfo directory)
         {
             directory?.Refresh();
 
@@ -120,7 +120,7 @@ namespace BackgroundImageSorter.Controller
             }
             else
             {
-                ConsoleView.DisplayDirectoryDoesNotExist(directory);
+                consoleView.DisplayDirectoryDoesNotExist(directory);
                 return null;
             }
         }

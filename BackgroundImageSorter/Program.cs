@@ -1,4 +1,5 @@
-﻿using BackgroundImageSorter.Model;
+﻿using BackgroundImageSorter.Controller;
+using BackgroundImageSorter.Model;
 using NDesk.Options;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,11 @@ namespace BackgroundImageSorter
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             View.ConsoleView consoleView = new View.ConsoleView();
-            Controller.ApplicationController.Program(args, new Controller.IOController(consoleView), consoleView, new PhotoDao());
+            ConfigurationController configurationController = new ConfigurationController(consoleView);
+            Controller.ApplicationController.Program(args, new Controller.IOController(consoleView), consoleView, new PhotoDao(), configurationController);
         }
     }
 }

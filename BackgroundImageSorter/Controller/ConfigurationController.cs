@@ -12,7 +12,14 @@ namespace BackgroundImageSorter.Controller
 {
     public class ConfigurationController
     {
-        public static Configuration EstablishConfiguration(string[] args)
+        ConsoleView consoleView = null;
+
+        public ConfigurationController(ConsoleView consoleView)
+        {
+            this.consoleView = consoleView;
+        }
+
+        public Configuration EstablishConfiguration(string[] args)
         {
             Configuration config = ConfigurationBuilder.BuildConfig();
 
@@ -21,7 +28,7 @@ namespace BackgroundImageSorter.Controller
         }
 
 
-        public static Configuration SetupConfiguration(string[] args, Configuration config)
+        public Configuration SetupConfiguration(string[] args, Configuration config)
         {
             try
             {
@@ -32,7 +39,7 @@ namespace BackgroundImageSorter.Controller
             }
             catch (OptionException e)
             {
-                ConsoleView.DisplayErrorMessage(e);
+                consoleView.DisplayErrorMessage(e);
                 config.Error = true;
             }
 
@@ -42,25 +49,25 @@ namespace BackgroundImageSorter.Controller
             return config;
         }
 
-        private static void ConfirmImportantFoldersExist(Configuration config)
+        private void ConfirmImportantFoldersExist(Configuration config)
         {
             if (!config.Destination.Exists || !config.Source.Exists)
             {
-                ConsoleView.DisplayError();
+                consoleView.DisplayError();
                 config.Error = true;
             }
         }
 
-        private static void ConsiderHelp(Configuration config, OptionSet options)
+        private void ConsiderHelp(Configuration config, OptionSet options)
         {
             if (config.ShowHelp)
             {
-                ConsoleView.ShowHelp(options);
+                consoleView.ShowHelp(options);
                 config.Error = true;
             }
         }
 
-        private static OptionSet SetOptions(Configuration config)
+        private OptionSet SetOptions(Configuration config)
         {
             return new NDesk.Options.OptionSet() {
                 { "d|DataFile=", "Dao Data File", d => config.DataFile = new FileInfo(d) },
@@ -86,13 +93,13 @@ namespace BackgroundImageSorter.Controller
             };
         }
 
-        private static void ParseArguments(string[] args, OptionSet p)
+        private void ParseArguments(string[] args, OptionSet p)
         {
             List<string> extra = p.Parse(args);
             if (extra.Count > 0) throw new OptionException(extra.First<string>(), "Unidentified Option");
         }
 
-        public static Configuration SetDefaultDirectories(Configuration config)
+        public Configuration SetDefaultDirectories(Configuration config)
         {
             if (config.Source == null)
                 config.Source = new DirectoryInfo(@"C:\Users\" + Environment.UserName + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
@@ -131,7 +138,7 @@ namespace BackgroundImageSorter.Controller
         }
 
 
-        private static DirectoryInfo PrepareSubDirectory(DirectoryInfo directory, string subDirectoryTitle)
+        private DirectoryInfo PrepareSubDirectory(DirectoryInfo directory, string subDirectoryTitle)
         {
             return new DirectoryInfo(directory.FullName + @"\" + subDirectoryTitle);
         }

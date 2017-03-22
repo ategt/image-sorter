@@ -15,6 +15,7 @@ namespace BackgroundImageSorterGUI
     {
         ApplicationController applicationController = null;
         Configuration config = null;
+        ConfigurationController configurationController = null;
 
         public MainWindow()
         {
@@ -23,10 +24,12 @@ namespace BackgroundImageSorterGUI
                                     @"--s=" + workingDir + @"\input",
                                     @"/Output:" + workingDir + @"\output" };
 
-            config = ConfigurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+            BackgroundImageSorter.View.ConsoleView consoleView = new BackgroundImageSorter.View.ConsoleView();
+            ConfigurationController configurationController = new ConfigurationController(consoleView);
 
-            View.ConsoleView consoleView = new View.ConsoleView();
-            applicationController = new ApplicationController(new BackgroundImageSorter.Controller.IOController(consoleView), consoleView, new PhotoDao());
+            config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+
+            applicationController = new ApplicationController(new BackgroundImageSorter.Controller.IOController(consoleView), consoleView, new PhotoDao(), configurationController);
 
 
             InitializeComponent();

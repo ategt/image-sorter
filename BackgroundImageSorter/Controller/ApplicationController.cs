@@ -12,27 +12,29 @@ namespace BackgroundImageSorter.Controller
     {
         IOController ioController = null;
         ConsoleView consoleView = null;
-        static PhotoDao photoDao = null;
+        PhotoDao photoDao = null;
+        ConfigurationController configurationController = null;
 
-        public ApplicationController(IOController ioController, ConsoleView consoleView, PhotoDao photoDao)
+        public ApplicationController(IOController ioController, ConsoleView consoleView, PhotoDao photoDao, ConfigurationController configurationController)
         {
             this.ioController = ioController;
             this.consoleView = consoleView;
-            ApplicationController.photoDao = photoDao;
+            this.photoDao = photoDao;
+            this.configurationController = configurationController;
         }
 
-        public static void Program(string[] args, IOController ioController, ConsoleView consoleView, PhotoDao photoDao)
+        public static void Program(string[] args, IOController ioController, ConsoleView consoleView, PhotoDao photoDao, ConfigurationController configurationController)
         {
             Report report = new BackgroundImageSorter
                                                 .Controller
-                                                .ApplicationController(ioController, consoleView, photoDao)
+                                                .ApplicationController(ioController, consoleView, photoDao, configurationController)
                                                 .RunProgram(args);
-            ConsoleView.PrintReport(report);
+            consoleView.PrintReport(report);
         }
 
         public Report RunProgram(string[] args)
         {
-            Configuration config = ConfigurationController.EstablishConfiguration(args);
+            Configuration config = configurationController.EstablishConfiguration(args);
 
             if (!config.Error)
                 return SortImages(config, new Model.Report());
@@ -72,11 +74,11 @@ namespace BackgroundImageSorter.Controller
 
         private void PreScanDestination(Configuration config, Report report, PhotoDao photoDao)
         {
-            ConsoleView.DisplayBeginingDirectoryPrescan();
+            consoleView.DisplayBeginingDirectoryPrescan();
 
             ioController.updateDirectoryData(config, photoDao);
 
-            ConsoleView.DisplayFinishedDirectoryPrescan();
+            consoleView.DisplayFinishedDirectoryPrescan();
         }
 
         private static Report ProcessReport(Configuration config, Report report)
@@ -88,7 +90,7 @@ namespace BackgroundImageSorter.Controller
 
         private void UpdateData(Configuration config, Report report)
         {
-            ConsoleView.DisplayBeginUpdatingDao();
+            consoleView.DisplayBeginUpdatingDao();
 
             if (!config.NoUpdate)
             {
@@ -102,42 +104,42 @@ namespace BackgroundImageSorter.Controller
 
             UpdateReportWithNewImageCount(config, report, photoDao);
 
-            ConsoleView.DisplayFinishedUpdateingDao();
+            consoleView.DisplayFinishedUpdateingDao();
         }
 
 
-        private static void CopyOrMoveFiles(Configuration config, Report report, IEnumerable<Photo> uniquePhotos)
+        private void CopyOrMoveFiles(Configuration config, Report report, IEnumerable<Photo> uniquePhotos)
         {
-            ConsoleView.DisplayBeginTransferingData();
+            consoleView.DisplayBeginTransferingData();
 
             moveUniquePhotosToAppropiateDirectory(uniquePhotos,
                                                     config, report);
-            ConsoleView.DisplayFinishedTransferingData();
+            consoleView.DisplayFinishedTransferingData();
         }
 
-        private static IEnumerable<Photo> ScanSource(Configuration config, Report report, PhotoDao photoDao)
+        private IEnumerable<Photo> ScanSource(Configuration config, Report report, PhotoDao photoDao)
         {
-            ConsoleView.DisplaySourceScanningBegining();
+            consoleView.DisplaySourceScanningBegining();
             IEnumerable<Photo> uniquePhotos = scanDirectoryForNewPhotos(config.Source, photoDao, report, config.Recurse);
 
-            ConsoleView.DisplaySourceScanningFinished();
+            consoleView.DisplaySourceScanningFinished();
             return uniquePhotos;
         }
 
-        public static PhotoDao LoadData(Configuration config, Report report)
+        public PhotoDao LoadData(Configuration config, Report report)
         {
-            ConsoleView.DisplayDaoLoadingBeginning();
+            consoleView.DisplayDaoLoadingBeginning();
 
             PhotoDao photoDao = new PhotoDao(config.DataFile.FullName);
 
             LoadDaoInfoToReport(report, photoDao);
 
-            ConsoleView.DisplayDaoLoadingFinished();
+            consoleView.DisplayDaoLoadingFinished();
             return photoDao;
         }
 
 
-        private static Report UpdateReportWithNewImageCount(Configuration config, Report report, PhotoDao photoDao)
+        private Report UpdateReportWithNewImageCount(Configuration config, Report report, PhotoDao photoDao)
         {
             if (config.Landscape != null)
             {
@@ -169,7 +171,7 @@ namespace BackgroundImageSorter.Controller
             return returnedPhoto;
         }
 
-        private static void moveUniquePhotosToAppropiateDirectory(IEnumerable<Photo> uniquePhotos,
+        private void moveUniquePhotosToAppropiateDirectory(IEnumerable<Photo> uniquePhotos,
                                         Configuration config,
                                         Report report)
         {
@@ -182,12 +184,12 @@ namespace BackgroundImageSorter.Controller
                 }
                 catch (System.IO.IOException ex)
                 {
-                    ConsoleView.DisplaySkippingPhotoDuringTransfer(photo, ex);
+                    consoleView.DisplaySkippingPhotoDuringTransfer(photo, ex);
                 }
             }
         }
 
-        private static void CopyFilesToAppropriateDirectory(Configuration config, Report report, Photo photo, System.Drawing.Size dimension)
+        private void CopyFilesToAppropriateDirectory(Configuration config, Report report, Photo photo, System.Drawing.Size dimension)
         {
             if (dimension.IsEmpty)
             {
@@ -206,12 +208,12 @@ namespace BackgroundImageSorter.Controller
             }
         }
 
-        private static void CopyToDataDirectory(Configuration config, Report report, Photo photo)
+        private void CopyToDataDirectory(Configuration config, Report report, Photo photo)
         {
             CopyToDirectory(config, report, photo, config.DataDirectory);
         }
 
-        private static void CopyOtherImages(Configuration config, Report report, Photo photo)
+        private void CopyOtherImages(Configuration config, Report report, Photo photo)
         {
             if (!config.LargeImagesOnly)
             {
@@ -219,7 +221,7 @@ namespace BackgroundImageSorter.Controller
             }
         }
 
-        private static void CopyLargeImagesToApproprateDirectory(Configuration config, Report report, Photo photo, System.Drawing.Size dimension)
+        private void CopyLargeImagesToApproprateDirectory(Configuration config, Report report, Photo photo, System.Drawing.Size dimension)
         {
             if (dimension.Height > dimension.Width)
             {
@@ -231,7 +233,7 @@ namespace BackgroundImageSorter.Controller
             }
         }
 
-        private static void CopyToDirectory(Configuration config, Report report, Photo photo, DirectoryInfo destinationDirectory)
+        private void CopyToDirectory(Configuration config, Report report, Photo photo, DirectoryInfo destinationDirectory)
         {
             string destinationFullName = GenerateNewFullName(config, photo, destinationDirectory);
 
@@ -245,12 +247,12 @@ namespace BackgroundImageSorter.Controller
             }
             else
             {
-                ConsoleView.DisplayFileTestTransfer(photo.FileInfo.FullName, destinationFullName);
+                consoleView.DisplayFileTestTransfer(photo.FileInfo.FullName, destinationFullName);
             }
             report.Moved++;
         }
 
-        private static string GenerateNewFullName(Configuration config, Photo photo, DirectoryInfo destinationDirectory)
+        private string GenerateNewFullName(Configuration config, Photo photo, DirectoryInfo destinationDirectory)
         {
             if (config?.RebuildExtensions ?? false)
                 return destinationDirectory.FullName + @"\" + RebuildImageExtension(photo, config.AggressiveExtensions);
@@ -258,7 +260,7 @@ namespace BackgroundImageSorter.Controller
                 return destinationDirectory.FullName + @"\" + photo.FileInfo.Name;
         }
 
-        public static string RebuildImageExtension(Photo photo, bool aggressive)
+        public string RebuildImageExtension(Photo photo, bool aggressive)
         {
             string properExtension = Utilities.ImageUtilities.DetectProperExtension(photo);
 
@@ -273,7 +275,7 @@ namespace BackgroundImageSorter.Controller
 
         }
 
-        private static string RemoveExtensions(Photo photo, bool aggresive)
+        private string RemoveExtensions(Photo photo, bool aggresive)
         {
             if (aggresive)
             {
@@ -286,7 +288,7 @@ namespace BackgroundImageSorter.Controller
             }
         }
 
-        private static void CreateNonExistantDirectory(DirectoryInfo directory)
+        private void CreateNonExistantDirectory(DirectoryInfo directory)
         {
             if (!directory.Exists)
             {
@@ -295,7 +297,7 @@ namespace BackgroundImageSorter.Controller
             }
         }
 
-        private static IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao, Report report, bool recurse)
+        private IEnumerable<Photo> scanDirectoryForNewPhotos(DirectoryInfo sourceDirectory, PhotoDao photoDao, Report report, bool recurse)
         {
             FileInfo[] possiblePhotos = (recurse) ?
                                 sourceDirectory.GetFiles("*", SearchOption.AllDirectories) :
@@ -306,7 +308,7 @@ namespace BackgroundImageSorter.Controller
 
             IEnumerable<Photo> photos = possiblePhotos.Select(possiblePhoto =>
             {
-                ConsoleView.DisplayScanProgress(currentPosition++, totalPossibles);
+                consoleView.DisplayScanProgress(currentPosition++, totalPossibles);
                 return PhotoBuilder.Build(possiblePhoto.FullName);
             })
                                                                                  .ToList();
@@ -326,7 +328,7 @@ namespace BackgroundImageSorter.Controller
             return filteredPhotos;
         }
 
-        private static IEnumerable<Photo> filterOutTheFilesWeAlreadyHave(PhotoDao photoDao, IEnumerable<Photo> photos)
+        private IEnumerable<Photo> filterOutTheFilesWeAlreadyHave(PhotoDao photoDao, IEnumerable<Photo> photos)
         {
 
             List<Photo> photosWeDoNotHaveYet = new List<Photo>();
@@ -340,12 +342,12 @@ namespace BackgroundImageSorter.Controller
                 {
                     photosWeDoNotHaveYet.Add(photo);
                     accepted = photosWeDoNotHaveYet.Count();
-                    ConsoleView.DisplayAFileHasBeenAccepted(accepted, rejected, total);
+                    consoleView.DisplayAFileHasBeenAccepted(accepted, rejected, total);
                 }
                 else
                 {
                     rejected++;
-                    ConsoleView.DisplayAFileHasBeenFilteredOut(accepted, rejected, total);
+                    consoleView.DisplayAFileHasBeenFilteredOut(accepted, rejected, total);
                 }
             }
 
@@ -353,12 +355,12 @@ namespace BackgroundImageSorter.Controller
         }
 
 
-        public static IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
+        public IEnumerable<Photo> GetDistinctPhotos(IEnumerable<Photo> filteredPhotos)
         {
             return getDistinctPhotos(filteredPhotos);
         }
 
-        private static IEnumerable<Photo> getDistinctPhotos(IEnumerable<Photo> photos)
+        private IEnumerable<Photo> getDistinctPhotos(IEnumerable<Photo> photos)
         {
 
             var hashes = photos.Select(photo => photo.SHA512);
@@ -375,7 +377,5 @@ namespace BackgroundImageSorter.Controller
 
             return uniques;
         }
-
-
     }
 }

@@ -10,7 +10,7 @@ namespace BackgroundImageSorter.View
         public readonly static string BEGINNING_SCANNING_SOURCE = "Scaning Source Directory....";
         public readonly static string BEGINNING_SCANNING_DESTINATION = "Scaning Destination Directory....";
 
-        public static void PrintReport(Report report)
+        public void PrintReport(Report report)
         {
             if (report == null) return;
 
@@ -23,13 +23,13 @@ namespace BackgroundImageSorter.View
         }
 
 
-        public static Report DisplayError()
+        public Report DisplayError()
         {
             Console.WriteLine("An important directory is missing.");
             return null;
         }
 
-        public static void ShowHelp(OptionSet p)
+        public void ShowHelp(OptionSet p)
         {
             Console.WriteLine("Usage: [OPTIONS]+");
             Console.WriteLine();
@@ -43,13 +43,13 @@ namespace BackgroundImageSorter.View
             Console.WriteLine(MakeProgressBar(current, count));
         }
 
-        public static void DisplayFinishedDirectoryPrescan()
+        public void DisplayFinishedDirectoryPrescan()
         {
             EraseCurrentLine();
             Console.WriteLine($"{BEGINNING_SCANNING_DESTINATION}PreScan Done.");
         }
 
-        public static void DisplayBeginingDirectoryPrescan()
+        public void DisplayBeginingDirectoryPrescan()
         {
             Console.WriteLine("PreScanning Destination Folder.");
             Console.Write(BEGINNING_SCANNING_DESTINATION);
@@ -62,24 +62,24 @@ namespace BackgroundImageSorter.View
             WriteFromBeginingOfConsoleLine($"{BEGINNING_SCANNING_DESTINATION}{progressBar}");
         }
 
-        public static void DisplayFinishedUpdateingDao()
+        public void DisplayFinishedUpdateingDao()
         {
             EraseCurrentLine();
             Console.WriteLine($"{BEGINNING_SCANNING_DESTINATION}Dao updated.");
         }
 
-        public static void DisplayBeginUpdatingDao()
+        public void DisplayBeginUpdatingDao()
         {
             Console.WriteLine("Updating File Data.");
             Console.Write(BEGINNING_SCANNING_DESTINATION);
         }
 
-        public static void DisplayFinishedTransferingData()
+        public void DisplayFinishedTransferingData()
         {
             Console.WriteLine("Copy Complete.");
         }
 
-        public static void DisplayBeginTransferingData()
+        public void DisplayBeginTransferingData()
         {
             Console.Write("Copying Photos...");
         }
@@ -89,17 +89,17 @@ namespace BackgroundImageSorter.View
             Console.WriteLine("No Files Were Moved...Skipping Data Update.");
         }
 
-        internal static void DisplayFileTestTransfer(string inputFullName, string outputFullName)
+        internal void DisplayFileTestTransfer(string inputFullName, string outputFullName)
         {
             Console.WriteLine($"{inputFullName} to {outputFullName}");
         }
 
-        public static void DisplaySourceScanningBegining()
+        public void DisplaySourceScanningBegining()
         {
             Console.Write(BEGINNING_SCANNING_SOURCE);
         }
 
-        internal static void DisplayScanProgress(int currentPosition, int totalPossibles)
+        internal void DisplayScanProgress(int currentPosition, int totalPossibles)
         {
             string progressBar = MakeProgressBar(currentPosition, totalPossibles);
 
@@ -107,52 +107,52 @@ namespace BackgroundImageSorter.View
             WriteFromBeginingOfConsoleLine(output);
         }
 
-        private static void WriteFromBeginingOfConsoleLine(string output)
+        private void WriteFromBeginingOfConsoleLine(string output)
         {
             Console.CursorLeft = 0;
             Console.Write(output);
         }
 
-        public static void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
+        public void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
         {
             DisplayFileFilterUpdate(accepted, rejected, total);
         }
 
-        public static void DisplayAFileHasBeenFilteredOut(int accepted, int rejected, int total)
+        public void DisplayAFileHasBeenFilteredOut(int accepted, int rejected, int total)
         {
             DisplayFileFilterUpdate(accepted, rejected, total);
         }
 
-        private static void DisplayFileFilterUpdate(int accepted, int rejected, int total)
+        private void DisplayFileFilterUpdate(int accepted, int rejected, int total)
         {
             string output = $"{BEGINNING_SCANNING_SOURCE} New:{accepted}\t Already Have:{rejected}\t Total:{total}";
             WriteFromBeginingOfConsoleLine(output);
         }
 
-        public static void DisplaySourceScanningFinished()
+        public void DisplaySourceScanningFinished()
         {
             EraseCurrentLine();
             Console.WriteLine($"{BEGINNING_SCANNING_SOURCE}Complete.");
         }
 
-        private static void EraseCurrentLine()
+        private void EraseCurrentLine()
         {
             Console.CursorLeft = 0;
             Console.Write(new string(' ', Console.WindowWidth - 2));
             Console.CursorLeft = 0;
         }
 
-        public static void DisplayDaoLoadingFinished()
+        public void DisplayDaoLoadingFinished()
         {
             Console.WriteLine("Complete.");
         }
 
-        public static void DisplayDaoLoadingBeginning()
+        public void DisplayDaoLoadingBeginning()
         {
             Console.Write("Dao loading...");
         }
 
-        public static Report DisplayErrorMessage(OptionException e)
+        public Report DisplayErrorMessage(OptionException e)
         {
             Console.Write("BackgroundImageSorter: ");
             Console.WriteLine(e.Message);
@@ -160,18 +160,18 @@ namespace BackgroundImageSorter.View
             return null;
         }
 
-        public static void DisplayDirectoryDoesNotExist(DirectoryInfo directory)
+        public void DisplayDirectoryDoesNotExist(DirectoryInfo directory)
         {
             Console.WriteLine(directory.FullName + " does not exist.");
         }
 
-        public static void DisplaySkippingPhotoDuringTransfer(Photo photo, IOException ex)
+        public void DisplaySkippingPhotoDuringTransfer(Photo photo, IOException ex)
         {
             Console.WriteLine("Skipping " + photo.FileInfo.Name);
             Console.WriteLine(ex.Message);
         }
 
-        private static string MakeProgressBar(int currentPosition, int totalPossibles)
+        private string MakeProgressBar(int currentPosition, int totalPossibles)
         {
             int lengthOfBar = 20;
             int dotsToShow = (int)(((float)currentPosition / (float)totalPossibles) * (float)lengthOfBar);
