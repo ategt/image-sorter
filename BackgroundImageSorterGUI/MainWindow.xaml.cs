@@ -174,10 +174,10 @@ namespace BackgroundImageSorterGUI
 
         private void TextBlock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            System.Windows.Controls.TextBlock textBox = (System.Windows.Controls.TextBlock)sender;
+            System.Windows.FrameworkElement element = (System.Windows.FrameworkElement)sender;
             //'System.Windows.Controls.TextBlock' to type 'System.Windows.Forms.TextBox
-            int valcount = textBox.CommandBindings.Count;
-            object dCtx = textBox.DataContext;
+            //int valcount = element.CommandBindings.Count;
+            object dCtx = element.DataContext;
 
             //Photo photo = null;
             if (dCtx is Photo)
