@@ -65,34 +65,25 @@
             <StackPanel>
 
                 <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
-                <ScrollViewer>
-                    <ListBox ItemsSource="{Binding Photos}" VerticalAlignment="Stretch">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Mouse.MouseEnter="TextBlock_MouseEnter" Mouse.MouseDown="Image_MouseDown">
-                                    <Image Source="{Binding Image}" />
-                                    <TextBlock Text="{Binding hash}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </ScrollViewer>
-                <StackPanel VerticalAlignment="Stretch" Height="Auto"
-                            HorizontalAlignment="Stretch" Width="Auto">
-                    <Image Name="image1" Stretch="Fill"
-                           StretchDirection="Both"
-                           Height="Auto" 
-                           Width="Auto" 
-                           VerticalAlignment="Stretch"
-                           HorizontalAlignment="Center" 
-                           ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-                           ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                           ClipToBounds="True"
-                           ></Image>
+                <TabControl>
+                    <TabItem Name="pathsTab" Header="Tab1" Margin="5,0,5,0" Padding="5,0,5,0" Width="80" TextElement.FontStyle="Normal">
+                        <StackPanel>
+                            <ScrollViewer>
+                                <ListBox ItemsSource="{Binding Photos}" VerticalAlignment="Stretch">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding hash}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
 
-                </StackPanel>
             </StackPanel>
         </DockPanel>
-
     </Grid>
 </Window>

@@ -27,7 +27,7 @@ namespace BackgroundImageSorterGUI
             //                        @"/Output:" + workingDir + @"\output" };
 
             BackgroundImageSorter.View.IView consoleView = new BackgroundImageSorter.View.NullView();
-            ConfigurationController configurationController = new ConfigurationController(consoleView);
+            configurationController = new ConfigurationController(consoleView);
 
             //config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
             config = new Configuration
@@ -60,6 +60,7 @@ namespace BackgroundImageSorterGUI
             }
 
             DataContext = photoViewModel;
+            //DataContextChanged(sender, e);
         }
 
         private void ChooseDatabaseFile_Click(object sender, RoutedEventArgs e)
@@ -164,25 +165,25 @@ namespace BackgroundImageSorterGUI
             }
         }
 
-        private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            image1.Source = photoViewModel.RandomImage();
-        }
+        //private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        //{
+        //    image1.Source = photoViewModel.RandomImage();
+        //}
 
-        private void TextBlock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            System.Windows.FrameworkElement element = (System.Windows.FrameworkElement)sender;
-            object dCtx = element.DataContext;
+        //private void TextBlock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        //{
+        //    System.Windows.FrameworkElement element = (System.Windows.FrameworkElement)sender;
+        //    object dCtx = element.DataContext;
 
-            if (dCtx is Photo)
-            {
-                Photo photo = (Photo)dCtx;
-                Uri uri = new Uri(photo.FileInfo.FullName);
-                image1.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
-            }
-            else
-                image1.Source = null;
-        }
+        //    if (dCtx is Photo)
+        //    {
+        //        Photo photo = (Photo)dCtx;
+        //        Uri uri = new Uri(photo.FileInfo.FullName);
+        //        image1.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
+        //    }
+        //    else
+        //        image1.Source = null;
+        //}
 
         private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
         {
