@@ -49,12 +49,13 @@ namespace BackgroundImageSorter.Controller
             return config;
         }
 
-        private void ConfirmImportantFoldersExist(Configuration config)
+        public void ConfirmImportantFoldersExist(Configuration config)
         {
             if (!config.Destination.Exists || !config.Source.Exists)
             {
                 consoleView.DisplayError();
                 config.Error = true;
+                throw new FileNotFoundException("An Important File is Missing.");
             }
         }
 

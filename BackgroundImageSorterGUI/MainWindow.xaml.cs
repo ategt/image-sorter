@@ -22,17 +22,26 @@ namespace BackgroundImageSorterGUI
         public MainWindow()
         {
             string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
-            string[] args = new string[] { "-d", workingDir + @"\data.bin",
-                                    @"--s=" + workingDir + @"\input",
-                                    @"/Output:" + workingDir + @"\output" };
+            //string[] args = new string[] { "-d", workingDir + @"\data.bin",
+            //                        @"--s=" + workingDir + @"\input",
+            //                        @"/Output:" + workingDir + @"\output" };
 
             BackgroundImageSorter.View.IView consoleView = new BackgroundImageSorter.View.NullView();
             ConfigurationController configurationController = new ConfigurationController(consoleView);
 
-            config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+            //config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
+            config = new Configuration
+            {
+                DataFile = new System.IO.FileInfo(workingDir + @"\data.bin"),
+                Source = new System.IO.DirectoryInfo(workingDir + @"\input"),
+                Destination = new System.IO.DirectoryInfo(workingDir + @"\output"),
+                Recurse = true,
+                FastScan = true
+            };
+
+            config = configurationController.SetDefaultDirectories(config);
 
             applicationController = new ApplicationController(new BackgroundImageSorter.Controller.IOController(consoleView), consoleView, new PhotoDao(), configurationController);
-
 
             InitializeComponent();
             OnConfigChange();
@@ -40,10 +49,9 @@ namespace BackgroundImageSorterGUI
 
         private void CheckForUniquePhotos_Click(object sender, RoutedEventArgs e)
         {
+            configurationController.ConfirmImportantFoldersExist(config);
             IEnumerable<Photo> uniquePhotos = applicationController.FindUniquePhotos(config, new Report());
 
-            //uniquePhotos
-            //PhotoViewModel photoViewModel = new PhotoViewModel();
             photoViewModel = new PhotoViewModel();
 
             foreach (Photo photo in uniquePhotos)
@@ -62,7 +70,6 @@ namespace BackgroundImageSorterGUI
         private void SaveDatabaseByDialog(string initialDirectory)
         {
             Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
-            //fileDialog.FileName = "database.bin";
             fileDialog.FileName = config.DataFile.Name;
             fileDialog.InitialDirectory = initialDirectory;
             fileDialog.DefaultExt = ".bin";
@@ -79,11 +86,8 @@ namespace BackgroundImageSorterGUI
         private void ChooseInputFolder_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
-            //fileDialog.FileName = "database.bin";
-            fileDialog.FileName = config.Source.FullName;
+            fileDialog.FileName = config.Source.Name;
             fileDialog.InitialDirectory = config.Source.FullName;
-            //fileDialog.
-            //fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
 
             Nullable<bool> result = fileDialog.ShowDialog();
 
@@ -114,25 +118,14 @@ namespace BackgroundImageSorterGUI
             {
                 config.Source = new System.IO.DirectoryInfo(folderBrowserDialog1.SelectedPath);
                 OnConfigChange();
-                //if (!fileOpened)
-                //{
-                //    // No file is opened, bring up openFileDialog in selected path.
-                //    openFileDialog1.InitialDirectory = folderName;
-                //    openFileDialog1.FileName = null;
-                //    openMenuItem.PerformClick();
-                //}
             }
         }
 
         private void ChooseDatabaseFile_Click_1(object sender, RoutedEventArgs e)
         {
-            //FolderBrowserDialogExampleForm.Launch();
             Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
-            //fileDialog.FileName = "database.bin";
             fileDialog.FileName = config.DataFile.Name;
             fileDialog.InitialDirectory = config.DataFile.DirectoryName;
-            //fileDialog.
-            //fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
 
             Nullable<bool> result = fileDialog.ShowDialog();
 
@@ -173,32 +166,21 @@ namespace BackgroundImageSorterGUI
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            //ImageSource imageSource = new ImageSource();
             image1.Source = photoViewModel.RandomImage();
         }
 
         private void TextBlock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             System.Windows.FrameworkElement element = (System.Windows.FrameworkElement)sender;
-            //'System.Windows.Controls.TextBlock' to type 'System.Windows.Forms.TextBox
-            //int valcount = element.CommandBindings.Count;
             object dCtx = element.DataContext;
 
-            //Photo photo = null;
             if (dCtx is Photo)
             {
                 Photo photo = (Photo)dCtx;
                 Uri uri = new Uri(photo.FileInfo.FullName);
                 image1.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
-
             }
             else
-                //cont.
-                //object os = sender.GetType();
-                //object sour = e.Source.GetType();
-                //bit
-                //return new System.Windows.Media.Imaging.BitmapImage(uri);
-                //image1.Stretch = Stretch.Fill;
                 image1.Source = null;
         }
 
