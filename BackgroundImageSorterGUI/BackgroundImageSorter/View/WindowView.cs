@@ -122,12 +122,19 @@ namespace BackgroundImageSorter.View
 
         public void DisplaySourceScanningBegining()
         {
-            progressBar.Value = 5;
+            dispatcher.Invoke(new Action(() =>
+            {
+                progressBar.Value = progressBar.Minimum;
+            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
         public void DisplaySourceScanningFinished()
         {
-            progressBar.Value = 75;
+            dispatcher.Invoke(new Action(() =>
+            {
+                progressBar.Value = progressBar.Maximum;
+                //progressBar.
+            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
         public void PrintReport(Report report)

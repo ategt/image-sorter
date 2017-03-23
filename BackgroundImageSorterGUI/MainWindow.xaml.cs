@@ -67,11 +67,10 @@ namespace BackgroundImageSorterGUI
         private PhotoViewModel uniquePhotoThread()
         {
             IEnumerable<Photo> uniquePhotos = null;
-            this.Dispatcher.Invoke(() =>
-            {
+            
                 configurationController.ConfirmImportantFoldersExist(config);
                 uniquePhotos = applicationController.FindUniquePhotos(config, new Report());
-            });
+           
             photoViewModel = new PhotoViewModel();
 
             foreach (Photo photo in uniquePhotos)
