@@ -15,7 +15,7 @@
     </Window.Resources>
     <Grid>
         <DockPanel>
-            <Grid DockPanel.Dock="Top" AllowDrop="True" Drop="Grid_Drop" Tag="source">
+            <Grid DockPanel.Dock="Top" AllowDrop="True" Drop="Grid_Drop" Tag="source" Name="inputGroup">
                 <Button Content="Input Folder"
                         AllowDrop="True"
                 Height="23"
@@ -69,6 +69,11 @@
                  Width="Auto" 
                   />
             </Grid>
+
+            <Grid DockPanel.Dock="Top">
+                <ProgressBar Name="progressBar" Minimum="0" Maximum="100" Value="0" Margin="12,5,12,0" Height="10"/>
+            </Grid>
+
             <Grid DockPanel.Dock="Top" >
                 <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
             </Grid>

@@ -3,6 +3,8 @@ using BackgroundImageSorter.Controller;
 using BackgroundImageSorter.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -19,16 +21,21 @@ namespace BackgroundImageSorterGUI
         Configuration config = null;
         ConfigurationController configurationController = null;
         PhotoViewModel photoViewModel = null;
+        BackgroundImageSorter.View.IView consoleView = null;
 
         public MainWindow()
         {
+            InitializeComponent();
+
             string workingDir = @"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images";
             //string[] args = new string[] { "-d", workingDir + @"\data.bin",
             //                        @"--s=" + workingDir + @"\input",
             //                        @"/Output:" + workingDir + @"\output" };
 
-            BackgroundImageSorter.View.IView consoleView = new BackgroundImageSorter.View.NullView();
+            consoleView = new BackgroundImageSorter.View.WindowView(progressBar, this.Dispatcher);
             configurationController = new ConfigurationController(consoleView);
+
+            //consoleView.pr progressBar;
 
             //config = configurationController.SetupConfiguration(args, ConfigurationBuilder.BuildConfig());
             config = new Configuration
@@ -44,15 +51,27 @@ namespace BackgroundImageSorterGUI
 
             applicationController = new ApplicationController(new BackgroundImageSorter.Controller.IOController(consoleView), consoleView, new PhotoDao(), configurationController);
 
-            InitializeComponent();
             OnConfigChange();
         }
 
-        private void CheckForUniquePhotos_Click(object sender, RoutedEventArgs e)
+        private async void CheckForUniquePhotos_Click(object sender, RoutedEventArgs e)
         {
-            configurationController.ConfirmImportantFoldersExist(config);
-            IEnumerable<Photo> uniquePhotos = applicationController.FindUniquePhotos(config, new Report());
+            //UpdateProgressBar();
 
+            //uniquePhotoThread();
+            //await uniquePhotoThreadAsync();
+            await Task.Run(() => uniquePhotoThread());
+            //DataContextChanged(sender, e);
+        }
+
+        private PhotoViewModel uniquePhotoThread()
+        {
+            IEnumerable<Photo> uniquePhotos = null;
+            this.Dispatcher.Invoke(() =>
+            {
+                configurationController.ConfirmImportantFoldersExist(config);
+                uniquePhotos = applicationController.FindUniquePhotos(config, new Report());
+            });
             photoViewModel = new PhotoViewModel();
 
             foreach (Photo photo in uniquePhotos)
@@ -60,8 +79,30 @@ namespace BackgroundImageSorterGUI
                 photoViewModel.Photos.Add(photo);
             }
 
-            DataContext = photoViewModel;
-            //DataContextChanged(sender, e);
+            //DataContext = await
+            this.Dispatcher.Invoke(() =>
+            {
+                DataContext = photoViewModel;
+            });
+            return photoViewModel;            
+        }
+
+        private async void uniquePhotoThreadAsync()
+        {
+            // This method runs asynchronously.
+
+            await Task.Run(() => uniquePhotoThread());           
+        }
+
+
+        private void UpdateProgressBar()
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += worker_DoWork;
+            worker.ProgressChanged += worker_ProgressChanged;
+
+            worker.RunWorkerAsync();
         }
 
         private void ChooseDatabaseFile_Click(object sender, RoutedEventArgs e)
@@ -241,6 +282,21 @@ namespace BackgroundImageSorterGUI
 
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
+        }
+
+        void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            uniquePhotoThread();
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    (sender as BackgroundWorker).ReportProgress(i);
+            //    //Thread.Sleep(100);
+            //}
+        }
+
+        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar.Value = e.ProgressPercentage;
         }
     }
 }

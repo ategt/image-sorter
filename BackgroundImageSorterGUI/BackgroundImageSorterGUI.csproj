@@ -73,6 +73,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BackgroundImageSorter\View\NullView.cs" />
+    <Compile Include="BackgroundImageSorter\View\WindowView.cs" />
     <Compile Include="UriToBitmapConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -82,7 +84,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BackgroundImageSorter\View\NullView.cs" />
     <Compile Include="FolderBrowserExample.cs">
       <SubType>Form</SubType>
     </Compile>
