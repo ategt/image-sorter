@@ -4,6 +4,7 @@ using BackgroundImageSorter.Model;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 
@@ -231,6 +232,14 @@ namespace BackgroundImageSorterGUI
 
         private void databaseFile_PreviewDragOver(object sender, System.Windows.DragEventArgs e)
         {
+            e.Handled = true;
+        }
+
+        private void Grid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = (ScrollViewer)sender;
+
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
         }
     }

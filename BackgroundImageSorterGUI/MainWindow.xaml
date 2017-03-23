@@ -76,7 +76,7 @@
 
                 <TabControl>
                     <TabItem Name="pathsTab" Header="Paths" Margin="5,0,5,0" Padding="5,0,5,0" Width="80" TextElement.FontStyle="Normal">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" PreviewMouseWheel="Grid_PreviewMouseWheel">
                             <ListBox ItemsSource="{Binding Photos}" VerticalAlignment="Stretch">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -90,7 +90,7 @@
 
                     </TabItem>
                     <TabItem Name="uniqueThumbnails" Header="Images">
-                        <ScrollViewer>
+                        <ScrollViewer PreviewMouseWheel="Grid_PreviewMouseWheel" VerticalScrollBarVisibility="Auto">
                             <WrapPanel>
                                 <ListBox ItemsSource="{Binding Photos}">
                                     <ListBox.ItemTemplate>
