@@ -69,11 +69,13 @@
                  Width="Auto" 
                   />
             </Grid>
-            <StackPanel>
-
+            <Grid DockPanel.Dock="Top" >
                 <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
+            </Grid>
+            <Grid>
+
                 <TabControl>
-                    <TabItem Name="pathsTab" Header="Tab1" Margin="5,0,5,0" Padding="5,0,5,0" Width="80" TextElement.FontStyle="Normal">
+                    <TabItem Name="pathsTab" Header="Paths" Margin="5,0,5,0" Padding="5,0,5,0" Width="80" TextElement.FontStyle="Normal">
                             <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
                                 <ListBox ItemsSource="{Binding Photos}" VerticalAlignment="Stretch">
                                     <ListBox.ItemTemplate>
@@ -89,18 +91,20 @@
                     </TabItem>
                     <TabItem Name="uniqueThumbnails" Header="Images">
                         <ScrollViewer>
-                            <ListView ItemsSource="{Binding Photos}">
-                                <ListView.ItemTemplate>
+                            <ListBox ItemsSource="{Binding Photos}">
+                                <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Image Source="{Binding Path=Path, Converter={StaticResource UriToBitmapConverter}}" />
+                                        <WrapPanel>
+                                            <Image Source="{Binding Path=Path, Converter={StaticResource UriToBitmapConverter}}" />
+                                        </WrapPanel>
                                     </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </ScrollViewer>
                     </TabItem>
                 </TabControl>
 
-            </StackPanel>
+            </Grid>
         </DockPanel>
     </Grid>
 </Window>
