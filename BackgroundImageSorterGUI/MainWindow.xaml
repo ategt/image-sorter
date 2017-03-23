@@ -4,8 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BackgroundImageSorterGUI"
+        xmlns:bill="clr-namespace:BackgroundImageSorterGUI"
         mc:Ignorable="d"
+
         Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        
+        <bill:UriToBitmapConverter x:Key="UriToBitmapConverter" />
+        
+    </Window.Resources>
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Top" AllowDrop="True" Drop="Grid_Drop" Tag="source">
@@ -67,8 +74,7 @@
                 <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
                 <TabControl>
                     <TabItem Name="pathsTab" Header="Tab1" Margin="5,0,5,0" Padding="5,0,5,0" Width="80" TextElement.FontStyle="Normal">
-                        <StackPanel>
-                            <ScrollViewer>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
                                 <ListBox ItemsSource="{Binding Photos}" VerticalAlignment="Stretch">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
@@ -79,7 +85,18 @@
                                     </ListBox.ItemTemplate>
                                 </ListBox>
                             </ScrollViewer>
-                        </StackPanel>
+                        
+                    </TabItem>
+                    <TabItem Name="uniqueThumbnails" Header="Images">
+                        <ScrollViewer>
+                            <ListView ItemsSource="{Binding Photos}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding Path=Path, Converter={StaticResource UriToBitmapConverter}}" />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </ScrollViewer>
                     </TabItem>
                 </TabControl>
 

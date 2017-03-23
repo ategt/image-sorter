@@ -56,5 +56,27 @@ namespace BackgroundImageSorter.Utilities
 
             return properExtension;
         }
+
+        public static bool IsImage(Uri uri)
+        {
+            System.Drawing.Size imageSize = new System.Drawing.Size();
+
+            try
+            {
+                using (System.Drawing.Image image = System.Drawing.Image.FromFile(uri.LocalPath))
+                {
+                    imageSize = image.Size;
+                    //format = image.RawFormat.Guid;
+                    image.Dispose();
+                }
+            }
+            catch (System.OutOfMemoryException ex)
+            {
+                //imageSize = new System.Drawing.Size();
+                //format = System.Guid.Empty;
+            }
+
+            return imageSize.IsEmpty;
+        }
     }
 }

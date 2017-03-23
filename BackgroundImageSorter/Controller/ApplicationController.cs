@@ -46,7 +46,7 @@ namespace BackgroundImageSorter.Controller
         {
             //PhotoDao photoDao;
             IEnumerable<Photo> uniquePhotos =
-            FindUniquePhotos(config, report);
+                        FindUniquePhotos(config, report);
 
             CopyOrMoveFiles(config, report, uniquePhotos);
 
