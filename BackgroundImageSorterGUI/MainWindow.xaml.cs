@@ -56,12 +56,17 @@ namespace BackgroundImageSorterGUI
 
         private void ChooseDatabaseFile_Click(object sender, RoutedEventArgs e)
         {
+            SaveDatabaseByDialog(config.DataFile.Directory.FullName);
+        }
+
+        private void SaveDatabaseByDialog(string initialDirectory)
+        {
             Microsoft.Win32.SaveFileDialog fileDialog = new Microsoft.Win32.SaveFileDialog();
             //fileDialog.FileName = "database.bin";
             fileDialog.FileName = config.DataFile.Name;
-            fileDialog.InitialDirectory = config.DataFile.Directory.FullName;
+            fileDialog.InitialDirectory = initialDirectory;
             fileDialog.DefaultExt = ".bin";
-            fileDialog.Filter = "Binary Data File (*.bin)|*.bin";
+            fileDialog.Filter = "Binary Data File (.bin)|*.bin";
 
             Nullable<bool> result = fileDialog.ShowDialog();
 
@@ -204,20 +209,22 @@ namespace BackgroundImageSorterGUI
             if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
-                //files[0];
-                //element.Name;
-                //TextFindResource((string)element.Tag);
+                string dropedFile = files[0];
                 string target = (string)element.Tag;
                 switch (target)
                 {
                     case "source":
-                        config.Source = new System.IO.DirectoryInfo(files[0]);
+                        config.Source = new System.IO.DirectoryInfo(dropedFile);
                         break;
                     case "destination":
-                        config.Destination = new System.IO.DirectoryInfo(files[0]);
+                        config.Destination = new System.IO.DirectoryInfo(dropedFile);
                         break;
                     case "database":
-                        config.DataFile = new System.IO.FileInfo(files[0]);
+                        if (System.IO.Directory.Exists(dropedFile))
+                            SaveDatabaseByDialog(dropedFile);
+                        else
+                            config.DataFile = new System.IO.FileInfo(dropedFile);
+
                         break;
                     default:
                         break;
