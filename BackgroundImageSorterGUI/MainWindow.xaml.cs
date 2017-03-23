@@ -185,6 +185,7 @@ namespace BackgroundImageSorterGUI
                 Photo photo = (Photo)dCtx;
                 Uri uri = new Uri(photo.FileInfo.FullName);
                 image1.Source = new System.Windows.Media.Imaging.BitmapImage(uri);
+
             }
             else
                 //cont.
@@ -194,6 +195,53 @@ namespace BackgroundImageSorterGUI
                 //return new System.Windows.Media.Imaging.BitmapImage(uri);
                 //image1.Stretch = Stretch.Fill;
                 image1.Source = null;
+        }
+
+        private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            System.Windows.FrameworkElement element = (System.Windows.FrameworkElement)sender;
+
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+                //files[0];
+                //element.Name;
+                //TextFindResource((string)element.Tag);
+                string target = (string)element.Tag;
+                switch (target)
+                {
+                    case "source":
+                        config.Source = new System.IO.DirectoryInfo(files[0]);
+                        break;
+                    case "destination":
+                        config.Destination = new System.IO.DirectoryInfo(files[0]);
+                        break;
+                    case "database":
+                        config.DataFile = new System.IO.FileInfo(files[0]);
+                        break;
+                    default:
+                        break;
+                }
+                OnConfigChange();
+
+            }
+        }
+
+        private void sourcePath_PreviewDragOver(object sender, System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+                if (System.IO.Directory.Exists(files[0]))
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void databaseFile_PreviewDragOver(object sender, System.Windows.DragEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

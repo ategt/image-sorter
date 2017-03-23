@@ -8,8 +8,9 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <DockPanel>
-            <Grid DockPanel.Dock="Top">
+            <Grid DockPanel.Dock="Top" AllowDrop="True" Drop="Grid_Drop" Tag="source">
                 <Button Content="Input Folder"
+                        AllowDrop="True"
                 Height="23"
                 HorizontalAlignment="Right"
                 Margin="12,5,12,0"
@@ -18,14 +19,16 @@
                 Width="100"
                 Click="SourceButton_Click"
                 />
-                <TextBox Height="23"
+                <TextBox AllowDrop="True" Drop="Grid_Drop" Tag="source" 
+                         PreviewDragOver="sourcePath_PreviewDragOver"
+                         Height="23"
                  HorizontalAlignment="Stretch"
                  Margin="12,5,120,0"
                  Name="sourcePath"
                  VerticalAlignment="Top"
                  Width="Auto" />
             </Grid>
-            <Grid DockPanel.Dock="Top">
+            <Grid DockPanel.Dock="Top" AllowDrop="True" Drop="Grid_Drop" Tag="database">
                 <Button Name="ChooseDatabaseFile" 
                 Height="23"
                 HorizontalAlignment="Right"
@@ -34,16 +37,16 @@
                 VerticalAlignment="Top"
                 Width="100"
                 Click="ChooseDatabaseFile_Click_1"/>
-                <TextBox Height="23"
+                <TextBox Height="23" PreviewDragOver="databaseFile_PreviewDragOver"
                  HorizontalAlignment="Stretch"
                  Margin="12,5,120,0"
                  Name="databaseFile"
                  VerticalAlignment="Top"
                  Width="Auto" />
             </Grid>
-            <Grid DockPanel.Dock="Top">
+            <Grid DockPanel.Dock="Top" AllowDrop="True" Drop="Grid_Drop" Tag="destination">
 
-                <Button Name="ChooseDestinationFolder" 
+                <Button AllowDrop="True" Name="ChooseDestinationFolder" 
                 Height="23"
                 HorizontalAlignment="Right"
                 Margin="12,5,12,0"
@@ -51,7 +54,7 @@
                 VerticalAlignment="Top"
                 Width="100">Output Folder</Button>
 
-                <TextBox Height="23"
+                <TextBox AllowDrop="True" PreviewDragOver="sourcePath_PreviewDragOver" Height="23"
                  HorizontalAlignment="Stretch"
                  Margin="12,5,120,0"
                  Name="destinationPath"
