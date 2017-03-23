@@ -6,12 +6,9 @@
         xmlns:local="clr-namespace:BackgroundImageSorterGUI"
         xmlns:bill="clr-namespace:BackgroundImageSorterGUI"
         mc:Ignorable="d"
-
         Title="MainWindow" Height="350" Width="525">
     <Window.Resources>
-
         <bill:UriToBitmapConverter x:Key="UriToBitmapConverter" />
-
     </Window.Resources>
     <Grid>
         <DockPanel>
@@ -78,10 +75,9 @@
                 <Button Name="CheckForUniquePhotos" Click="CheckForUniquePhotos_Click" Margin="12,5,12,5" MaxWidth="200">Check For New Photos</Button>
             </Grid>
             <Grid>
-
                 <TabControl>
-                    <TabItem Name="pathsTab" Header="Paths" Margin="5,0,5,0" Padding="5,0,5,0" Width="80" TextElement.FontStyle="Normal">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" PreviewMouseWheel="Grid_PreviewMouseWheel">
+                    <TabItem Name="pathsTab" Header="Paths" Margin="5,0,-5,0" Padding="5,0,5,0" Width="80" TextElement.FontStyle="Normal">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="Grid_PreviewMouseWheel">
                             <ListBox ItemsSource="{Binding Photos}" VerticalAlignment="Stretch">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -92,25 +88,38 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </ScrollViewer>
-
                     </TabItem>
-                    <TabItem Name="uniqueThumbnails" Header="Images">
+                    <TabItem Name="uniqueThumbnails" Header="Images" Margin="10,0,-10,0">
                         <ScrollViewer PreviewMouseWheel="Grid_PreviewMouseWheel" VerticalScrollBarVisibility="Auto">
-                            <WrapPanel>
-                                <ListBox ItemsSource="{Binding Photos}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Image Source="{Binding Path=Path, Converter={StaticResource UriToBitmapConverter}, IsAsync=true}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </WrapPanel>
+                            <ListBox ItemsSource="{Binding Photos}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding Path=Path, Converter={StaticResource UriToBitmapConverter}, IsAsync=true}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </ScrollViewer>
                     </TabItem>
+                    <TabItem Name="advancedOptions" Header="Additional Options" Margin="15,0,-15,0">
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Label>Name:</Label>
+                            <TextBox Grid.Column="1" Margin="0,0,0,10" />
+                            <Label Grid.Row="1">E-mail:</Label>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" />
+                            <Label Grid.Row="2">Comment:</Label>
+                            <TextBox Grid.Row="2" Grid.Column="1" AcceptsReturn="True" />
+                        </Grid>
+                    </TabItem>
                 </TabControl>
-
             </Grid>
         </DockPanel>
     </Grid>
