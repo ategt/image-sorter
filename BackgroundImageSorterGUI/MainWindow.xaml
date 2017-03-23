@@ -101,7 +101,7 @@
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid>
-                                                <Image Source="{Binding Path=Path, Converter={StaticResource UriToBitmapConverter}}" />
+                                                <Image Source="{Binding Path=Path, Converter={StaticResource UriToBitmapConverter}, IsAsync=true}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
