@@ -38,15 +38,6 @@ namespace BackgroundImageSorterTests.Utilities
                     Assert.Null(extenstion);
                 }
             }
-
-            //MultimediaUtilities.DetectProperExtension("");
-            //MultimediaUtilities multimediaUtilities = this.CreateMultimediaUtilities();
-            //multimediaUtilities.
-        }
-
-        private MultimediaUtilities CreateMultimediaUtilities()
-        {
-            return new MultimediaUtilities();
         }
     }
 }
