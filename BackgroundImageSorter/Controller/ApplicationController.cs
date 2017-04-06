@@ -195,7 +195,14 @@ namespace BackgroundImageSorter.Controller
             {
                 if (!config.ImagesOnly)
                 {
-                    CopyToDataDirectory(config, report, photo);
+                    if (Utilities.MultimediaUtilities.IsMultimedia(new Uri(photo.Path)))
+                    {
+
+                    }
+                    else
+                    {
+                        CopyToDataDirectory(config, report, photo);
+                    }
                 }
             }
             else if (dimension.Height >= 1080 && dimension.Width >= 1080)
