@@ -703,6 +703,93 @@ namespace BackgroundImageSorter.Tests
 
         }
 
+        [Test()]
+        public void MainProgramTestWithMultimedia()
+        {
+            DirectoryInfo middleFolder = new DirectoryInfo(workingDir + @"\output\temp");
+            DirectoryInfo sourceFolder = new DirectoryInfo(workingDir + @"\input");
+            DirectoryInfo mediaFolder = new DirectoryInfo(workingDir + @"\special\media");
+
+            CopyDirectory(middleFolder, sourceFolder);
+            CopyDirectory(middleFolder, mediaFolder);
+
+            Configuration config = new Configuration
+            {
+                Source = middleFolder,
+                Destination = new DirectoryInfo(workingDir + @"\output\dest"),
+                DataFile = new FileInfo(workingDir + @"\output\data.bin"),
+                Recurse = true,
+                NoUpdate = true,
+                Move = true
+            };
+
+            //Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
+            config = configurationController.SetDefaultDirectories(config);
+            configurationController.ConfirmImportantFoldersExist(config);
+
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Model.Report());
+
+            //FileInfo[] landscapePhotos = landscapeDir.GetFiles();
+
+            //Assert.AreEqual(landscapePhotos.Count(), 3);
+
+            //DirectoryAssert.DoesNotExist(portraitDir);
+
+            Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Distinct, 3);
+            Assert.AreEqual(report.Moved, 3);
+            Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
+
+        }
+
+        private static void CopyDirectory(DirectoryInfo middleFolder, DirectoryInfo sourceFolder)
+        {
+            //Now Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(sourceFolder.FullName, "*",
+                SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(sourceFolder.FullName, middleFolder.FullName));
+
+            //Copy all the files & Keep any files with the same name
+            foreach (string newPath in Directory.GetFiles(sourceFolder.FullName, "*.*",
+                SearchOption.AllDirectories))
+                File.Copy(newPath, newPath.Replace(sourceFolder.FullName, middleFolder.FullName), false);
+
+        }
+
+        [Test()]
+        public void MainProgramSingleOutputTestl()
+        {
+
+            DirectoryInfo sourceDir = new DirectoryInfo(workingDir + @"\input");
+            DirectoryInfo destinationDir = new DirectoryInfo(workingDir + @"\output");
+            DirectoryInfo portraitDir = new DirectoryInfo(workingDir + @"\output\portrait");
+            DirectoryInfo landscapeDir = new DirectoryInfo(workingDir + @"\output\landscape");
+
+            string[] args = new string[] { "-d", workingDir + @"\output\data.bin",
+                                    $"--s={sourceDir.FullName}",
+                                    @"/Output:" + workingDir + @"\output",
+                                    "-Single",
+                                    "-sub" };
+
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
+
+            FileInfo[] outputPhotos = destinationDir.GetFiles();
+
+            Assert.AreEqual(outputPhotos.Count(), 7);
+
+            Assert.AreEqual(destinationDir.GetDirectories().Count(), 0);
+
+            DirectoryAssert.DoesNotExist(portraitDir);
+            DirectoryAssert.DoesNotExist(landscapeDir);
+
+            Assert.AreEqual(report.Scanned, 9);
+            Assert.AreEqual(report.AlreadyHad, 0);
+            Assert.AreEqual(report.Distinct, 6);
+            Assert.AreEqual(report.Moved, 6);
+        }
+
+
 
 
         private static void ResetOutputDirectory()
