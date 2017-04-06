@@ -111,6 +111,7 @@ namespace BackgroundImageSorter.Controller
         private void CopyOrMoveFiles(Configuration config, Report report, IEnumerable<Photo> uniquePhotos)
         {
             consoleView.DisplayBeginTransferingData();
+            consoleView.TotalFilesToTransfer = uniquePhotos.Count();
 
             moveUniquePhotosToAppropiateDirectory(uniquePhotos,
                                                     config, report);
@@ -180,6 +181,7 @@ namespace BackgroundImageSorter.Controller
                 System.Drawing.Size dimension = photo.Dimension;
                 try
                 {
+                    consoleView.CurrentFileNumberTransfering++;
                     CopyFilesToAppropriateDirectory(config, report, photo, dimension);
                 }
                 catch (System.IO.IOException ex)
@@ -252,10 +254,13 @@ namespace BackgroundImageSorter.Controller
             if (!config.Test)
             {
                 CreateNonExistantDirectory(destinationDirectory);
+                consoleView.DisplayCurrentFileTransfer(destinationFullName);
                 if (config.Move)
                     photo.FileInfo.MoveTo(destinationFullName);
                 else
                     photo.FileInfo.CopyTo(destinationFullName, false);
+
+                consoleView.DisplayCompleteFileTransfer(destinationFullName);
             }
             else
             {

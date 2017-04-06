@@ -6,6 +6,9 @@ namespace BackgroundImageSorter.View
 {
     public class NullView : IView
     {
+        public int CurrentFileNumberTransfering { get; set; }
+        public int TotalFilesToTransfer { get; set; }
+
         public void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total)
         {
             // Do nothing.
@@ -27,6 +30,16 @@ namespace BackgroundImageSorter.View
         }
 
         public void DisplayBeginUpdatingDao()
+        {
+            // Do nothing.
+        }
+
+        public void DisplayCompleteFileTransfer(string destinationFullName = null)
+        {
+            // Do nothing.
+        }
+
+        public void DisplayCurrentFileTransfer(string destinationFullName = null, int currentFileNumber = 0)
         {
             // Do nothing.
         }

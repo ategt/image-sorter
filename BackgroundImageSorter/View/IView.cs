@@ -6,6 +6,9 @@ namespace BackgroundImageSorter.View
 {
     public interface IView
     {
+        int TotalFilesToTransfer { get; set; }
+        int CurrentFileNumberTransfering { get; set; }
+
         void DisplayAFileHasBeenAccepted(int accepted, int rejected, int total);
         void DisplayAFileHasBeenFilteredOut(int accepted, int rejected, int total);
         void DisplayBeginingDirectoryPrescan();
@@ -28,5 +31,7 @@ namespace BackgroundImageSorter.View
         void ShowHelp(OptionSet p);
         void DisplayFileTestTransfer(string inputFullName, string outputFullName);
         void DisplayScanProgress(int currentPosition, int totalPossibles);
+        void DisplayCurrentFileTransfer(string destinationFullName = null, int currentFileNumber = 0);
+        void DisplayCompleteFileTransfer(string destinationFullName = null);
     }
 }

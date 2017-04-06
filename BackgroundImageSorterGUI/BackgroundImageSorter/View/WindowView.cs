@@ -9,6 +9,9 @@ namespace BackgroundImageSorter.View
         private System.Windows.Controls.ProgressBar progressBar = null;
         private System.Windows.Threading.Dispatcher dispatcher = null;
 
+        public int TotalFilesToTransfer { get; set; }
+        public int CurrentFileNumberTransfering { get; set; }
+
         public WindowView(System.Windows.Controls.ProgressBar progressBar, System.Windows.Threading.Dispatcher dispatcher)
         {
             this.progressBar = progressBar;
@@ -143,6 +146,16 @@ namespace BackgroundImageSorter.View
         }
 
         public void ShowHelp(global::NDesk.Options.OptionSet p)
+        {
+            // Do nothing.
+        }
+
+        public void DisplayCurrentFileTransfer(string destinationFullName = null, int currentFileNumber = 0)
+        {
+            // Do nothing.
+        }
+
+        public void DisplayCompleteFileTransfer(string destinationFullName = null)
         {
             // Do nothing.
         }

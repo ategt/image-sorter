@@ -10,11 +10,21 @@ namespace BackgroundImageSorter.Utilities
     {
         public static string DetectProperExtension(string mediaString, MediaToolkit.Model.Metadata metadata = null)
         {
+            string format = null;
             metadata = metadata ?? getMetadata(mediaString);
-            string format = metadata.VideoData?.Format;
-
-            if (string.IsNullOrWhiteSpace(format))
-                format = metadata.AudioData?.Format;
+            if (metadata.VideoData != null)
+            {
+                if (string.IsNullOrWhiteSpace(metadata.VideoData?.Format))
+                    format = ".video";
+                else
+                    format = metadata.VideoData?.Format;
+            }
+            else if (metadata.AudioData != null) {
+                if (string.IsNullOrWhiteSpace(metadata.AudioData?.Format))
+                    format = ".audio";
+                else
+                    format = metadata.AudioData?.Format;
+            }
 
             if (format.Contains(" "))
                 format = format.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];

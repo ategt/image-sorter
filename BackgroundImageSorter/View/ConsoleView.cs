@@ -9,6 +9,10 @@ namespace BackgroundImageSorter.View
     {
         public readonly static string BEGINNING_SCANNING_SOURCE = "Scaning Source Directory....";
         public readonly static string BEGINNING_SCANNING_DESTINATION = "Scaning Destination Directory....";
+        public readonly static string COPYING_PHOTOS = "Copying Photos...";
+
+        public int TotalFilesToTransfer { get; set; }
+        public int CurrentFileNumberTransfering { get; set; }
 
         public void PrintReport(Report report)
         {
@@ -54,7 +58,7 @@ namespace BackgroundImageSorter.View
             Console.WriteLine("PreScanning Destination Folder.");
             Console.Write(BEGINNING_SCANNING_DESTINATION);
         }
-        
+
         public void DisplayDaoScanProgress(int currentPosition, int totalPositions)
         {
             string progressBar = MakeProgressBar(currentPosition, totalPositions);
@@ -76,12 +80,12 @@ namespace BackgroundImageSorter.View
 
         public void DisplayFinishedTransferingData()
         {
-            Console.WriteLine("Copy Complete.");
+            WriteFromBeginingOfConsoleLine(COPYING_PHOTOS + "Copy Complete.");
         }
 
         public void DisplayBeginTransferingData()
         {
-            Console.Write("Copying Photos...");
+            Console.Write(COPYING_PHOTOS);
         }
 
         public void DisplayNoFilesMoved()
@@ -184,6 +188,20 @@ namespace BackgroundImageSorter.View
 
             string output = $"{progressBar}({currentPosition}/{totalPossibles})";
             return output;
+        }
+
+        public void DisplayCurrentFileTransfer(string destinationFullName = null, int currentFileNumber = 0)
+        {
+            if (currentFileNumber == 0)
+                currentFileNumber = CurrentFileNumberTransfering;
+
+            string fileName = Path.GetFileName(destinationFullName);
+            WriteFromBeginingOfConsoleLine($"{COPYING_PHOTOS}{MakeProgressBar(currentFileNumber, TotalFilesToTransfer)} - {fileName}");
+        }
+
+        public void DisplayCompleteFileTransfer(string destinationFullName = null)
+        {
+            Console.Write("...Done.");
         }
     }
 }

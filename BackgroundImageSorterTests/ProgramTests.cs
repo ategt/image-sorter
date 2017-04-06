@@ -833,10 +833,7 @@ namespace BackgroundImageSorter.Tests
             FileAssert.Exists(Path.Combine(multimediaFolder.FullName, "video.h264"));
             FileAssert.Exists(Path.Combine(multimediaFolder.FullName, "audio.aac"));
         }
-
-
-
-
+        
         private static void ResetOutputDirectory()
         {
             try
