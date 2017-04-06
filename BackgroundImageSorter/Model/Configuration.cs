@@ -15,6 +15,7 @@ namespace BackgroundImageSorter.Model
         public DirectoryInfo Landscape { get; set; }
         public DirectoryInfo BackgroundDirectory { get; set; }
         public DirectoryInfo SmallDirectory { get; set; }
+        public DirectoryInfo MultimediaDirectory { get; set; }
         public DirectoryInfo DataDirectory { get; set; }
         public FileInfo DataFile { get; set; }
         public bool FastScan { get; set; }

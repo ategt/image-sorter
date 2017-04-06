@@ -197,7 +197,7 @@ namespace BackgroundImageSorter.Controller
                 {
                     if (Utilities.MultimediaUtilities.IsMultimedia(new Uri(photo.Path)))
                     {
-
+                        CopyToMediaDirectory(config, report, photo);
                     }
                     else
                     {
@@ -218,6 +218,11 @@ namespace BackgroundImageSorter.Controller
         private void CopyToDataDirectory(Configuration config, Report report, Photo photo)
         {
             CopyToDirectory(config, report, photo, config.DataDirectory);
+        }
+
+        private void CopyToMediaDirectory(Configuration config, Report report, Photo photo)
+        {
+            CopyToDirectory(config, report, photo, config.MultimediaDirectory);
         }
 
         private void CopyOtherImages(Configuration config, Report report, Photo photo)

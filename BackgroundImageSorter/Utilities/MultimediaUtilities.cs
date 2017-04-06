@@ -46,7 +46,7 @@ namespace BackgroundImageSorter.Utilities
         public static bool IsMultimedia(Uri uri, MediaToolkit.Model.Metadata metadata = null)
         {
             metadata = metadata ?? getMetadata(uri.LocalPath);
-            return metadata.AudioData != null || metadata.VideoData != null;
+            return metadata != null && (metadata.AudioData != null || metadata.VideoData != null);
         }
     }
 }
