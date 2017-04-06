@@ -276,6 +276,11 @@ namespace BackgroundImageSorter.Controller
         {
             string properExtension = Utilities.ImageUtilities.DetectProperExtension(photo);
 
+            if (string.IsNullOrWhiteSpace(properExtension) && Utilities.MultimediaUtilities.IsMultimedia(new Uri(photo.Path)))
+            {
+                properExtension = Utilities.MultimediaUtilities.DetectProperExtension(photo.Path);
+            }
+
             if (string.IsNullOrWhiteSpace(properExtension))
             {
                 return photo.FileInfo.Name;

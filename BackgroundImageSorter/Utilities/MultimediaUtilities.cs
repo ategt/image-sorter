@@ -16,6 +16,9 @@ namespace BackgroundImageSorter.Utilities
             if (string.IsNullOrWhiteSpace(format))
                 format = metadata.AudioData?.Format;
 
+            if (format.Contains(" "))
+                format = format.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)[0];
+
             return format;
         }
 

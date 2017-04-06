@@ -800,6 +800,40 @@ namespace BackgroundImageSorter.Tests
             Assert.AreEqual(report.Moved, 9);
         }
 
+        [Test()]
+        public void MainProgramMultimediaExtensionTest()
+        {
+            DirectoryInfo middleFolder = new DirectoryInfo(workingDir + @"\output\temp");
+            DirectoryInfo sourceFolder = new DirectoryInfo(workingDir + @"\input");
+            DirectoryInfo destinationFolder = new DirectoryInfo(workingDir + @"\output\dest");
+
+            CopyDirectory(middleFolder, sourceFolder);
+
+            IncludeMultimedia(middleFolder);
+
+            Directory.CreateDirectory(destinationFolder.FullName);
+
+            string[] args = new string[] { "-d", workingDir + @"\output\data.bin",
+                                    $"--s={middleFolder.FullName}",
+                                    @"/Output:" + destinationFolder.FullName,
+                                    "-sub",
+                                    "-r" };
+
+            Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
+
+            DirectoryInfo multimediaFolder = new DirectoryInfo(Path.Combine(destinationFolder.FullName, "Multimedia"));
+
+            FileInfo[] outputMedia = multimediaFolder.GetFiles("*", SearchOption.AllDirectories);
+
+            Assert.AreEqual(outputMedia.Count(), 3);
+
+            Assert.AreEqual(multimediaFolder.GetDirectories().Count(), 0);
+
+            FileAssert.Exists(Path.Combine(multimediaFolder.FullName, "audio and video.h264"));
+            FileAssert.Exists(Path.Combine(multimediaFolder.FullName, "video.h264"));
+            FileAssert.Exists(Path.Combine(multimediaFolder.FullName, "audio.aac"));
+        }
+
 
 
 
