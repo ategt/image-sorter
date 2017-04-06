@@ -708,15 +708,19 @@ namespace BackgroundImageSorter.Tests
         {
             DirectoryInfo middleFolder = new DirectoryInfo(workingDir + @"\output\temp");
             DirectoryInfo sourceFolder = new DirectoryInfo(workingDir + @"\input");
-            DirectoryInfo mediaFolder = new DirectoryInfo(workingDir + @"\special\media");
+
+            DirectoryInfo destinationFolder = new DirectoryInfo(workingDir + @"\output\dest");
 
             CopyDirectory(middleFolder, sourceFolder);
-            CopyDirectory(middleFolder, mediaFolder);
+
+            IncludeMultimedia(middleFolder);
+
+            Directory.CreateDirectory(destinationFolder.FullName);
 
             Configuration config = new Configuration
             {
                 Source = middleFolder,
-                Destination = new DirectoryInfo(workingDir + @"\output\dest"),
+                Destination = destinationFolder,
                 DataFile = new FileInfo(workingDir + @"\output\data.bin"),
                 Recurse = true,
                 NoUpdate = true,
@@ -735,12 +739,18 @@ namespace BackgroundImageSorter.Tests
 
             //DirectoryAssert.DoesNotExist(portraitDir);
 
-            Assert.AreEqual(report.Scanned, 6);
+            Assert.AreEqual(report.Scanned, 12);
             Assert.AreEqual(report.AlreadyHad, 0);
-            Assert.AreEqual(report.Distinct, 3);
-            Assert.AreEqual(report.Moved, 3);
+            Assert.AreEqual(report.Distinct, 9);
+            Assert.AreEqual(report.Moved, 9);
             Assert.AreEqual(report.ImagesInLandscapeFolder, 3);
 
+        }
+
+        private static void IncludeMultimedia(DirectoryInfo middleFolder)
+        {
+            DirectoryInfo mediaFolder = new DirectoryInfo(workingDir + @"\special\media");
+            CopyDirectory(middleFolder, mediaFolder);
         }
 
         private static void CopyDirectory(DirectoryInfo middleFolder, DirectoryInfo sourceFolder)
@@ -758,35 +768,36 @@ namespace BackgroundImageSorter.Tests
         }
 
         [Test()]
-        public void MainProgramSingleOutputTestl()
+        public void MainProgramSingleOutputTestWithMultimedia()
         {
+            DirectoryInfo middleFolder = new DirectoryInfo(workingDir + @"\output\temp");
+            DirectoryInfo sourceFolder = new DirectoryInfo(workingDir + @"\input");
+            DirectoryInfo destinationFolder = new DirectoryInfo(workingDir + @"\output\dest");
 
-            DirectoryInfo sourceDir = new DirectoryInfo(workingDir + @"\input");
-            DirectoryInfo destinationDir = new DirectoryInfo(workingDir + @"\output");
-            DirectoryInfo portraitDir = new DirectoryInfo(workingDir + @"\output\portrait");
-            DirectoryInfo landscapeDir = new DirectoryInfo(workingDir + @"\output\landscape");
+            CopyDirectory(middleFolder, sourceFolder);
+
+            IncludeMultimedia(middleFolder);
+
+            Directory.CreateDirectory(destinationFolder.FullName);
 
             string[] args = new string[] { "-d", workingDir + @"\output\data.bin",
-                                    $"--s={sourceDir.FullName}",
-                                    @"/Output:" + workingDir + @"\output",
+                                    $"--s={middleFolder.FullName}",
+                                    @"/Output:" + destinationFolder.FullName,
                                     "-Single",
                                     "-sub" };
 
             Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
 
-            FileInfo[] outputPhotos = destinationDir.GetFiles();
+            FileInfo[] outputPhotos = destinationFolder.GetFiles("*", SearchOption.AllDirectories);
 
-            Assert.AreEqual(outputPhotos.Count(), 7);
+            Assert.AreEqual(outputPhotos.Count(), 9);
 
-            Assert.AreEqual(destinationDir.GetDirectories().Count(), 0);
+            Assert.AreEqual(destinationFolder.GetDirectories().Count(), 0);
 
-            DirectoryAssert.DoesNotExist(portraitDir);
-            DirectoryAssert.DoesNotExist(landscapeDir);
-
-            Assert.AreEqual(report.Scanned, 9);
+            Assert.AreEqual(report.Scanned, 12);
             Assert.AreEqual(report.AlreadyHad, 0);
-            Assert.AreEqual(report.Distinct, 6);
-            Assert.AreEqual(report.Moved, 6);
+            Assert.AreEqual(report.Distinct, 9);
+            Assert.AreEqual(report.Moved, 9);
         }
 
 

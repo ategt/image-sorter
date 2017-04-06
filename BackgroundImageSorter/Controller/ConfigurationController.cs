@@ -118,6 +118,7 @@ namespace BackgroundImageSorter.Controller
                 config.Portrait = config.Destination;
                 config.SmallDirectory = config.Destination;
                 config.Landscape = config.Destination;
+                config.MultimediaDirectory = config.Destination;
             }
 
             if (config.BackgroundDirectory == null)
@@ -134,6 +135,9 @@ namespace BackgroundImageSorter.Controller
 
             if (config.DataDirectory == null)
                 config.DataDirectory = PrepareSubDirectory(config.Destination, "Data");
+
+            if (config.MultimediaDirectory == null)
+                config.MultimediaDirectory = PrepareSubDirectory(config.Destination, "Multimedia");
 
             return config;
         }
