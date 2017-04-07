@@ -44,7 +44,6 @@ namespace BackgroundImageSorter.Controller
 
         public Report SortImages(Configuration config, Report report)
         {
-            //PhotoDao photoDao;
             IEnumerable<Photo> uniquePhotos =
                         FindUniquePhotos(config, report);
 
