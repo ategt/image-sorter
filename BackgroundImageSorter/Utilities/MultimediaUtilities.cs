@@ -12,7 +12,9 @@ namespace BackgroundImageSorter.Utilities
         {
             string format = null;
             metadata = metadata ?? getMetadata(mediaString);
-            if (metadata.VideoData != null)
+            if (!IsMultimedia(new Uri(mediaString), metadata)){
+                return null;
+            }else if (metadata.VideoData != null)
             {
                 if (string.IsNullOrWhiteSpace(metadata.VideoData?.Format))
                     format = ".video";
