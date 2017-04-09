@@ -81,5 +81,40 @@ namespace BackgroundImageSorterTests.Utilities
             Assert.AreEqual(extension, string.Empty);
 
         }
+
+        [Test]
+        public void TestGetDefaultExtension()
+        {
+            string mediaFolder = @"C:\Users\" + System.Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\special\media";
+            
+            string inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\files.txt");
+            string outputExtension = MimeSniffer.DetectProperExtension(inputPath);
+            Assert.AreEqual(".txt", outputExtension);
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\WinZip Archive (1378)");
+            outputExtension = MimeSniffer.DetectProperExtension(inputPath);
+            Assert.AreEqual(".zip", outputExtension);
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\PDF Document (121860)");
+            outputExtension = MimeSniffer.DetectProperExtension(inputPath);
+            Assert.AreEqual(".pdf", outputExtension);
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\Zip Archive (269250)");
+            outputExtension = MimeSniffer.DetectProperExtension(inputPath);
+            Assert.AreEqual(".zip", outputExtension);
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\download.png");
+            outputExtension = MimeSniffer.DetectProperExtension(inputPath);
+            Assert.AreEqual(".png", outputExtension);
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\16464157_924752977628291_4243522177728512000_n.jpg");
+            outputExtension = MimeSniffer.DetectProperExtension(inputPath);
+            Assert.AreEqual(".jpg", outputExtension);
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "video");
+            outputExtension = MimeSniffer.DetectProperExtension(inputPath);
+            Assert.AreEqual(string.Empty, outputExtension);
+        }
+
     }
 }

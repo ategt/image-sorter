@@ -126,5 +126,10 @@ namespace BackgroundImageSorter.Utilities
 
             return result;
         }
+
+        public static string DetectProperExtension(string inputPath)
+        {
+            return GetDefaultExtension( GetMime(inputPath) );
+        }
     }
 }
