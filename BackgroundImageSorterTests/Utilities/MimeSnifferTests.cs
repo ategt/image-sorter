@@ -17,7 +17,7 @@ namespace BackgroundImageSorterTests.Utilities
         }
 
         [Test]
-        public void TestMethod1()
+        public void TestGetMime()
         {
             string mediaFolder = @"C:\Users\" + System.Environment.UserName + @"\Documents\Visual Studio 2015\Projects\BackgroundImageSorter\test_images\special\media";
 
@@ -32,6 +32,26 @@ namespace BackgroundImageSorterTests.Utilities
             string audioAndVideo = System.IO.Path.Combine(mediaFolder, "audio and video");
             string audioAndVideoMime = MimeSniffer.GetMime(audioAndVideo);
             Assert.AreEqual(audioAndVideoMime, "application/octet-stream");
+
+            string inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\files.txt");
+            string outputMime = MimeSniffer.GetMime(inputPath);
+            Assert.AreEqual(outputMime, "text/plain");
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\WinZip Archive (1378)");
+            outputMime = MimeSniffer.GetMime(inputPath);
+            Assert.AreEqual(outputMime, "application/x-zip-compressed");
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\Zip Archive (269250)");
+            outputMime = MimeSniffer.GetMime(inputPath);
+            Assert.AreEqual(outputMime, "application/x-zip-compressed");
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\download.png");
+            outputMime = MimeSniffer.GetMime(inputPath);
+            Assert.AreEqual(outputMime, "image/png");
+
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\16464157_924752977628291_4243522177728512000_n.jpg");
+            outputMime = MimeSniffer.GetMime(inputPath);
+            Assert.AreEqual(outputMime, "image/jpeg");
 
         }
 
