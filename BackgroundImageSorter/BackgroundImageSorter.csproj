@@ -75,6 +75,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ImageUtilities.cs" />
+    <Compile Include="Utilities\MimeSniffer.cs" />
     <Compile Include="Utilities\MultimediaUtilities.cs" />
     <Compile Include="View\ConsoleView.cs" />
     <Compile Include="View\IView.cs" />

@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="ProgramTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\MimeSnifferTests.cs" />
     <Compile Include="Utilities\MultimediaUtilitiesTests.cs" />
   </ItemGroup>
   <ItemGroup>
