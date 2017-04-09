@@ -287,7 +287,7 @@ namespace BackgroundImageSorter.Controller
 
             if (string.IsNullOrWhiteSpace(properExtension))
             {
-                properExtension = Utilities.MultimediaUtilities.DetectProperExtension(photo.Path);
+                properExtension = Utilities.MimeSniffer.DetectProperExtension(photo.Path);
             }
 
             if (string.IsNullOrWhiteSpace(properExtension))
