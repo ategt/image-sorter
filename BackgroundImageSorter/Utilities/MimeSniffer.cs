@@ -97,21 +97,21 @@ namespace BackgroundImageSorter.Utilities
             }
         }
 
-        //public static string GetMime(string filePath)
-        //{
-        //    using (System.IO.FileStream fileStream = System.IO.File.OpenRead(filePath))
-        //    {
-        //        byte[] buffer = new byte[2048];
-        //        fileStream.Read(buffer, 0, buffer.Length);
-
-        //        return MimeSniffer.GetMime(buffer);
-        //    }
-        //}
-
         public static string GetMime(string filePath)
         {
-            return MimeSniffer.GetMime(System.IO.File.ReadAllBytes(filePath));
+            using (System.IO.FileStream fileStream = System.IO.File.OpenRead(filePath))
+            {
+                byte[] buffer = new byte[2048];
+                fileStream.Read(buffer, 0, buffer.Length);
+
+                return MimeSniffer.GetMime(buffer);
+            }
         }
+
+        //public static string GetMime(string filePath)
+        //{
+        //    return MimeSniffer.GetMime(System.IO.File.ReadAllBytes(filePath));
+        //}
 
     }
 }
