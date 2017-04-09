@@ -727,17 +727,10 @@ namespace BackgroundImageSorter.Tests
                 Move = true
             };
 
-            //Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).RunProgram(args);
             config = configurationController.SetDefaultDirectories(config);
             configurationController.ConfirmImportantFoldersExist(config);
 
             Report report = new ApplicationController(ioController, consoleView, photoDao, configurationController).SortImages(config, new Model.Report());
-
-            //FileInfo[] landscapePhotos = landscapeDir.GetFiles();
-
-            //Assert.AreEqual(landscapePhotos.Count(), 3);
-
-            //DirectoryAssert.DoesNotExist(portraitDir);
 
             Assert.AreEqual(report.Scanned, 12);
             Assert.AreEqual(report.AlreadyHad, 0);
