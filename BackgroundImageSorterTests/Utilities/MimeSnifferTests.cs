@@ -41,6 +41,10 @@ namespace BackgroundImageSorterTests.Utilities
             outputMime = MimeSniffer.GetMime(inputPath);
             Assert.AreEqual(outputMime, "application/x-zip-compressed");
 
+            inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\PDF Document (121860)");
+            outputMime = MimeSniffer.GetMime(inputPath);
+            Assert.AreEqual(outputMime, "application/pdf");
+
             inputPath = System.IO.Path.Combine(mediaFolder, "..\\trouble files\\Zip Archive (269250)");
             outputMime = MimeSniffer.GetMime(inputPath);
             Assert.AreEqual(outputMime, "application/x-zip-compressed");
@@ -55,5 +59,27 @@ namespace BackgroundImageSorterTests.Utilities
 
         }
 
+        [Test]
+        public void TestGetExtension()
+        {
+            string extension = MimeSniffer.GetDefaultExtension("image/jpeg");
+            Assert.AreEqual(extension, ".jpg");
+
+            extension = MimeSniffer.GetDefaultExtension("image/png");
+            Assert.AreEqual(extension, ".png");
+
+            extension = MimeSniffer.GetDefaultExtension("text/plain");
+            Assert.AreEqual(extension, ".txt");
+
+            extension = MimeSniffer.GetDefaultExtension("application/pdf");
+            Assert.AreEqual(extension, ".pdf");
+
+            extension = MimeSniffer.GetDefaultExtension("application/x-zip-compressed");
+            Assert.AreEqual(extension, ".zip");
+
+            extension = MimeSniffer.GetDefaultExtension("application/octet-stream");
+            Assert.AreEqual(extension, string.Empty);
+
+        }
     }
 }
